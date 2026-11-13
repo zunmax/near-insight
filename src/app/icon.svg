@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The NEAR Insights mark (BrandMark in src/components/shell/BrandMark.tsx), in the light or dark theme colours of the browser. -->
+  <style>
+    .box { fill: #ffffff; stroke: #0f1419; }
+    .stems { stroke: #0f1419; }
+    .diagonal { stroke: #00a37a; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: #000000; stroke: #e7e9ea; }
+      .stems { stroke: #e7e9ea; }
+      .diagonal { stroke: #1ed39b; }
+    }
+  </style>
+  <rect class="box" x="1.5" y="1.5" width="29" height="29" rx="9" stroke-width="2.4"/>
+  <path class="stems" d="M10 22V10M22 22V10" fill="none" stroke-width="3" stroke-linecap="round"/>
+  <path class="diagonal" d="M10 10l12 12" stroke-width="3" stroke-linecap="round"/>
+</svg>

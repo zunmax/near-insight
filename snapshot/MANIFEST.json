@@ -1,0 +1,30 @@
+{
+  "file": "dashboard.db",
+  "createdAt": "2026-11-11T15:57:50.834Z",
+  "dataThrough": "2026-11-09",
+  "sha256": "f85471005ae628e89d6938bc67ad16d10d7bc2328dc01b61562c3cf0eff872b2",
+  "bytes": 7491584,
+  "excludedTables": [
+    "news_items",
+    "ingest_runs"
+  ],
+  "rows": {
+    "coin_supply_daily": 8145,
+    "coins_daily": 802,
+    "coins_latest": 100,
+    "daily_series": 33053,
+    "dataset_versions": 15,
+    "epoch_supply": 1335,
+    "governance_proposals": 1,
+    "ingest_runs": 0,
+    "intents_chain_daily": 15201,
+    "intents_fee_channels": 100,
+    "intents_symbol_daily": 33358,
+    "live_samples": 6136,
+    "network_latest": 1,
+    "news_items": 0,
+    "protocol_versions": 2,
+    "releases": 50,
+    "validator_epochs": 4862
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "near-insights",
+  "version": "1.0.0",
+  "description": "A live, re-runnable investment thesis for NEAR: a Next.js dashboard and an ingest worker over a local SQLite database.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "dev:snapshot": "node --env-file-if-exists=.env scripts/dev-snapshot.ts",
+    "build": "next build",
+    "start": "next start",
+    "ingest": "node --env-file-if-exists=.env src/ingest/run.ts --once",
+    "worker": "node --env-file-if-exists=.env src/ingest/run.ts",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --import ./tests/resolve-alias.ts --test \"tests/**/*.test.ts\"",
+    "check": "npm run typecheck && npm run lint && npm test && npm run verify",
+    "thesis": "node --env-file-if-exists=.env scripts/thesis.ts",
+    "snapshot": "node --env-file-if-exists=.env scripts/snapshot.ts",
+    "verify": "node --env-file-if-exists=.env scripts/verify.ts",
+    "query": "node --env-file-if-exists=.env scripts/query.ts",
+    "rebuild": "node --env-file-if-exists=.env scripts/rebuild.ts",
+    "worker:health": "node --env-file-if-exists=.env src/ingest/health.ts"
+  },
+  "dependencies": {
+    "hyparquet": "1.31.3",
+    "hyparquet-compressors": "1.1.2",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "ws": "8.22.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/ws": "^8.18.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

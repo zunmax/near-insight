@@ -1,0 +1,21 @@
+# HTTPS for SITE_DOMAIN (set in .env): the news WebSocket goes to the worker, everything else to the website, and www
+# redirects to the bare domain. Caddy gets and renews the certificates itself; the website sets the security headers.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	header -Server
+	# The site has no Server Actions, so a request calling one (the Next-Action header) is a probe and never reaches it.
+	@server_action header Next-Action *
+	handle @server_action {
+		respond 403
+	}
+	handle /news-events* {
+		reverse_proxy worker:8081
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}

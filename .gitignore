@@ -1,0 +1,31 @@
+# dependencies
+/node_modules
+
+# next.js (.next-verify: npm run verify's own build folder)
+/.next/
+/.next-verify/
+
+# local SQLite database (written by the ingest worker)
+/data/
+
+# npm run snapshot's working copy, renamed to dashboard.db when it is complete
+/snapshot/*.tmp*
+
+# misc
+.DS_Store
+*.pem
+
+# env files
+.env*
+!.env.example
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# python bytecode (the Dune helper)
+__pycache__/
+
+# editor folders
+/.vscode/
+/.idea/

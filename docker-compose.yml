@@ -1,0 +1,111 @@
+# Production (`docker compose up -d --build`): Caddy with HTTPS in front of the website and the ingest worker, which share one
+# SQLite database on the `data` volume. SITE_DOMAIN and optional API keys go in a .env file next to this one (see .env.example).
+
+x-site-url: &site-url https://${SITE_DOMAIN:?Set SITE_DOMAIN in .env (the domain the site is served on)}
+x-news-events-url: &news-events-url wss://${SITE_DOMAIN:?Set SITE_DOMAIN in .env (the domain the site is served on)}/news-events
+
+# Every container: restarted when it exits, read-only apart from its volumes and a small /tmp, no Linux capabilities, no
+# privilege gain, and bounded CPU, memory and processes (the app's caps are set in .env for the server's size). The local
+# log driver keeps about 100 MB of compressed logs per container.
+x-hardened: &hardened
+  restart: unless-stopped
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges=true
+  cpus: 1
+  mem_limit: 1g
+  pids_limit: 256
+  logging:
+    driver: local
+
+x-app: &app
+  <<: *hardened
+  build:
+    context: .
+    args:
+      SITE_URL: *site-url
+      NEWS_EVENTS_URL: *news-events-url
+  image: near-insights:latest
+  init: true
+  environment:
+    SITE_URL: *site-url
+    NEWS_EVENTS_URL: *news-events-url
+  volumes:
+    - data:/app/data
+
+services:
+  caddy:
+    <<: *hardened
+    image: caddy:2.11.9@sha256:e40b94d0a43b5ff69cb20568d73f10c70703df7b0ffc2298eb3d723cdc9d0bd1
+    # Binding ports 80 and 443 is the one capability it needs.
+    cap_add:
+      - NET_BIND_SERVICE
+    mem_limit: 512m
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Set SITE_DOMAIN in .env (the domain the site is served on)}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  worker:
+    <<: *app
+    command: ["node", "src/ingest/run.ts"]
+    cpus: ${WORKER_CPUS:-1}
+    mem_limit: ${WORKER_MEMORY:-1g}
+    # Only the worker reads .env, so its API keys never reach the website, which faces the internet.
+    env_file:
+      - path: .env
+        required: false
+    # Replaces the shared block, so SITE_URL is repeated (the news WebSocket accepts that origin only); the image's paths and
+    # Caddy's worker port are fixed here, so a .env written for local runs cannot move them.
+    environment:
+      SITE_URL: *site-url
+      NEWS_EVENTS_HOST: 0.0.0.0
+      NEWS_EVENTS_PORT: "8081"
+      DATABASE_PATH: /app/data/dashboard.db
+      BACKUP_DIR: /app/backups
+      DUNE_PYTHON: /opt/dune/bin/python
+    # The daily backups sit on their own volume, mounted here only, so the website, which faces the internet, cannot reach them.
+    volumes:
+      - data:/app/data
+      - backups:/app/backups
+    # A hung worker exits by itself (WORKER_STALL_MS); unhealthy only reports that no job has succeeded for a while.
+    healthcheck:
+      test: ["CMD", "node", "src/ingest/health.ts"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 20m
+
+  web:
+    <<: *app
+    depends_on:
+      - worker
+    cpus: ${WEB_CPUS:-2}
+    mem_limit: ${WEB_MEMORY:-1g}
+    # Next.js keeps its cache of rendered pages and data in .next/cache.
+    tmpfs:
+      - /tmp:size=64m
+      - /app/.next/cache:uid=1000,gid=1000,size=256m
+    # Fails while the server does not answer, and stops a server that has not answered three times in a row so it restarts.
+    healthcheck:
+      test: ["CMD", "node", "src/server/health.ts"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 1m
+
+volumes:
+  data:
+  backups:
+  caddy_data:
+  caddy_config:
