@@ -12,7 +12,7 @@ import { PanelBoundary } from "@/components/ui/PanelBoundary";
 
 export const metadata: Metadata = {
   title: "Methodology and data sources",
-  description: "Where every number on NEAR Insights comes from, how each is calculated, how fresh it is, and how to rebuild the data yourself.",
+  description: "Where every number on NEAR Insights comes from, how each is calculated, how fresh it is and how to rebuild the data yourself.",
   alternates: { canonical: "/dashboard/methodology" },
 };
 

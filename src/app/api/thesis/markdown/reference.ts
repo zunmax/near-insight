@@ -1,4 +1,4 @@
-/** The thesis document's reference parts: about the data, what could not be computed, how to re-run it, and the formulas. */
+/** The thesis document's reference parts: the data and method, what could not be measured, how to reproduce it, and the formulas. */
 import {
   ARCHIVAL_RPC,
   COINGECKO,
@@ -8,6 +8,7 @@ import {
   DEFILLAMA,
   DEFILLAMA_COINS,
   DEFILLAMA_STABLECOINS,
+  EXPLORER_SWAPS,
   FASTNEAR_RPC,
   GITHUB,
   NEAR_DAILY_PRICE,
@@ -20,10 +21,11 @@ import {
   TESTNET_RPC,
   type ThesisDocumentInput,
 } from "@/app/api/thesis/markdown/format";
+import { sectionNumber } from "@/app/api/thesis/markdown/section";
 import { EPOCH_HISTORY_START, MAX_PULL_BACK_DAYS } from "@/config/ingest";
-import { DEFILLAMA_PUBLIC_ONLY } from "@/config/intents";
-import { PEER_SUPPLY_GROWTH } from "@/config/peers";
+import { DEFILLAMA_PUBLIC_ONLY, NO_REFERRAL } from "@/config/intents";
 import { LEAD_LAG } from "@/config/lead-lag";
+import { PEER_SUPPLY_GROWTH } from "@/config/peers";
 import { COVERAGE_HORIZON_MONTHS } from "@/config/projections";
 import { BUYBACKS_START_DAY, HSP029, PROTOCOL_TREASURY_SHARE, TRANSFER_TGAS } from "@/config/protocol";
 import {
@@ -37,23 +39,30 @@ import {
   SOURCES,
 } from "@/config/sources";
 import { BOUGHT_GROWTH_RANGE, TRIGGERS } from "@/config/thesis-triggers";
+import { DUNE_QUERY_DATA } from "@/content/source-requests";
 import { SECTIONS } from "@/content/thesis";
 import { formatCount, formatInteger, formatPercent, formatUsd } from "@/lib/format";
 import { DAY_SECONDS, dayTime } from "@/lib/metrics";
+import { TRIGGER_STATUS_LABEL } from "@/lib/thesis/triggers";
 
-/** Metrics the thesis would use that the free public sources cannot give, and why; nothing is estimated in their place. */
-export function couldNotCompute(input: ThesisDocumentInput): string {
+/** Section `n`: metrics the thesis would use that the free sources cannot give, and why; nothing is estimated in their place. */
+export function notMeasured(input: ThesisDocumentInput, n: number): string {
   const measuredFrom = input.metrics.issuance?.measuredFrom ?? EPOCH_HISTORY_START;
   const confidential = input.metrics.intents?.confidentialShare30d;
   const lines = [
-    `- **Days since March 2026 from the NEAR BigQuery public dataset (\`bigquery-public-data.crypto_near_mainnet_us\`).** The dataset is loaded from NEAR Lake, which NEAR's docs say "was deprecated on March 24, 2026 and no longer indexes new blocks" (docs.near.org/data-infrastructure/big-query). Its loader repository (github.com/near/near-public-lakehouse) names no other source. The thesis needs windows of 30 to 365 days ending on the data-through day, and buybacks began on ${BUYBACKS_START_DAY}. Daily transactions and active and new accounts therefore come from NearBlocks, whose daily transactions and active accounts match the figures NEAR reported for Q2 2026 (854K transactions and 121K active accounts a day).`,
-    "- **Per-swap NEAR Intents data from the Intents Explorer API.** It needs a JWT from the partner dashboard. Volume, swaps, fees, TVL and volume by chain and token come from the daily totals on the NEAR team's Dune dashboard, and revenue and buybacks from DefiLlama, so single swap sizes, routes and solvers are not measured.",
-    `- **Accounts that swapped through NEAR Intents.** No query on the NEAR team's Dune dashboard counts them by day, and NearBlocks' count covers public swaps only, leaving out confidential swaps${confidential == null ? "" : ` (${formatPercent(confidential, 1)} of volume over the 30 days to ${input.metrics.intents?.duneThrough ?? DASH})`}, so it is not used.`,
-    "- **Contract usage beyond `intents.near`.** The free sources give daily transactions of named contracts, not a ranking of all contracts; the dashboard measures the one contract the thesis rests on.",
+    `- **Days since March 2026 from the NEAR BigQuery public dataset (\`bigquery-public-data.crypto_near_mainnet_us\`).** The dataset is loaded from NEAR Lake, which NEAR's docs say "was deprecated on March 24, 2026 and no longer indexes new blocks" (docs.near.org/data-infrastructure/big-query). The same page says the dataset itself remains available, but its loader repository (github.com/near/near-public-lakehouse) names no source other than NEAR Lake. The thesis needs windows of 30 to 365 days ending on the data-through day, and buybacks began on ${BUYBACKS_START_DAY}, so daily transactions and active and new accounts come from NearBlocks instead. Its Q2 2026 averages match Nansen's NEAR report for that quarter: 854K transactions and 121K active addresses a day (nansen.ai/post/nansen-near-quarterly-report-q2-2026).`,
+    `- **Single NEAR Intents swaps.** The NEAR Intents Explorer API lists every 1Click swap, but its terms allow no API data to be kept beyond 24 hours. The worker therefore adds up each finished day's swaps by referral and stores only those daily totals. Single swap sizes, routes and solvers are not measured, and the API does not list swaps made outside 1Click (section ${sectionNumber("capture")} compares the 1Click swaps' app fees with all NEAR Intents gross fees). The data also does not show how each app fee splits between the front end and NEAR Intents, so the share of fees that buys NEAR comes from DefiLlama's revenue and buybacks.`,
+    `- **Accounts that swapped through NEAR Intents.** No query on the NEAR team's Dune dashboard counts them by day. NearBlocks' count covers public swaps only and leaves out confidential swaps${confidential == null ? "" : ` (${formatPercent(confidential, 1)} of volume over the 30 days to ${input.metrics.intents?.duneThrough ?? DASH})`}, so it is not used.`,
+    "- **Contract usage beyond `intents.near`.** The free sources give daily transactions of named contracts, not a ranking of all contracts, so the dashboard measures only the contract the thesis rests on.",
     `- **Burn and issuance before ${measuredFrom}.** The stored epoch block headers start that day${measuredFrom > EPOCH_HISTORY_START ? ` and are read back toward ${EPOCH_HISTORY_START}` : ""}; longer windows show "${DASH}" until the stored epochs cover them.`,
-    "- **NEAR held from buybacks that is later sold.** The fee wallets' balances are measured, but a sale cannot be told apart from another outflow without labeling every counterparty.",
+    "- **The trades that buy NEAR.** DefiLlama's buybacks are the NEAR and wNEAR that reach the three fee wallets (its `near-intents` adapter in github.com/DefiLlama/dimension-adapters), and it books the same inflow as revenue. This paper measures NEAR delivered to the wallets, not the swaps that bought it, so buybacks ÷ revenue is 100% by construction.",
+    "- **NEAR bought and later sold.** The fee wallets' balances are measured, but a sale cannot be told apart from another outflow without labeling every counterparty.",
   ];
-  return [sectionHeading("What could not be computed", "🚫"), lines.join("\n")].join("\n\n");
+  return [
+    sectionHeading(`${n}. What we could not measure`, "🚫"),
+    "The free sources cannot give the following, and nothing is estimated in their place.",
+    lines.join("\n"),
+  ].join("\n\n");
 }
 
 /** Where `through` falls against the snapshot day: ", 5 days before the snapshot", ", the snapshot day" or ", 1 day after the snapshot". */
@@ -62,39 +71,31 @@ function fromSnapshot(through: string, snapshot: string): string {
   return days === 0 ? ", the snapshot day" : `, ${formatCount(Math.abs(days), "day")} ${days > 0 ? "before" : "after"} the snapshot`;
 }
 
-export function aboutTheData(input: ThesisDocumentInput): string {
+/** Section 2: where the numbers come from, the days they run to, and how a section tests its claim. */
+export function dataAndMethod(input: ThesisDocumentInput): string {
   const { market, protocol, activity, feeChain, dataThrough } = input.metrics;
   const lines = [
-    `- **Snapshot:** ${input.snapshot}, generated by \`npm run thesis\` from the dashboard's database (\`GET /api/thesis\`). The dashboard updates these numbers as the worker stores new data; this document is a dated copy.`,
-    `- **Data through:** flow windows end on **${dataThrough ?? DASH}**${dataThrough ? fromSnapshot(dataThrough, input.snapshot) : ""}; windows that use Intents gross fees (the fee chain, the fee rate and the share of fees that buys NEAR) on ${day(feeChain?.through)}; NearBlocks figures (transactions and accounts) on ${day(activity?.through)}. The first item under Formulas gives the rule behind each day.`,
-    `- **NEAR Intents:** volume (public and confidential), swaps, fees, volume by chain and token, fees by channel and TVL come from the NEAR team's Dune dashboard (\`${SOURCES.dune.baseUrl}/${SOURCES.dune.dashboard.handle}/${SOURCES.dune.dashboard.slug}\`), refreshed about once a day. Volume and fees use Dune's value on each day it has one and DefiLlama's otherwise. From ${DEFILLAMA_PUBLIC_ONLY.label}, DefiLlama counted only public swaps, leaving out confidential ones, so it is not the primary source. Revenue and buybacks come from DefiLlama.`,
+    `- **Snapshot:** ${input.snapshot}. \`npm run thesis\` writes this document from the dashboard's database (\`GET /api/thesis\`). The dashboard updates as the worker stores new data; this document is a dated copy.`,
+    `- **Data through:** flow windows end on **${dataThrough ?? DASH}**${dataThrough ? fromSnapshot(dataThrough, input.snapshot) : ""}. Windows built on Intents gross fees (the fee chain, the fee rate and the share of fees that buys NEAR) end on ${day(feeChain?.through)}, and NearBlocks figures (transactions and accounts) on ${day(activity?.through)}. The first item of Appendix A gives the rule behind each day.`,
+    `- **NEAR Intents:** volume (public and confidential), swaps, fees, volume by chain and token, fees by channel and TVL come from the NEAR team's Dune dashboard (\`${SOURCES.dune.baseUrl}/${SOURCES.dune.dashboard.handle}/${SOURCES.dune.dashboard.slug}\`), which refreshes about once a day. On a day Dune does not have, volume and fees come from DefiLlama. DefiLlama is not the primary source because from ${DEFILLAMA_PUBLIC_ONLY.label} it counted only public swaps. Revenue and buybacks come from DefiLlama.`,
     `- **Market:** ${market ? `NEAR at **${formatUsd(market.priceUsd)}**, rank **#${market.rank}**, market cap **${formatUsd(market.marketCapUsd)}**` : DASH} (CoinGecko, ${reading(input.marketAsOf)}).`,
     `- **Network:** ${protocol ? `mainnet runs **protocol ${protocol.mainnet}**; testnet runs ${protocol.testnet}` : DASH}.`,
-    `- **Burn and issuance** are measured from block headers (a NEAR archival RPC node, FastNEAR's by default), one epoch at a time, from ${input.metrics.issuance?.measuredFrom ?? EPOCH_HISTORY_START}.`,
-    "- **Units:** issuance is paid in NEAR, so buybacks are measured in NEAR: each day's dollar amount is converted at that day's NEAR price. Burn is read in NEAR from block headers.",
-    `- **Windows:** Intents buybacks began on ${BUYBACKS_START_DAY}. Growth comparisons use 90-day windows; year-on-year comparisons use 30 days against the same 30 days a year earlier.`,
-    `- **Missing values:** "${DASH}" means the database does not cover that window yet. No value is estimated in its place.`,
+    `- **Burn and issuance:** measured epoch by epoch from block headers on a NEAR archival RPC node (FastNEAR's by default), from ${input.metrics.issuance?.measuredFrom ?? EPOCH_HISTORY_START}.`,
+    "- **Units:** issuance is paid in NEAR, so buybacks are measured in NEAR too: each day's dollar amount is converted at that day's NEAR price. Burn is read in NEAR from block headers.",
+    `- **Windows:** Intents buybacks began on ${BUYBACKS_START_DAY}. Growth compares the last 90 days with the 90 days before; year-on-year compares the last 30 days with the same 30 days a year earlier.`,
+    `- **Missing values:** "${DASH}" marks a window the database does not cover yet. Nothing is estimated in its place.`,
+    `- **Statuses:** each breaking point is **${TRIGGER_STATUS_LABEL["not-happened"]}** (not reached), **${TRIGGER_STATUS_LABEL.happened}** (reached), **${TRIGGER_STATUS_LABEL["too-close"]}** (the measured range spans the limit) or **${TRIGGER_STATUS_LABEL["no-data"]}** (the data does not cover it).`,
   ];
-  return [sectionHeading("About the data", "🗂️"), lines.join("\n")].join("\n\n");
+  return [sectionHeading("2. Data and method", "🗂️"), lines.join("\n")].join("\n\n");
 }
 
-/** What each Dune query gives, for the re-run table. */
-const DUNE_QUERY_DATA: Record<keyof typeof SOURCES.dune.queries, string> = {
-  volume: "daily volume, public and confidential",
-  swaps: "daily swaps",
-  fees: "daily gross fees",
-  feeChannels: "fees since launch for the 100 largest channels above $10",
-  symbolVolume: "daily volume by token",
-  chainVolume: "daily volume by chain",
-  tvl: "daily TVL, public and confidential",
-};
-
-export function howToRerun(): string {
+/** Section `n`: the commands that rebuild every number, and the request behind each dataset. */
+export function howToReproduce(n: number): string {
   const proposalArgs = btoa(JSON.stringify({ proposal_id: HSP029.proposalId }));
   const rows = [
     [
       "Every number in this document",
-      "`npm run rebuild` (every source, a new snapshot and this document) or `npm run verify` (offline, from the committed snapshot); setup and run times are in the Quick Start of [README.md](README.md)",
+      "`npm run rebuild` (every source, a new snapshot and this document) or `npm run verify` (offline, from the committed snapshot); setup and run times are under Reproduce and verify in [README.md](README.md)",
     ],
     [
       "The SQL behind every chart",
@@ -114,7 +115,7 @@ export function howToRerun(): string {
     ["Total supply, gas price", `Same endpoint, \`block\` with \`{"finality":"final"}\``],
     [
       "NEAR minted and burned per epoch",
-      `\`POST ${ARCHIVAL_RPC}\` with \`{"jsonrpc":"2.0","id":1,"method":"block","params":{"block_id":<height or hash>}}\` for the three blocks named under Formulas; each epoch's previous block is read by the hash in the next block's \`prev_hash\``,
+      `\`POST ${ARCHIVAL_RPC}\` with \`{"jsonrpc":"2.0","id":1,"method":"block","params":{"block_id":<height or hash>}}\` for the three blocks named in Appendix A; each epoch's previous block is read by the hash in the next block's \`prev_hash\``,
     ],
     ["Validators, stake", "Same endpoint as the max issuance rate, `validators` with `[null]`"],
     ["Protocol status", `\`status\` on \`${FASTNEAR_RPC}\` and \`${TESTNET_RPC}\``],
@@ -135,6 +136,7 @@ export function howToRerun(): string {
       `NEAR Intents ${DUNE_QUERY_DATA[name as keyof typeof SOURCES.dune.queries]}`,
       `Dune query ${id} on \`${SOURCES.dune.baseUrl}/${SOURCES.dune.dashboard.handle}/${SOURCES.dune.dashboard.slug}\`: SQL and latest result at \`${SOURCES.dune.baseUrl}/queries/${id}\``,
     ]),
+    ["NEAR Intents 1Click swaps, volume and app fees by referral", EXPLORER_SWAPS],
     ["Intents volume on days Dune does not have", `\`GET ${DEFILLAMA}/summary/dexs/near-intents?excludeTotalDataChartBreakdown=true\``],
     [
       "Intents revenue, buybacks (and gross fees on days Dune does not have)",
@@ -155,7 +157,11 @@ export function howToRerun(): string {
       `\`${OPEN_DEV_DATA}/manifest.json\`, \`eco_mads.parquet\` (ids: NEAR ${DEVELOPER_ECOSYSTEMS.near}, Ethereum ${DEVELOPER_ECOSYSTEMS.ethereum}, Solana ${DEVELOPER_ECOSYSTEMS.solana}, Bitcoin ${DEVELOPER_ECOSYSTEMS.bitcoin})`,
     ],
   ];
-  return [sectionHeading("How to re-run the data", "🔁"), "All sources are free and public; each request below returns one dataset on its own.", table(["Data", "Request"], rows)].join("\n\n");
+  return [
+    sectionHeading(`${n}. How to reproduce this`, "🔁"),
+    "Every source is free. All are public except the NEAR Intents Explorer API, which needs a free partner key. Each request below returns one dataset on its own.",
+    table(["Data", "Request"], rows),
+  ].join("\n\n");
 }
 
 export const FORMULAS = [
@@ -170,7 +176,8 @@ export const FORMULAS = [
   `Fee chain, in four steps, over the 30 and 90 days to the last day Intents fees and revenue both have: NEAR Intents volume, the gross fees charged on it, the revenue kept from those fees (DefiLlama \`dailyRevenue\`), and the buybacks paid from that revenue (\`dailyHoldersRevenue\`). Fee rate = gross fees ÷ volume; fees per $1M swapped = fee rate × 1,000,000; each later step is also shown as a share of the step before (revenue ÷ fees, buybacks ÷ revenue). Capture rate (share of fees that buys NEAR) = buybacks ÷ gross fees, also from ${BUYBACKS_START_DAY} to that day. Share of volume that buys NEAR = buybacks ÷ volume; it needs no fees, so its windows (the 90-day rows, break-even and the projections) end on \`dataThrough\`.`,
   "Share of DEX volume = DefiLlama's NEAR Intents volume ÷ the volume of every DEX DefiLlama tracks on NEAR, which includes NEAR Intents, over 30 and 180 days; both from DefiLlama, so they count the same swaps.",
   "Swaps, public and confidential, compare the 30-day total with the same 30 days a year earlier. Average swap = volume ÷ swaps over the same 30 days. Confidential share = confidential volume ÷ all volume, over 30 days and in 7-day blocks.",
-  "Chain mix and stablecoin share: Dune counts each swap's volume once, under one token and its chain, so the shares add up to 100%. Stablecoin share = volume under the symbols in `STABLECOIN_SYMBOLS` (`src/config/intents.ts`) ÷ all volume.",
+  "Chain mix and stablecoin share: Dune's volume by chain and its volume by token each sum to its total volume, so the shares add up to 100%. Stablecoin share = volume under the symbols in `STABLECOIN_SYMBOLS` (`src/config/intents.ts`) ÷ all volume.",
+  `1Click swaps by referral: for each UTC day, once the day after it has ended, the completed swaps the Explorer API lists as created that day, added up by referral (\`${NO_REFERRAL}\` when a swap carries none). Volume = \`amountInUsd\`; app fees = each fee's basis points × \`amountInUsd\` ÷ 10,000. Over the 30 days to the newest stored day: largest referral's share of fees = its app fees ÷ all app fees; fee rate = app fees ÷ volume. 1Click share of gross fees = app fees ÷ NEAR Intents gross fees over the 30 days to the last day both have.`,
   `Share of transactions = ${INTENTS_CONTRACT} transactions over 30 days ÷ all NEAR transactions over the same 30 days, ending on the last day both NearBlocks series have.`,
   "Chain activity: transactions and new accounts compare the 30-day total with the same 30 days a year earlier. Active accounts compare the median daily count of the 30 days with the median of the same 30 days a year earlier.",
   "Monthly growth rate of NEAR bought = (1 + the change of NEAR bought over the 90 days to `dataThrough` against the 90 days before)^(365 ÷ 12 ÷ 90) − 1, a month being 365 ÷ 12 days as in the projection.",

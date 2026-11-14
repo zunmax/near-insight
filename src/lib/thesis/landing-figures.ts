@@ -21,7 +21,7 @@ export function landingFigures(m: LandingMetrics): LandingFigure[] {
       ? { eyebrow: `Bought with NEAR Intents fees · ${window}`, value: formatNear(m.bought30dNear), verb: "bought" }
       : null,
     minted > 0 ? { eyebrow: `Minted by the protocol · ${window}`, value: formatNear(minted), verb: "minted" } : null,
-    absorbed > 0 ? { eyebrow: `Of NEAR minted, burned or bought · ${window}`, value: formatPercentFromFull(absorbed, 1), verb: "absorbed" } : null,
+    absorbed > 0 ? { eyebrow: `Share of NEAR minted that was burned or bought · ${window}`, value: formatPercentFromFull(absorbed, 1), verb: "absorbed" } : null,
     m.intentsReach && m.intentsReach.chains > 0
       ? { eyebrow: `Chains with NEAR Intents volume · ${m.intentsReach.day}`, value: formatCount(m.intentsReach.chains, "chain"), verb: "reached" }
       : null,

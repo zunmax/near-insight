@@ -8,7 +8,7 @@ const port = process.argv[2] ?? "3000";
 const snapshot = copySnapshot("near-insights-dev-");
 console.log(`Serving a copy of snapshot/dashboard.db at http://localhost:${port}/dashboard/home (Ctrl+C to stop).`);
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "-p", port], {
-  env: { ...process.env, DATABASE_PATH: snapshot.database },
+  env: { ...process.env, DATABASE_PATH: snapshot.database, NEXT_TELEMETRY_DISABLED: "1" },
   stdio: "inherit",
 });
 server.on("exit", (code) => {

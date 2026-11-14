@@ -11,6 +11,7 @@ import { YEAR_SECONDS } from "@/lib/metrics";
 const TITLE = "Total NEAR supply";
 const TWO_YEARS = 2 * YEAR_SECONDS;
 
+/** Total NEAR supply each day over the two years to the newest stored day. */
 export async function SupplyHistoryPanel() {
   await io();
   const supply = await getSeries(SERIES.nearTotalSupply);

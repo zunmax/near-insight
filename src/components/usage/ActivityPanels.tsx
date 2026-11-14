@@ -16,6 +16,7 @@ const TVL_TITLE = "DeFi TVL on NEAR";
 const STABLECOINS_TITLE = "Stablecoins on NEAR";
 const ACCOUNT_SERIES = ["Active (signed a transaction)", "Relayed (gas paid by a relayer)", "New accounts"] as const;
 
+/** A stored daily series in full and over the year to its newest day; null when it has no points. */
 async function lastYear(series: SeriesName) {
   const points = await getSeries(series);
   const last = points.at(-1);
@@ -106,6 +107,7 @@ export async function AccountsPanel() {
   );
 }
 
+/** DeFi TVL on NEAR each day over the last 12 months, against the same day a year earlier. */
 export async function TvlPanel() {
   await io();
   const tvl = await lastYear(SERIES.nearTvlUsd);
@@ -125,6 +127,7 @@ export async function TvlPanel() {
   );
 }
 
+/** USD-pegged stablecoins on NEAR each day over the last 12 months, against the same day a year earlier. */
 export async function StablecoinsPanel() {
   await io();
   const stables = await lastYear(SERIES.nearStablecoinsUsd);

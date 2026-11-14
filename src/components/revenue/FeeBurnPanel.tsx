@@ -37,7 +37,7 @@ export async function FeeBurnPanel() {
   const share = check ? ratio(check.a, check.b) : null;
   const measured =
     check && check.days !== null && share !== null
-      ? `The NEAR burned, measured from block headers, equals ${formatPercentFromFull(share, 0)} of gas fees over the ${check.days} days to ${check.through}.`
+      ? `NEAR burned, measured from block headers, equals ${formatPercentFromFull(share, 0)} of gas fees over the ${check.days} days to ${check.through}.`
       : undefined;
   /** Without both protocol readings, the burn share the projections use (1 once no gas is paid to contracts) decides; without
       that either, the rule mainnet runs is unknown and goes unstated. */
@@ -59,7 +59,7 @@ export async function FeeBurnPanel() {
           : fullBurnLive
             ? `Since protocol ${FULL_BURN_PROTOCOL}, contracts no longer receive part of the gas they use, so all gas fees are burned.${
                 share !== null && share < 1
-                  ? ` The measured share can be below 100% for two reasons: the window includes days before mainnet ran protocol ${FULL_BURN_PROTOCOL}, or the reported gas fees differ from the burn read from block headers.`
+                  ? ` The measured share is below 100% because the window includes days before mainnet ran protocol ${FULL_BURN_PROTOCOL}, or because the reported gas fees differ from the burn read from block headers.`
                   : ""
               }`
             : `Today, part of the gas a contract call uses is paid to the contract instead of being burned. Protocol ${FULL_BURN_PROTOCOL} removes that payment, so all gas fees are burned once mainnet runs it.`}
@@ -71,9 +71,9 @@ export async function FeeBurnPanel() {
 /** Loading placeholder of FeeBurnPanel. */
 export function FeeBurnPanelSkeleton() {
   return (
-    <PanelSkeleton title={TITLE.length} text={100} tabs="Chart">
+    <PanelSkeleton title={TITLE.length} text={96} tabs="Chart">
       <ColumnChartSkeleton columns={12} />
-      <NoteSkeleton chars={322} />
+      <NoteSkeleton chars={317} />
     </PanelSkeleton>
   );
 }

@@ -7,7 +7,7 @@ function PanelError({ title }: { title: string }, { retry }: ErrorInfo) {
     <section role="alert" className="panel h-full">
       <h2 className="panel-head panel-title">{title}</h2>
       <div className="panel-body panel-empty">
-        <p className="text-[13px] leading-relaxed text-ink-2">This panel could not be loaded. The rest of the page still works. Try again in a moment.</p>
+        <p className="text-[13px] leading-relaxed text-ink-2">This panel could not load. The rest of the page still works. Try again in a moment.</p>
         <button type="button" onClick={() => retry()} className="btn btn-primary btn-sm">
           Try again
         </button>

@@ -14,10 +14,11 @@ const TITLE = "NEAR Intents volume, 30-day totals";
 const WINDOW_DAYS = 30;
 const WINDOWS = 12;
 
+/** NEAR Intents volume in consecutive 30-day totals ending on the data-through day. */
 export async function IntentsVolumePanel() {
   await io();
   const [daily, { intents, dataThrough }] = await Promise.all([getSeries(SERIES.intentsVolumeUsd), getThesisMetrics()]);
-  if (!intents || !dataThrough) return <NoData title="NEAR Intents volume" />;
+  if (!intents || !dataThrough) return <NoData title={TITLE} />;
   const end = dayTime(dataThrough);
   const first = daily[0]?.time ?? end;
   /** Only windows whose 30 days all fall inside the stored history, so no column shows a short or empty total. */
@@ -28,7 +29,7 @@ export async function IntentsVolumePanel() {
   )
     .filter((w) => w.end - (WINDOW_DAYS - 1) * DAY_SECONDS >= first)
     .map((w) => ({ label: formatShortDate(w.end), value: w.value }));
-  if (points.length === 0) return <NoData title="NEAR Intents volume" />;
+  if (points.length === 0) return <NoData title={TITLE} />;
   /** The sentence totals the windows drawn, so it adds up to the columns. */
   const shownTotal = points.reduce((sum, point) => sum + point.value, 0);
 

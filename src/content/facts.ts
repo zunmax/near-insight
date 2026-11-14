@@ -18,14 +18,14 @@ export const TECHNOLOGY_FACTS: Fact[] = [
 export const INTENTS_FEES = {
   contract: { label: "intents.near contract", value: "1 pip (0.0001%) a swap", source: "NEAR Intents docs, Fees (2026-11-03)" },
   app: { label: "near-intents.org app", value: "0.2% a swap", source: "NEAR Intents docs, Fees (2026-11-03)" },
-  oneClick: { label: "1Click API", value: "about 0.2–0.25% on most routes", source: "NEAR Intents docs, Fees (2026-11-03)" },
+  oneClick: { label: "1Click API", value: "0.25% without an API key, 0.2% with one; 0.01% on stablecoin pairs", source: "NEAR Intents docs, Fees (2026-11-14)" },
 } satisfies Record<string, Fact>;
 
 /** NEAR account features, from docs.near.org. */
 export const ACCOUNT_FACTS: Fact[] = [
   {
     label: "Chain Signatures",
-    value: "An MPC network (v1.signer) lets a NEAR account, contracts included, sign native transactions for Bitcoin, EVM chains, Solana and others",
+    value: "A multi-party computation (MPC) network, v1.signer, lets any NEAR account, contracts included, sign native transactions for Bitcoin, EVM chains, Solana and others",
     source: "docs.near.org, Chain Signatures (2026-11-03)",
   },
   { label: "Named accounts", value: "Human-readable account names such as alice.near, beside 64-character implicit accounts", source: "docs.near.org, Access keys (2026-11-03)" },

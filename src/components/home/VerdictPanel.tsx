@@ -37,8 +37,8 @@ export async function VerdictPanel() {
 }
 
 /** Lengths of the verdict's summary and of its points, for the loading placeholder. */
-const SKELETON_SUMMARY = 308;
-const SKELETON_POINTS = [159, 108, 225, 189, 251, 300, 275];
+const SKELETON_SUMMARY = 398;
+const SKELETON_POINTS = [159, 108, 226, 189, 309, 292, 275];
 
 /** Loading placeholder of VerdictPanel: the summary, then the boxed list of points. */
 export function VerdictPanelSkeleton() {

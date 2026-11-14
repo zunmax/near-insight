@@ -52,8 +52,8 @@ export async function RevenueUnitsPanel() {
         markers={[MILESTONES.buybacksStart]}
       />
       <p className="mt-3 text-[12px] leading-relaxed text-muted">
-        Change in revenue a day from {formatMonth(monthStart(first.month))} to {formatMonth(monthStart(last.month))}, only months with revenue on every
-        day. Each day&apos;s revenue is converted at that day&apos;s NEAR price.
+        Change in revenue a day from {formatMonth(monthStart(first.month))} to {formatMonth(monthStart(last.month))}, counting only months with revenue
+        on every day. Each day&apos;s revenue is converted to NEAR at that day&apos;s price.
       </p>
     </Panel>
   );
@@ -69,7 +69,7 @@ export function RevenueUnitsPanelSkeleton() {
         ))}
       </dl>
       <LineChartSkeleton legend={[14, 15]} />
-      <NoteSkeleton chars={147} />
+      <NoteSkeleton chars={159} />
     </PanelSkeleton>
   );
 }

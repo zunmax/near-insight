@@ -11,7 +11,7 @@ import { SITE } from "@/config/site";
 const MAIN_ITEMS = NAV_GROUPS.filter((group) => !("secondary" in group)).flatMap((group): readonly NavItem[] => group.items);
 const SECONDARY_ITEMS = NAV_GROUPS.filter((group) => "secondary" in group).flatMap((group): readonly NavItem[] => group.items);
 
-/** The account avatar and the menu it opens: a modal <dialog> sliding in from the left with the account name, the
+/** The brand mark and the menu it opens: a modal <dialog> sliding in from the left with the site name, the
     sections in large type, the reference pages under a divider and the theme switch. A link, Escape or the backdrop closes it. */
 export function MobileMenu() {
   const dialog = useRef<HTMLDialogElement>(null);

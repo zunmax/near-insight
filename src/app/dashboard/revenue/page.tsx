@@ -8,6 +8,7 @@ import { FeeChainPanel, FeeChainPanelSkeleton } from "@/components/revenue/FeeCh
 import { FeeChannelsPanel, FeeChannelsPanelSkeleton } from "@/components/revenue/FeeChannelsPanel";
 import { FeeRatePanel, FeeRatePanelSkeleton } from "@/components/revenue/FeeRatePanel";
 import { FeeWalletsPanel, FeeWalletsPanelSkeleton } from "@/components/revenue/FeeWalletsPanel";
+import { ReferralFeesPanel, ReferralFeesPanelSkeleton } from "@/components/revenue/ReferralFeesPanel";
 import { RevenueUnitsPanel, RevenueUnitsPanelSkeleton } from "@/components/revenue/RevenueUnitsPanel";
 import { PageMain } from "@/components/shell/PageMain";
 import { ThesisHeader, ThesisHeaderSkeleton } from "@/components/thesis/ThesisHeader";
@@ -17,7 +18,7 @@ import { PanelSlot } from "@/components/ui/PanelSlot";
 
 export const metadata: Metadata = {
   title: "NEAR Intents fees, buybacks and burn",
-  description: "How NEAR Intents fees buy NEAR: the share of fees that buys NEAR, fees per $1M swapped and by channel, the three fee wallets, and NEAR burned by month.",
+  description: "How NEAR Intents fees buy NEAR: the share of fees that buys NEAR, fees per $1M swapped, who pays them, fees by channel, the three fee wallets and NEAR burned by month.",
   alternates: { canonical: "/dashboard/revenue" },
 };
 
@@ -48,6 +49,9 @@ export default function RevenuePage() {
       </PanelSlot>
       <PanelSlot title="NEAR Intents fees per $1M swapped, by month" skeleton={<FeeRatePanelSkeleton />}>
         <FeeRatePanel />
+      </PanelSlot>
+      <PanelSlot title="Who pays NEAR Intents fees" skeleton={<ReferralFeesPanelSkeleton />}>
+        <ReferralFeesPanel />
       </PanelSlot>
       <PanelSlot title="NEAR Intents fees by channel" skeleton={<FeeChannelsPanelSkeleton />}>
         <FeeChannelsPanel />

@@ -10,7 +10,7 @@ const siteLabel = (url: string) => new URL(url).host.replace(/^www\./, "");
 export function SourceInfo({ sources, through }: { sources: SourceRef[]; through?: string }) {
   return (
     <SourceInfoNote>
-      <span className="mb-2 block text-[10.5px] font-bold tracking-[0.06em] text-muted uppercase">Where the data comes from</span>
+      <span className="mb-2 block text-[10.5px] font-bold tracking-[0.06em] text-muted uppercase">Data sources</span>
       <span className="flex flex-col gap-2">
         {sources.map((source) => (
           <span key={sourceName(source)} className="flex items-center gap-2.5">

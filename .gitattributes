@@ -1,3 +1,4 @@
 # LF everywhere, so a Windows checkout matches the generated THESIS.md byte for byte (npm run verify).
 * text=auto eol=lf
 *.db binary
+*.pdf binary

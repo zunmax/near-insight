@@ -129,9 +129,9 @@ export function yearlyGrowthOfMedians(daily: DailyPoint[], endDays: number): num
   const baseEnd = first.time <= yearBefore - window ? yearBefore : first.time + window;
   const spanDays = (last.time - baseEnd) / DAY_SECONDS;
   if (spanDays < endDays) return null;
-  const now = windowMedian(daily, endDays, 0, last.time);
+  const latest = windowMedian(daily, endDays, 0, last.time);
   const base = windowMedian(daily, endDays, 0, baseEnd);
-  return now !== null && base !== null && base > 0 ? (now / base) ** (365 / spanDays) - 1 : null;
+  return latest !== null && base !== null && base > 0 ? (latest / base) ** (365 / spanDays) - 1 : null;
 }
 
 /** Each point as a share of the first point, × 100, so series in different units share one axis; empty when the first value is not positive. */

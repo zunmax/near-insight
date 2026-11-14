@@ -25,17 +25,17 @@ import {
 import { formatMaxIssuance, maxIssuanceDigits } from "@/lib/thesis/max-issuance";
 import { describeProposalStatus, proposalFailed, proposalStatusLabel } from "@/lib/thesis/proposal-status";
 
-/** Whether a thesis's breaking point shows in the latest data; "too-close" while its threshold falls inside the measured range. */
+/** Whether a section's breaking point shows in the latest data; "too-close" while its threshold falls inside the measured range. */
 export type TriggerStatus = "happened" | "not-happened" | "too-close" | "no-data";
 
-/** The breaking point of one thesis (the result that would change the view), and what the latest data shows against it. */
+/** The breaking point of one thesis section (the result that would change the view), and what the latest data shows against it. */
 type SectionTrigger = {
   /** The breaking point, as a fixed sentence with its threshold. */
   rule: string;
   /** The same rule in one short sentence, for the Home thesis cards. */
   ruleShort: string;
   status: TriggerStatus;
-  /** What the data shows now, written from the live numbers. */
+  /** What the latest data shows, written from the live numbers. */
   detail: string;
   /** The deciding numbers of `detail` in one sentence, for the Home thesis cards. */
   detailShort: string;
@@ -113,7 +113,7 @@ export const noGrowthMatches = (horizon: string) => `no growth of NEAR bought ca
 export function buybackPace(monthlyGrowth: number, check: GrowthCheck, digits: number): string {
   const shown = percentRounded(monthlyGrowth, digits);
   const motion = shown > 0 ? "growing" : shown < 0 ? "shrinking" : "not growing";
-  if (check === "too-close") return shown > 0 ? "growing, though not clearly as fast as needed at today's price" : `${motion}, which may or may not be enough at today's price`;
+  if (check === "too-close") return shown > 0 ? "growing, though not clearly as fast as needed at today's price" : `${motion}, too close to call against the growth needed at today's price`;
   if (shown > 0) return `growing ${check === "happened" ? "too slowly" : "faster than needed"} at today's price`;
   return check === "happened" ? `${motion}, short of the growth needed at today's price` : `${motion}, which is still enough at today's price`;
 }
@@ -133,12 +133,12 @@ export const growthNeededName = (required: number, digits: number) => (required 
 /** The growth needed as a value: −1 means burn alone matches issuance, so no rate of NEAR bought is needed at all. */
 export const growthNeededValue = (required: number, digits: number) => (required <= -1 ? "None: burn alone matches issuance" : formatChange(required, digits));
 
-/** Each thesis's breaking point. The rule is fixed in advance (thresholds in src/config/thesis-triggers.ts);
+/** Each section's breaking point. The rule is fixed in advance (thresholds in src/config/thesis-triggers.ts);
     the status and the explanation follow the live numbers. */
 export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTrigger> = {
   demand: ({ intents: i, dataThrough }) => {
     const rule =
-      "The thesis breaks if NEAR Intents volume over the last 30 days falls below its volume in the same 30 days a year earlier, or if its volume over the last 90 days falls below its volume in the 90 days before: cross-chain trading through NEAR would then be shrinking, not growing.";
+      "The thesis breaks if NEAR Intents volume over the last 30 days falls below the same 30 days a year earlier, or volume over the last 90 days falls below the 90 days before. Either would mean cross-chain trading through NEAR is shrinking.";
     const ruleShort = "The thesis breaks if Intents volume falls below the same 30 days a year earlier, or below the 90 days before.";
     const yearOnYear = i?.changeYoY30d ?? null;
     const recent = i?.change90d ?? null;
@@ -172,9 +172,9 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
               ? "Trading through NEAR Intents is below its level a year earlier."
               : "Trading through NEAR Intents fell over those 90 days."
           : yearOnYear === null || recent === null
-            ? "Both checks need their data before the thesis can be tested."
+            ? "The thesis cannot be tested until both checks have data."
             : yearOnYear > 0 && recent > 0
-              ? "Trading through NEAR Intents grew both against a year earlier and over those 90 days."
+              ? "Trading through NEAR Intents grew on both checks."
               : "Trading through NEAR Intents did not shrink on either check."
       }`,
     };
@@ -197,7 +197,7 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
       ? ""
       : w.shortfall30dNear <= 0
         ? " On no day did the wallets fall behind the NEAR bought since the window began."
-        : ` On the day the gap was largest, the wallets' gain since the window began fell ${formatNearAboveZero(w.shortfall30dNear)} short of the NEAR bought since then, ${formatPercent(shortfallShare, shareDigits)} of the 30 days' buying, ${compareWord(shortfallShare, TRIGGERS.walletShortfallShare, "above", "below", "at")} the ${limit} limit.`;
+        : ` On the day of the largest gap, the wallets' gain since the window began fell ${formatNearAboveZero(w.shortfall30dNear)} short of the NEAR bought since then: ${formatPercent(shortfallShare, shareDigits)} of the 30 days' buying, ${compareWord(shortfallShare, TRIGGERS.walletShortfallShare, "above", "below", "at")} the ${limit} limit.`;
     const outcome = !happened
       ? "The buying continues, and the NEAR bought is still held."
       : [stopped ? "The buying stopped." : null, lost ? "NEAR left the wallets." : null, !lost && fellBehind ? "NEAR bought was sold or moved out during the window." : null]
@@ -218,7 +218,7 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
     };
   },
   supply: ({ supply: s, hsp029, absorption: a, dataThrough }) => {
-    const rule = `The thesis breaks if HSP-029 can no longer take effect (its vote fails, is vetoed, rejected or expires, or its execution fails), if max issuance rises above ${formatPercent(TRIGGERS.maxIssuanceCeiling, 1)} a year again, or if NEAR burned plus bought equals a smaller share of the NEAR minted over the last 90 days than over the 90 days before.`;
+    const rule = `The thesis breaks if HSP-029 can no longer take effect (it is defeated, vetoed, rejected or expires, or fails on execution), if max issuance rises above ${formatPercent(TRIGGERS.maxIssuanceCeiling, 1)} a year again, or if NEAR burned plus bought equals a smaller share of the NEAR minted over the last 90 days than over the 90 days before.`;
     const ruleShort = `The thesis breaks if HSP-029 fails, max issuance rises above ${formatPercent(TRIGGERS.maxIssuanceCeiling, 1)}, or burn plus buybacks take a smaller share of the NEAR minted over the last 90 days than in the 90 days before.`;
     if (!s) return unmeasured(rule, ruleShort);
     const raised = s.maxInflationRate > TRIGGERS.maxIssuanceCeiling;
@@ -255,7 +255,7 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
   },
   valuation: ({ buybacks: b, valuation: v, seed, dataThrough }) => {
     const horizon = formatMonths(COVERAGE_HORIZON_MONTHS);
-    const rule = `The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth rate (the last 90 days against the 90 days before) is below the monthly growth rate needed for burn plus buybacks to match monthly issuance by the end of ${horizon}, at today's price and with the burn held at its current rate. The 95% range shows how far day-to-day swings in buying alone can move the measured rate. While the growth needed falls inside that range, the check is too close to call.`;
+    const rule = `The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth rate (the last 90 days against the 90 days before) is below the monthly growth rate needed for burn plus buybacks to match monthly issuance by the end of ${horizon}. The growth needed assumes today's price and burn held at its current rate. The 95% range shows how far day-to-day swings in buying alone can move the measured rate; while the growth needed falls inside it, the check is too close to call.`;
     const ruleShort = `The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth is below the growth needed for burn plus buybacks to match monthly issuance by the end of ${horizon}.`;
     if (!b) return unmeasured(rule, ruleShort);
     /** With nothing bought, no growth of NEAR bought can close the gap to issuance, unless burn alone already closes it (−1);
@@ -282,16 +282,16 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
       rule,
       ruleShort,
       detailShort:
-        required <= 0 ? `${growthShort}; ${alreadyAbsorbed(required, horizon, digits)}.${outcome}` : `${growthShort}; ${formatPercent(required, digits)} a month is needed.`,
+        required <= 0 ? `${growthShort}. ${upperFirst(alreadyAbsorbed(required, horizon, digits))}.${outcome}` : `${growthShort}; ${formatPercent(required, digits)} a month is needed.`,
       status: check,
       detail:
         required <= 0
-          ? `${pace}; ${alreadyAbsorbed(required, horizon, digits)}.${outcome}`
-          : `${pace}; for burn plus buybacks to match monthly issuance by the end of ${horizon}, NEAR bought needs ${formatPercent(required, digits)} growth a month. NEAR bought is ${buybackPace(growth.monthly, check, digits)}.`,
+          ? `${pace}. ${upperFirst(alreadyAbsorbed(required, horizon, digits))}.${outcome}`
+          : `${pace}. NEAR bought needs to grow ${formatPercent(required, digits)} a month for burn plus buybacks to match monthly issuance by the end of ${horizon}, and it is ${buybackPace(growth.monthly, check, digits)}.`,
     };
   },
   technology: ({ technology: t }) => {
-    const rule = `The thesis breaks if a simple NEAR transfer costs more than ${formatUsd(TRIGGERS.transferCostLimitUsd)} at the latest gas price read, because trades would then stop settling cheaply.`;
+    const rule = `The thesis breaks if a simple NEAR transfer costs more than ${formatUsd(TRIGGERS.transferCostLimitUsd)} at the latest gas price read. Trades would then no longer settle cheaply.`;
     const ruleShort = `The thesis breaks if a simple NEAR transfer costs more than ${formatUsd(TRIGGERS.transferCostLimitUsd)}.`;
     if (!t) return unmeasured(rule, ruleShort);
     const happened = t.transferCostUsd > TRIGGERS.transferCostLimitUsd;
@@ -308,12 +308,12 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
     };
   },
   network: ({ staking: st }) => {
-    const rule = `The thesis breaks if fewer than ${TRIGGERS.nakamotoFloor} validators together hold more than a third of all stake, because a group that small could stop the chain from finalizing blocks by acting together. Validators are counted by staking pool, and one operator can run several pools, so the number of separate parties can be lower.`;
+    const rule = `The thesis breaks if fewer than ${TRIGGERS.nakamotoFloor} validators together hold more than a third of all stake. A group that small could stop the chain from finalizing blocks by acting together. Validators are counted by staking pool, and one operator can run several pools, so there can be fewer separate parties.`;
     const ruleShort = `The thesis breaks if fewer than ${TRIGGERS.nakamotoFloor} staking pools together hold more than a third of all stake.`;
     if (!st) return unmeasured(rule, ruleShort);
     const happened = st.nakamoto < TRIGGERS.nakamotoFloor;
     const gap = Math.abs(st.nakamoto - TRIGGERS.nakamotoFloor);
-    const against = `${gap === 0 ? "at" : `${formatCount(gap, "validator")} ${happened ? "below" : "above"}`} the floor of ${TRIGGERS.nakamotoFloor}`;
+    const against = `${gap === 0 ? "at" : `${gap} ${happened ? "below" : "above"}`} the floor of ${TRIGGERS.nakamotoFloor}`;
     return {
       rule,
       ruleShort,
@@ -334,7 +334,7 @@ export const SECTION_TRIGGERS: Record<SectionId, (m: ThesisMetrics) => SectionTr
       ruleShort,
       detailShort: `NEAR's circulating supply ${formatGrowth(p.nearGrowth1y, digits)} over 12 months, ${place} the ${formatPercent(p.medianGrowth1y, digits)} median of ${formatCount(p.count, "larger coin")}.`,
       status: happened ? "happened" : "not-happened",
-      detail: `NEAR's circulating supply ${formatGrowth(p.nearGrowth1y, digits)} over 12 months; the median circulating supply growth of the ${formatCount(p.count, "larger coin")} with a year of history, dollar-pegged coins left out, was ${formatPercent(p.medianGrowth1y, digits)}. NEAR's supply growth is ${place} that median${happened ? ", so having no tokens left to unlock does not keep its supply growth low" : ""}.`,
+      detail: `NEAR's circulating supply ${formatGrowth(p.nearGrowth1y, digits)} over 12 months. The median growth of the ${formatCount(p.count, "larger coin")} with a year of history (dollar-pegged coins left out) was ${formatPercent(p.medianGrowth1y, digits)}. NEAR's supply growth is ${place} that median${happened ? ", so having no tokens left to unlock has not kept it low" : ""}.`,
     };
   },
 };

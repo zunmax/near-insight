@@ -19,6 +19,8 @@ export function GET() {
     THESIS_STATEMENT,
     "## Thesis",
     link("NEAR investment thesis (Markdown)", "/thesis.md", "the verdict on the latest data, each claim with its bull case, bear case and breaking point, the data sources, the formulas and how to re-run them"),
+    link("Verdict, breaking points and data checks (JSON)", "/api/thesis?format=json"),
+    link("Model scenarios month by month (CSV)", "/api/model", "with the inputs they start from; ?format=json for the inputs alone"),
     "## Dashboard",
     pages.join("\n"),
   ].join("\n\n");

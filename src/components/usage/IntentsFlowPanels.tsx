@@ -14,7 +14,7 @@ const STABLECOIN_TITLE = "Stablecoin share of NEAR Intents volume";
 const WEEKS = 52;
 
 /** How volume is split, shown under both panels. */
-const COUNTING_NOTE = "Each swap's volume is counted once, under one token and its chain, so the shares add up to 100%. Public and confidential swaps are both included.";
+const COUNTING_NOTE = "Volume by chain and volume by token each sum to total NEAR Intents volume, so each set of shares adds up to 100%. Both public and confidential swaps count.";
 
 const chainName = (chain: string) => INTENTS_CHAIN_NAMES[chain.toLowerCase()] ?? chain.toUpperCase();
 

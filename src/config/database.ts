@@ -14,5 +14,8 @@ export const SNAPSHOT_PATH = resolve(/*turbopackIgnore: true*/ "snapshot/dashboa
 /** The snapshot's SHA-256, size, row counts and data-through day, beside it. */
 export const MANIFEST_PATH = join(dirname(SNAPSHOT_PATH), "MANIFEST.json");
 
+/** The model's inputs as the dashboard computes them from the snapshot (`GET /api/model?format=json`), beside it, for `npm run model`. */
+export const MODEL_INPUTS_PATH = join(dirname(SNAPSHOT_PATH), "model-inputs.json");
+
 /** Tables left out of the snapshot: third-party news, and this machine's run log. */
 export const SNAPSHOT_EXCLUDED_TABLES = ["news_items", "ingest_runs"] as const;

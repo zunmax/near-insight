@@ -10,7 +10,7 @@ import { formatPercent } from "@/lib/format";
 import { DAY_SECONDS, dayTime, isoDay, ratio, rollingWindows } from "@/lib/metrics";
 import { windowName } from "@/lib/thesis/window-name";
 
-const TITLE = "Public and confidential NEAR Intents volume";
+const TITLE = "Confidential share of NEAR Intents volume";
 const WEEKS = 52;
 
 /** Confidential swaps' share of NEAR Intents volume in consecutive 7-day blocks to Dune's last day,
@@ -42,7 +42,7 @@ export async function IntentsConfidentialPanel() {
   return (
     <Panel
       title={TITLE}
-      description={`Confidential swaps, which run inside a private NEAR shard instead of on the public chain, made up ${formatPercent(intents.confidentialShare30d, 1)} of NEAR Intents volume over the ${windowName(metrics, "30 days", through)}${comparison}. Public swaps made up the rest.`}
+      description={`Confidential swaps (run in a private NEAR shard, not on the public chain) made up ${formatPercent(intents.confidentialShare30d, 1)} of NEAR Intents volume over the ${windowName(metrics, "30 days", through)}${comparison}. Public swaps made up the rest.`}
       sources={["dune"]}
       through={`Data through ${through}`}
       sqlId="intents-confidential"
@@ -55,7 +55,7 @@ export async function IntentsConfidentialPanel() {
 /** Loading placeholder of IntentsConfidentialPanel. */
 export function IntentsConfidentialPanelSkeleton() {
   return (
-    <PanelSkeleton title={TITLE.length} text={223} tabs="Chart">
+    <PanelSkeleton title={TITLE.length} text={207} tabs="Chart">
       <LineChartSkeleton />
     </PanelSkeleton>
   );

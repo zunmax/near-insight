@@ -7,7 +7,21 @@ const NEAR_NAME = /\bnear (?:protocol|intents)\b/i;
 /** True when any of the texts names NEAR, so news only tagged NEAR among many coins is left out. */
 export const mentionsNear = (...texts: Array<string | null>) => texts.some((text) => text !== null && (NEAR_TICKER.test(text) || NEAR_NAME.test(text)));
 
-const NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+  hellip: "…",
+  ndash: "–",
+  mdash: "—",
+};
 
 /** Plain text from a feed's HTML snippet: tags removed, named and numeric entities decoded, spaces collapsed,
     and decimals rejoined where a feed put a space after the point ("2. 5%" → "2.5%"). */

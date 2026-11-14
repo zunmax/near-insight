@@ -22,12 +22,13 @@ import {
   upperFirst,
 } from "@/lib/format";
 import { isoDay } from "@/lib/metrics";
+import { largestReferral, referralSwaps } from "@/lib/referrals";
 import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
 import { proposalFailed, proposalStatusLabel } from "@/lib/thesis/proposal-status";
 import { alreadyAbsorbed, boughtAmount, boughtPace, growthCheck, growthDigits, growthNeededName, measuredGrowth, noGrowthMatches, peerDigits, transferCost } from "@/lib/thesis/triggers";
 import { windowName } from "@/lib/thesis/window-name";
 
-/** What the data shows now, written from the live numbers: sentences that back the section's claim and sentences that cut against it. */
+/** What the latest data shows, written from the live numbers: sentences that back the section's claim and sentences that cut against it. */
 type Finding = { for: string[]; against: string[] };
 
 /** One sentence and whether its numbers back the claim; sentences whose numbers are missing are left out (null). */
@@ -53,7 +54,7 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
   demand: (m) => {
     const { intents: i, activity: a, intentsTxnShare: ts, dexShare: d, intentsReach: r } = m;
     return sort(
-      r ? { text: `On ${r.day}, NEAR Intents volume was counted under ${formatCount(r.tokens, "token symbol")} on ${formatCount(r.chains, "chain")}.`, supports: r.chains > 1 } : null,
+      r ? { text: `NEAR Intents volume on ${r.day} spanned ${formatCount(r.tokens, "token symbol")} on ${formatCount(r.chains, "chain")}.`, supports: r.chains > 1 } : null,
       i && i.changeYoY30d !== null
         ? {
             text: `NEAR Intents volume was ${formatUsd(i.total30d)} over the ${windowName(m, "30 days")}, ${formatMoveFromZero(i.changeYoY30d)} from ${formatUsd(i.yearAgo30d)} in the same 30 days a year earlier.`,
@@ -68,7 +69,7 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
         : null,
       ts?.avg30d != null && d?.d30 != null
         ? {
-            text: `The NEAR Intents contract, intents.near, accounted for ${formatPercent(ts.avg30d, 1)} of all NEAR transactions over the ${windowName(m, "30 days", ts.through)}, and NEAR Intents made up ${formatPercent(d.d30, digitsApart(d.d30 * 100, FINDING_LEVELS.dexShareMajority * 100, 1))} of all DEX volume on NEAR over the ${windowName(m, "30 days")}.`,
+            text: `The NEAR Intents contract, intents.near, accounted for ${formatPercent(ts.avg30d, 1)} of all NEAR transactions over the ${windowName(m, "30 days", ts.through)}. NEAR Intents made up ${formatPercent(d.d30, digitsApart(d.d30 * 100, FINDING_LEVELS.dexShareMajority * 100, 1))} of all DEX volume on NEAR over the ${windowName(m, "30 days")}.`,
             supports: d.d30 >= FINDING_LEVELS.dexShareMajority,
           }
         : null,
@@ -79,15 +80,16 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
       a.activeAccounts.median30d !== null &&
       a.activeAccounts.medianYearAgo30d !== null
         ? {
-            text: `NEAR handled ${formatCompact(a.txns.last30d, 2)} transactions over the ${windowName(m, "30 days", a.through)}, ${formatMoveFromZero(a.txns.change)} from ${formatCompact(a.txns.yearAgo30d, 2)} in the same 30 days a year earlier. New accounts over the same days totaled ${formatCompact(a.newAccounts.last30d, 2)}, ${formatMoveFromZero(a.newAccounts.change)} from ${formatCompact(a.newAccounts.yearAgo30d, 2)} a year earlier, and a median of ${formatCompact(a.activeAccounts.median30d, 2)} accounts a day signed a transaction, ${formatMoveFromZero(a.activeAccounts.change)} from a median of ${formatCompact(a.activeAccounts.medianYearAgo30d, 2)} a year earlier.`,
+            text: `NEAR handled ${formatCompact(a.txns.last30d, 2)} transactions over the ${windowName(m, "30 days", a.through)}, ${formatMoveFromZero(a.txns.change)} from ${formatCompact(a.txns.yearAgo30d, 2)} in the same 30 days a year earlier. New accounts over the same days totaled ${formatCompact(a.newAccounts.last30d, 2)}, ${formatMoveFromZero(a.newAccounts.change)} from ${formatCompact(a.newAccounts.yearAgo30d, 2)} a year earlier. A median of ${formatCompact(a.activeAccounts.median30d, 2)} accounts a day signed a transaction over the same days, ${formatMoveFromZero(a.activeAccounts.change)} from a median of ${formatCompact(a.activeAccounts.medianYearAgo30d, 2)} a year earlier.`,
             supports: a.txns.change > 0 && a.newAccounts.change > 0 && a.activeAccounts.change > 0,
           }
         : null,
     );
   },
   capture: (m) => {
-    const { buybacks: b, feeChain: f, feeWallets: w } = m;
+    const { buybacks: b, feeChain: f, feeWallets: w, referrals: r } = m;
     const growth = measuredGrowth(b);
+    const top = largestReferral(r);
     return sort(
       b && growth
         ? {
@@ -104,7 +106,13 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
           }
         : null,
       w && w.totalNear > 0
-        ? { text: `The ${formatNear(w.totalNear)} held in the three fee wallets on ${w.asOf} is not burned, so it is still in total supply.`, supports: false }
+        ? { text: `The three fee wallets held ${formatNear(w.totalNear)} on ${w.asOf}. That NEAR is not burned, so it still counts in total supply.`, supports: false }
+        : null,
+      r && top
+        ? {
+            text: `${referralSwaps(top.referral)} paid ${formatPercent(top.feeShare, digitsApart(top.feeShare * 100, FINDING_LEVELS.referralFeesMajority * 100, 1))} of the app fees on NEAR Intents 1Click swaps over the ${windowName(m, "30 days", r.through)}, on ${formatPercent(top.volumeShare, 1)} of the volume.`,
+            supports: top.feeShare < FINDING_LEVELS.referralFeesMajority,
+          }
         : null,
     );
   },
@@ -126,7 +134,7 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
         : null,
       i?.rate30d != null && a?.d30
         ? {
-            text: `Measured issuance ran at ${formatPercent(i.rate30d)} a year over the ${windowName(m, "30 days")}, and the NEAR burned plus bought equaled ${formatPercentFromFull(a.d30.share, 1)} of the NEAR minted over the same days, so the NEAR on the market ${compareWord(a.d30.share, 1, "shrank", "grew", "held level")}.`,
+            text: `Measured issuance ran at ${formatPercent(i.rate30d)} a year over the ${windowName(m, "30 days")}. NEAR burned plus bought equaled ${formatPercentFromFull(a.d30.share, 1)} of the NEAR minted over the same days, so the NEAR on the market ${compareWord(a.d30.share, 1, "shrank", "grew", "held level")}.`,
             supports: a.d30.share >= 1,
           }
         : null,
@@ -155,12 +163,12 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
               const pace = `NEAR bought over the ${windowName(m, "90 days")} was ${boughtPace(growth, digits)}`;
               /** A growth needed of zero or less is named by its rate, since alreadyAbsorbed words it as a fall. */
               const needed = growthNeededName(required, digits);
-              const inside = check === "too-close" ? `; ${needed} falls inside that range` : check === "happened" ? `; even the top of that range is below ${required > 0 ? "it" : needed}` : "";
+              const inside = check === "too-close" ? `. ${upperFirst(needed)} falls inside that range` : check === "happened" ? `. Even the top of that range is below ${needed}` : "";
               return {
                 text:
                   required <= 0
-                    ? `${pace}; ${alreadyAbsorbed(required, formatMonths(COVERAGE_HORIZON_MONTHS), digits)}${inside}.`
-                    : `${pace}, ${compareWord(growth.monthly, required, "faster than", "slower than", "the same as")} the ${formatPercent(required, digits)} a month needed for burn plus buybacks to match monthly issuance by the end of ${formatMonths(COVERAGE_HORIZON_MONTHS)}${inside}.`,
+                    ? `${pace}. ${upperFirst(alreadyAbsorbed(required, formatMonths(COVERAGE_HORIZON_MONTHS), digits))}${inside}.`
+                    : `${pace}. That pace is ${compareWord(growth.monthly, required, "faster than", "slower than", "the same as")} the ${formatPercent(required, digits)} a month needed for burn plus buybacks to match monthly issuance by the end of ${formatMonths(COVERAGE_HORIZON_MONTHS)}${inside}.`,
                 /** Backs the claim only while the whole range clears the growth needed, as the breaking point decides. */
                 supports: check === "not-happened",
               };
@@ -170,7 +178,7 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
         ? (() => {
             const digits = digitsApart(r.latest.value, r.median, 0);
             return {
-              text: `On ${isoDay(r.latest.time)}, NEAR's market cap was ${formatMultiple(r.latest.value, digits)} its yearly network revenue (Intents revenue plus gas fees over the ${windowName(m, "30 days", isoDay(r.latest.time))}, annualized), ${compareWord(r.latest.value, r.median, "above", "below", "level with")} the ${formatMultiple(r.median, digits)} median of the same multiple since ${isoDay(r.daily[0]!.time)}.`,
+              text: `On ${isoDay(r.latest.time)}, NEAR's market cap was ${formatMultiple(r.latest.value, digits)} its yearly network revenue (Intents revenue plus gas fees over the ${windowName(m, "30 days", isoDay(r.latest.time))}, annualized). That is ${compareWord(r.latest.value, r.median, "above", "below", "level with")} the ${formatMultiple(r.median, digits)} median of this multiple since ${isoDay(r.daily[0]!.time)}.`,
               supports: r.latest.value <= r.median,
             };
           })()
@@ -180,8 +188,8 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
             const needed = e.d30.volumePerDayUsd / e.d30.currentVolumePerDayUsd;
             const match =
               needed <= 1
-                ? `At today's price, daily Intents volume at its average over the ${windowName(m, "30 days")} already buys enough NEAR for burn plus buybacks to match the NEAR minted.`
-                : `For burn plus buybacks to match the NEAR minted at today's price, daily Intents volume would need to be ${formatMultiple(needed, digitsApart(needed, 1, 1))} its average over the ${windowName(m, "30 days")}.`;
+                ? `At today's price, the average daily Intents volume of the ${windowName(m, "30 days")} already buys enough NEAR for burn plus buybacks to match the NEAR minted.`
+                : `Burn plus buybacks would match the NEAR minted at today's price if daily Intents volume rose to ${formatMultiple(needed, digitsApart(needed, 1, 1))} its average over the ${windowName(m, "30 days")}.`;
             return {
               text: `NEAR's market cap is ${formatMultiple(v.multiple)} the yearly value of NEAR burned and bought (the ${windowName(m, "30 days")}, annualized at today's price). ${match}`,
               supports: needed <= 1,
@@ -239,7 +247,7 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
             const locked = `${p.lockedCount === 0 ? "none" : p.lockedCount} of the ${p.peerTotal} larger coins that are not dollar-pegged still ${p.lockedCount === 1 ? "has" : "have"} FDV above market cap (supply not yet circulating)`;
             /** Without NEAR's FDV the sentence names only the larger coins. */
             const near = p.nearFdvRatio === null ? null : `NEAR's FDV is ${formatMultiple(p.nearFdvRatio, 2)} its market cap${p.nearLocked ? "" : ", so no NEAR is left to unlock"}`;
-            return { text: near === null ? `${upperFirst(locked)}.` : `${near}, while ${locked}.`, supports: !p.nearLocked && p.lockedCount > 0 };
+            return { text: near === null ? `${upperFirst(locked)}.` : `${near}. ${upperFirst(locked)}.`, supports: !p.nearLocked && p.lockedCount > 0 };
           })()
         : null,
       p && p.nearGrowth1y !== null && p.medianGrowth1y !== null
@@ -248,12 +256,12 @@ export const SECTION_FINDINGS: Record<SectionId, (m: ThesisMetrics) => Finding> 
             const median = p.medianGrowth1y!;
             const digits = peerDigits(p);
             return {
-              text: `NEAR's circulating supply ${formatGrowth(near, digits)} over 12 months, ${compareWord(near, median, "above", "below", "level with")} the ${formatPercent(median, digits)} median circulating supply growth of the ${formatCount(p.count, "larger coin")} with a year of history, dollar-pegged coins left out${p.fasterCount === null ? "" : `; ${p.fasterCount === 0 ? "none" : p.fasterCount} of them had a higher supply growth rate than NEAR`}.`,
+              text: `NEAR's circulating supply ${formatGrowth(near, digits)} over 12 months, ${compareWord(near, median, "above", "below", "level with")} the ${formatPercent(median, digits)} median growth of the ${formatCount(p.count, "larger coin")} with a year of history (dollar-pegged coins left out)${p.fasterCount === null ? "" : `. ${p.fasterCount === 0 ? "None" : p.fasterCount} of them grew their supply faster than NEAR`}.`,
               supports: near <= median,
             };
           })()
         : null,
-      i?.rate1y != null ? { text: `NEAR minted over the ${windowName(m, "12 months")} came to ${formatPercent(i.rate1y)} of total supply at the window's start.`, supports: false } : null,
+      i?.rate1y != null ? { text: `NEAR minted over the ${windowName(m, "12 months")} equaled ${formatPercent(i.rate1y)} of total supply at the window's start.`, supports: false } : null,
     );
   },
 };

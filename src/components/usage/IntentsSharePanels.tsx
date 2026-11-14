@@ -1,6 +1,6 @@
 import { io } from "next/cache";
-import { monthLabel } from "@/components/charts/chart-format";
 import { ColumnChart, ColumnChartSkeleton } from "@/components/charts/ColumnChart";
+import { monthLabel } from "@/components/charts/chart-format";
 import { LineChart, LineChartSkeleton } from "@/components/charts/LineChart";
 import { lastCompleteIndex, partialMonthIndexes, partialMonthsNote } from "@/components/charts/partial-months";
 import { NoData } from "@/components/ui/NoData";

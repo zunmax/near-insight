@@ -1,10 +1,10 @@
 import { io } from "next/cache";
-import { CoverageModel, CoverageModelSkeleton } from "@/components/valuation/CoverageModel";
-import { describeProposalStatus, proposalFailed } from "@/lib/thesis/proposal-status";
 import { NoData } from "@/components/ui/NoData";
 import { Panel } from "@/components/ui/Panel";
 import { PanelSkeleton } from "@/components/ui/PanelSkeleton";
+import { CoverageModel, CoverageModelSkeleton } from "@/components/valuation/CoverageModel";
 import { getThesisMetrics } from "@/data/thesis-metrics";
+import { describeProposalStatus, proposalFailed } from "@/lib/thesis/proposal-status";
 
 const TITLE = "Coverage model: burn + buybacks ÷ issuance";
 

@@ -4,7 +4,7 @@ export function NoData({ title }: { title: string }) {
     <section className="panel h-full">
       <h2 className="panel-head panel-title">{title}</h2>
       <p className="panel-body panel-empty text-[14px] leading-relaxed text-ink-2">
-        <span>This data is not complete yet. It appears here once every day it needs is stored from its public sources.</span>
+        <span>This panel is waiting for data. It appears once every day it needs is stored.</span>
       </p>
     </section>
   );

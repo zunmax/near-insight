@@ -14,7 +14,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata: Metadata = {
   title: "NEAR supply, issuance and burn",
-  description: "NEAR issuance and measured supply growth, how much of it burn and buybacks offset, staking, the protocol treasury, and a 5-year supply outlook.",
+  description: "NEAR issuance and measured supply growth, how much of it burn and buybacks offset, staking, the protocol treasury and a 5-year supply outlook.",
   alternates: { canonical: "/dashboard/supply" },
 };
 
@@ -42,7 +42,7 @@ export default function SupplyPage() {
       </PanelSlot>
 
       <SectionHeading title="Projection" />
-      <PanelSlot title="Supply outlook" skeleton={<SupplyOutlookPanelSkeleton />}>
+      <PanelSlot title="Total NEAR supply, next 5 years" skeleton={<SupplyOutlookPanelSkeleton />}>
         <SupplyOutlookPanel />
       </PanelSlot>
     </PageMain>

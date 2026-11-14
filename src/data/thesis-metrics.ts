@@ -1,15 +1,15 @@
 import "server-only";
 import { cacheLife } from "next/cache";
+import { getLeadLag } from "@/data/lead-lag";
+import { latestLiveSampleAt } from "@/data/live";
 import { activityMetrics } from "@/data/thesis-metrics/activity";
 import { dataChecksMetrics } from "@/data/thesis-metrics/data-checks";
 import { flowContext } from "@/data/thesis-metrics/flow-context";
 import { loadThesisInputs } from "@/data/thesis-metrics/inputs";
-import { getLeadLag } from "@/data/lead-lag";
-import { latestLiveSampleAt } from "@/data/live";
 import { dexShareMetrics, intentsMetrics, intentsTvlMetrics, intentsTxnShareMetrics } from "@/data/thesis-metrics/intents";
 import { marketMetrics, peersMetrics } from "@/data/thesis-metrics/market";
 import { protocolMetrics, stakingMetrics, technologyMetrics } from "@/data/thesis-metrics/network";
-import { buybacksMetrics, feeChainMetrics, feeWalletsMetrics, feeWalletWindow } from "@/data/thesis-metrics/revenue";
+import { buybacksMetrics, feeChainMetrics, feeWalletsMetrics, feeWalletWindow, referralMetrics } from "@/data/thesis-metrics/revenue";
 import { absorptionMetrics, issuanceMetrics, supplyMetrics, treasuryMetrics, treasuryWindow } from "@/data/thesis-metrics/supply";
 import type { ThesisMetrics } from "@/data/thesis-metrics/types";
 import { breakEvenMetrics, networkRevenue, revenueMultipleMetrics, seedMetrics, valuationMetrics } from "@/data/thesis-metrics/valuation";
@@ -45,6 +45,7 @@ export async function getThesisMetrics(): Promise<ThesisMetrics> {
     buybacks: buybacksMetrics(inputs, flow),
     valuation: valuationMetrics(inputs, flow, seed),
     feeChain: feeChainMetrics(inputs, flow),
+    referrals: referralMetrics(inputs),
     dexShare: dexShareMetrics(inputs, flow),
     intentsTxnShare: intentsTxnShareMetrics(inputs),
     intentsReach: inputs.intentsReach,

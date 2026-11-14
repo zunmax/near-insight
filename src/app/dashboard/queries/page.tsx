@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
   title: "SQL behind every chart",
-  description: "The SQL behind every chart on NEAR Insights, the public requests that filled its tables, and how to run each query yourself.",
+  description: "Each chart's query with its API link, CSV download and command line, and the public requests that filled its tables.",
   alternates: { canonical: "/dashboard/queries" },
 };
 

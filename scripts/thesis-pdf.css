@@ -1,0 +1,314 @@
+/** THESIS.pdf in the dashboard's dark theme: a cover with the key figures, then each section on its own pages, its number
+    outlined in the section's color beside its status. Plus Jakarta Sans throughout, code in JetBrains Mono, no italics. */
+:root {
+  --paper: #000000;
+  --ink: #e7e9ea;
+  --text: rgba(231, 233, 234, 0.86);
+  --muted: #9aa0a6;
+  --faint: #868b91;
+  --line: #2f3336;
+  --soft: #16181c;
+  --accent: #1ed39b;
+  --broken: #f4212e;
+  --close: #ffad1f;
+  --tone: var(--accent);
+  --sans: "Plus Jakarta Sans Variable", "Segoe UI Symbol", "DejaVu Sans", sans-serif;
+  --mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font: 400 9.6pt/1.6 var(--sans);
+  color: var(--text);
+}
+
+em,
+i {
+  font-style: normal;
+}
+
+/** The cover fills the first page: the green glow of the dashboard's accent in its corner, the title block, the figures, and
+    the disclaimer and links at its foot. */
+.front {
+  box-sizing: border-box;
+  height: 297mm;
+  display: flex;
+  flex-direction: column;
+  padding: 26mm 22mm 20mm;
+  background: radial-gradient(120% 60% at 100% 0%, rgba(30, 211, 155, 0.16), transparent 60%), var(--paper);
+  break-after: page;
+}
+
+.front svg {
+  width: 12mm;
+  height: 12mm;
+}
+
+.front .kicker {
+  margin: 42mm 0 4mm;
+  font: 700 7.6pt/1.4 var(--sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.front h1 {
+  margin: 0;
+  max-width: 160mm;
+  font: 700 36pt/1.04 var(--sans);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+/** The deck, then the version line in monospace. */
+.front p {
+  margin: 0;
+}
+
+.front h1 + p {
+  margin-top: 5mm;
+  max-width: 150mm;
+  font: 400 14pt/1.45 var(--sans);
+  color: var(--muted);
+}
+
+.front h1 + p strong {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.front h1 + p + p {
+  margin-top: 5mm;
+  font: 400 8.6pt/1.5 var(--mono);
+  color: var(--faint);
+}
+
+/** The key figures as tiles in a ruled grid, the last one across both columns. */
+.figures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: 16mm;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.figure {
+  padding: 5mm 6mm;
+  background: var(--paper);
+}
+
+.figure:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
+.figure .value {
+  font: 600 20pt/1.1 var(--sans);
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.figure .label {
+  margin-top: 2mm;
+  font: 400 8pt/1.35 var(--sans);
+  color: var(--muted);
+}
+
+.front .figures + p {
+  margin-top: auto;
+  font-size: 8pt;
+  color: var(--faint);
+}
+
+.front .figures + p + p {
+  margin-top: 2mm;
+  font-size: 8.6pt;
+  color: var(--muted);
+}
+
+.front .figures + p + p strong {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+main {
+  padding: 0 22mm;
+}
+
+/** Each numbered section starts a page; the abstract follows the cover, and the closing notes follow the appendix. */
+section.numbered {
+  break-before: page;
+}
+
+section.closing {
+  margin-top: 10mm;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 5mm;
+  margin: 0 0 6mm;
+  font: 700 19pt/1.15 var(--sans);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  break-after: avoid;
+}
+
+/** The section number outlined in the section's color. */
+h2 .num {
+  font: 700 32pt/1 var(--sans);
+  color: transparent;
+  -webkit-text-stroke: 1px var(--tone);
+}
+
+h2 .title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+h2 .num,
+h2 .status {
+  flex-shrink: 0;
+}
+
+h2 .status {
+  font-size: 7.6pt;
+}
+
+section.abstract h2,
+section.closing h2 {
+  font: 700 8.6pt/1.2 var(--sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+p {
+  margin: 0 0 2.8mm;
+  orphans: 3;
+  widows: 3;
+}
+
+ul,
+ol {
+  margin: 0 0 3.2mm;
+  padding-left: 5.5mm;
+}
+
+li {
+  margin-bottom: 1.4mm;
+}
+
+li::marker {
+  color: var(--accent);
+}
+
+strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+code {
+  padding: 0 1.1mm;
+  border-radius: 1mm;
+  background: var(--soft);
+  font: 400 0.8em/1.4 var(--mono);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/** A day or a month (2026-11-12, 2026-11) never breaks at its hyphens. */
+.date {
+  white-space: nowrap;
+}
+
+table {
+  width: 100%;
+  margin: 1.5mm 0 5mm;
+  border-collapse: collapse;
+  font: 400 8.2pt/1.45 var(--sans);
+  color: var(--text);
+}
+
+th {
+  padding: 1.6mm 2mm;
+  text-align: left;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+/** A cell breaks a word only when it cannot fit whole, so amounts such as $33.89B stay on one line. */
+td {
+  padding: 1.5mm 2mm;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(47, 51, 54, 0.6);
+  overflow-wrap: break-word;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tr {
+  break-inside: avoid;
+}
+
+/** A breaking-point status, outlined in its color. */
+.status {
+  display: inline-block;
+  padding: 0 1.6mm;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  font: 600 7.2pt/1.6 var(--sans);
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--accent);
+}
+
+.status.broken {
+  color: var(--broken);
+}
+
+.status.close {
+  color: var(--close);
+}
+
+.status.unmeasured {
+  color: var(--muted);
+}
+
+/** Each section's bull and bear case open under a rule. */
+p.bull,
+p.bear {
+  margin-top: 4.5mm;
+  padding-top: 2.6mm;
+  border-top: 1px solid var(--line);
+}
+
+/** The breaking point and its status, between two rules in the section's color. */
+.verdict {
+  margin: 5mm 0;
+  padding: 3mm 0 0.4mm;
+  border-top: 1px solid var(--tone);
+  border-bottom: 1px solid var(--tone);
+  break-inside: avoid;
+}
+
+p.rerun {
+  font: 400 7.6pt/1.5 var(--sans);
+  color: var(--faint);
+}

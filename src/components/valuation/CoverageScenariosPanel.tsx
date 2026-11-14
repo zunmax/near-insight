@@ -30,7 +30,7 @@ export async function CoverageScenariosPanel() {
   /** "grows 4.9% a month", "falls 0.04% a month" (with the decimals that tell it from zero) or "holds flat". */
   const pace = (rate: number) =>
     rate === 0 ? "holds flat" : `${rate < 0 ? "falls" : "grows"} ${formatPercent(Math.abs(rate), digitsApart(rate * 100, 0, 1))} a month`;
-  const assumptions: Record<CoverageScenario["id"], string> = {
+  const assumptions: Partial<Record<CoverageScenario["id"], string>> = {
     "no-growth": `NEAR burned and bought stay at the pace of the ${window}`,
     "growth-needed": needed === null ? "" : `NEAR bought ${pace(needed)}; burn holds at the pace of the ${window}`,
     "recent-pace": recent === null ? "" : `NEAR bought ${pace(recent)} for ${formatCount(RECENT_PACE_MONTHS, "month")}, then holds; burn holds throughout`,
@@ -45,7 +45,7 @@ export async function CoverageScenariosPanel() {
         reachedMonth !== null
           ? { label: "Reaches 100%", value: `Month ${reachedMonth}` }
           : { label: "Reaches 100%", value: "Not reached", detail: `Within ${formatMonths(COVERAGE_HORIZON_MONTHS)}` },
-        /** Enough decimals that a share just under 100% never reads "100%" beside "Not reached". */
+        /** Enough decimals that a share slightly under 100% never reads "100%" beside "Not reached". */
         { label: `Absorbed in month ${COVERAGE_HORIZON_MONTHS}`, value: formatPercentFromFull(finalCoverage, 0) },
         scenario.growth === 0
           ? { label: "Growth", value: "None" }
@@ -78,11 +78,11 @@ export async function CoverageScenariosPanel() {
         chartTitle="Share of issuance absorbed by burn and buybacks each month, by scenario (capped at 100%)"
       />
       <HowCalculated>
-        The projection starts from the 30 days to <NoBreakTokens text={seed.through} />: {formatNear(seed.boughtNearPerMonth)} bought a month (that period&apos;s
+        Starts from the 30 days to <NoBreakTokens text={seed.through} />: {formatNear(seed.boughtNearPerMonth)} bought a month (that period&apos;s
         buyback dollars at today&apos;s price) and {formatCompact(seed.feesNearPerMonth * seed.burnShareOfFees)} NEAR burned a month ({formatCompact(seed.feesNearPerMonth)} NEAR of
         gas fees, with {burnNote(seed)}). Issuance is today&apos;s max rate of {formatMaxIssuance(seed.maxInflationRate)} a year, and the price is today&apos;s{" "}
-        {formatUsd(seed.priceUsd)}. Burned NEAR is destroyed. Bought NEAR is held off the market in the three fee wallets; it is not burned, so it stays in
-        total supply and in circulating supply. Yearly Intents volume is the volume a year that would buy NEAR at the
+        {formatUsd(seed.priceUsd)}. Burned NEAR leaves total supply. Bought NEAR is held off the market in the three fee wallets; it is not burned, so it stays in
+        total supply and in circulating supply. Yearly Intents volume is the volume a year needed to buy NEAR at the
         scenario&apos;s pace in its last month. It uses today&apos;s price and the share of volume that bought NEAR over the same 30 days
         {seed.takeRate === null ? "" : ` (${formatBps(seed.takeRate)})`}, as break-even does. The 30-day run rate is the Intents volume of those 30 days,
         annualized.

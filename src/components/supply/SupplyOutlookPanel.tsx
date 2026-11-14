@@ -3,8 +3,6 @@ import { burnNote, rampNote } from "@/components/projections/projection-notes";
 import { ScenarioPicker, ScenarioPickerSkeleton } from "@/components/projections/ScenarioPicker";
 import { HowCalculated, HowCalculatedSkeleton } from "@/components/ui/HowCalculated";
 import { NoBreakTokens } from "@/components/ui/NoBreakTokens";
-import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
-import { describeProposalStatus, proposalFailed } from "@/lib/thesis/proposal-status";
 import { NoData } from "@/components/ui/NoData";
 import { Panel } from "@/components/ui/Panel";
 import { PanelSkeleton } from "@/components/ui/PanelSkeleton";
@@ -14,6 +12,8 @@ import { getThesisMetrics } from "@/data/thesis-metrics";
 import { formatChange, formatCompact, formatMonths, formatNear, formatPercent } from "@/lib/format";
 import { dayTime } from "@/lib/metrics";
 import { MONTH_SECONDS, project, seedInput } from "@/lib/projection";
+import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
+import { describeProposalStatus, proposalFailed } from "@/lib/thesis/proposal-status";
 
 const YEARS = SUPPLY_OUTLOOK_MONTHS / 12;
 const HORIZON = formatMonths(SUPPLY_OUTLOOK_MONTHS);
@@ -49,9 +49,9 @@ export async function SupplyOutlookPanel() {
             name: outlook.name,
             assumption: outlook.status ?? undefined,
             metrics: [
-              { label: `Supply in ${HORIZON}`, value: formatCompact(end, 2) },
+              { label: `Supply in ${HORIZON}`, value: formatNear(end, 2) },
               /** Signed: with a burn larger than issuance the supply falls. */
-              { label: "Change in supply", value: `${end > seed.totalSupplyNear ? "+" : ""}${formatCompact(end - seed.totalSupplyNear)}` },
+              { label: "Change in supply", value: `${end > seed.totalSupplyNear ? "+" : ""}${formatNear(end - seed.totalSupplyNear)}` },
               { label: "Supply growth a year", value: formatChange((end / seed.totalSupplyNear) ** (1 / YEARS) - 1, 2) },
             ],
             points: [

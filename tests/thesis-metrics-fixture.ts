@@ -2,8 +2,7 @@
     each test changes only the fields its case needs. */
 import assert from "node:assert/strict";
 import type { ThesisMetrics } from "../src/data/thesis-metrics.ts";
-import type { Absorption } from "../src/lib/metrics.ts";
-import { dataCheck, dayTime } from "../src/lib/metrics.ts";
+import { dataCheck, dayTime, type Absorption } from "../src/lib/metrics.ts";
 
 export const DATA_THROUGH = "2026-11-09";
 
@@ -96,6 +95,7 @@ export function holdingMetrics(): ThesisMetrics {
     },
     valuation: { marketCapUsd: 4.75e9, tokenRevenueRunRateUsd: 18.98e6, multiple: 250, holderYield: 0.004, requiredMonthlyGrowth: 0.0506 },
     feeChain: null,
+    referrals: null,
     dexShare: null,
     intentsTxnShare: null,
     intentsReach: null,
@@ -119,6 +119,7 @@ export function holdingMetrics(): ThesisMetrics {
       boughtVsWallets: dataCheck(403_800, 406_600, 30, dayTime(DATA_THROUGH)),
       revenueMultiple: null,
       treasuryShare: null,
+      referralFees: null,
     },
     treasury: null,
     revenueMultiple: null,

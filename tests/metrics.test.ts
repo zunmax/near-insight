@@ -42,8 +42,8 @@ import {
   windowMedian,
   windowValues,
   yearlyGrowthOfMedians,
+  type DailyPoint,
 } from "../src/lib/metrics.ts";
-import type { DailyPoint } from "../src/lib/metrics.ts";
 import { assertClose } from "./assert-close.ts";
 
 /** Daily points from [day, value] pairs. */

@@ -11,7 +11,7 @@ export const REVENUE_QUERIES: NamedQuery[] = [
     title: "From NEAR Intents volume to NEAR bought, 30 days",
     page: "/dashboard/revenue",
     sentence:
-      "NEAR Intents volume, gross fees, NEAR Intents revenue (the share the app operators keep), buyback dollars and the NEAR bought over the 30 days to the fee windows' last day (the data-through day, or the last day of fees and revenue when earlier, since the newest day of fees is still filling), with each step's share. The last column is the NEAR bought a year at that pace as a share of circulating NEAR (market cap ÷ price). The row appears only when volume, fees, revenue and NEAR bought cover every one of the 30 days.",
+      "NEAR Intents volume, gross fees, revenue (the part of fees the app operators keep), buyback dollars and NEAR bought over the 30 days to the fee windows' last day, with each step's share. That day is the data-through day, or the last day of fees and revenue when earlier, since the newest day of fees is still filling. The last column is a year of NEAR bought at this pace as a share of circulating NEAR (market cap ÷ price). The row appears only when volume, fees, revenue and NEAR bought cover all 30 days.",
     sql: `WITH ${THROUGH}, ${FEES_THROUGH}, ${FLOWS}
 SELECT t.day AS through_day, COUNT(*) AS days,
   SUM(volume_usd) AS volume_usd, SUM(fees_usd) AS fees_usd, SUM(revenue_usd) AS revenue_usd, SUM(buybacks_usd) AS buybacks_usd,
@@ -32,7 +32,7 @@ HAVING COUNT(volume_usd) = 30 AND COUNT(fees_usd) = 30 AND COUNT(revenue_usd) = 
     title: "NEAR Intents fees per $1M swapped, by month",
     page: "/dashboard/revenue",
     sentence:
-      "NEAR Intents gross fees against its volume over the 30 and 90 days to the fee windows' last day and each calendar month through that day, as dollars of fees per $1 million swapped. A window row appears only when volume and fees cover every one of its days.",
+      "NEAR Intents gross fees per $1 million swapped, over the 30 and 90 days to the fee windows' last day and in each calendar month through that day. A 30- or 90-day row appears only when volume and fees cover all its days.",
     sql: `WITH ${THROUGH}, ${FEES_THROUGH}, ${FLOWS}, windows(days) AS (VALUES (30), (90))
 SELECT 'last ' || w.days || ' days' AS month, COUNT(*) AS days, SUM(volume_usd) AS volume_usd, SUM(fees_usd) AS fees_usd,
   SUM(fees_usd) / SUM(volume_usd) * 1000000 AS fees_per_1m_usd
@@ -51,11 +51,30 @@ ORDER BY month DESC`,
     code: "src/data/thesis-metrics/revenue.ts · feeChainMetrics (30- and 90-day fee rates: fees ÷ volume); src/lib/metrics.ts · feeChain, monthlyTable (months)",
   },
   {
+    id: "referral-fees-30d",
+    title: "Who pays NEAR Intents fees",
+    page: "/dashboard/revenue",
+    sentence:
+      "Completed 1Click swaps over the 30 days to the newest stored day, by referral (the front end, wallet or app a swap came through). Each row gives swaps, dollars swapped in, app fees, the referral's share of all app fees and volume, and its fee rate in basis points. Rows appear only when all 30 days are stored.",
+    sql: `WITH last AS (SELECT MAX(day) AS day FROM intents_referral_daily),
+days30 AS (SELECT r.* FROM intents_referral_daily r, last WHERE r.day > date(last.day, '-30 days') AND r.day <= last.day)
+SELECT (SELECT day FROM last) AS through_day, referral, SUM(swaps) AS swaps, SUM(volume_usd) AS volume_usd, SUM(fees_usd) AS fees_usd,
+  SUM(fees_usd) / (SELECT SUM(fees_usd) FROM days30) AS share_of_fees,
+  SUM(volume_usd) / (SELECT SUM(volume_usd) FROM days30) AS share_of_volume,
+  SUM(fees_usd) / SUM(volume_usd) * 10000 AS fee_rate_bps
+FROM days30
+GROUP BY referral
+HAVING (SELECT COUNT(DISTINCT day) FROM days30) = 30
+ORDER BY fees_usd DESC`,
+    requests: [SOURCE_REQUESTS.explorerSwaps],
+    code: "src/data/intents-flows.ts · getReferralWindow; src/data/thesis-metrics/revenue.ts · referralMetrics",
+  },
+  {
     id: "fee-channels",
     title: "NEAR Intents fees by channel",
     page: "/dashboard/revenue",
     sentence:
-      "Gross fees each channel (the referral a swap carries: a front end, wallet or app) generated from NEAR Intents' launch through as_of, with its share of the listed channels' fees. Dune lists the 100 largest channels above $10 and leaves out swaps without a referral.",
+      "Gross fees by channel (the referral a swap carries: a front end, wallet or app) from NEAR Intents' launch through as_of, with each channel's share of the listed channels' fees. Dune lists the 100 largest channels above $10 and leaves out swaps without a referral.",
     sql: `SELECT channel, fees_usd, fees_usd / (SELECT SUM(fees_usd) FROM intents_fee_channels) AS share, as_of
 FROM intents_fee_channels
 ORDER BY fees_usd DESC`,
@@ -65,7 +84,7 @@ ORDER BY fees_usd DESC`,
     id: "capture-rate-monthly",
     title: "Share of fees that buys NEAR, by month",
     page: "/dashboard/revenue",
-    sentence: `Buyback dollars against NEAR Intents gross fees over the 90 days to the fee windows' last day and by calendar month through that day. Fees count from ${BUYBACKS_START_DAY}, the first day of buying, so the month buying began is not diluted by the days before it. Buying days are a month's days since buying began; the 90-day row appears only when volume, fees, revenue and NEAR bought cover every one of its days.`,
+    sentence: `Buyback dollars against NEAR Intents gross fees over the 90 days to the fee windows' last day and by calendar month through that day. Fees count from ${BUYBACKS_START_DAY}, the first day of buying, so the month buying began is not diluted by the days before it. Buying days are a month's days since buying began. The 90-day row appears only when volume, fees, revenue and NEAR bought cover all 90 days.`,
     sql: `WITH ${THROUGH}, ${FEES_THROUGH}, ${FLOWS}, windows(days) AS (VALUES (90))
 SELECT 'last ' || w.days || ' days' AS month, COUNT(*) AS days, SUM(flows.day >= '${BUYBACKS_START_DAY}' AND buybacks_usd IS NOT NULL) AS buying_days, SUM(fees_usd) AS fees_usd,
   SUM(CASE WHEN flows.day >= '${BUYBACKS_START_DAY}' THEN fees_usd END) AS fees_since_buybacks_usd, SUM(buybacks_usd) AS buybacks_usd,
@@ -88,7 +107,7 @@ ORDER BY month DESC`,
     id: "bought-by-month",
     title: "NEAR bought by month",
     page: "/dashboard/revenue",
-    sentence: `NEAR bought each calendar month from ${BUYBACKS_START_DAY}, the first day of buying, through the data-through day, with each day's buybacks converted at that day's NEAR price; a month's days count every stored day since buying began.`,
+    sentence: `NEAR bought each calendar month from ${BUYBACKS_START_DAY}, the first day of buying, through the data-through day. Each day's buyback dollars convert at that day's NEAR price. A month's days count every stored day since buying began.`,
     sql: `WITH ${THROUGH}, ${FLOWS}
 SELECT substr(flows.day, 1, 7) AS month, COUNT(*) AS days, SUM(buybacks_usd) AS buybacks_usd, SUM(bought_near) AS bought_near
 FROM flows, through t
@@ -103,7 +122,7 @@ ORDER BY month DESC`,
     title: "NEAR Intents revenue in dollars and in NEAR",
     page: "/dashboard/revenue",
     sentence:
-      "Monthly NEAR Intents revenue through the fee windows' last day, in USD and in NEAR (each day at its own price), in total and a day. The chart uses revenue a day in months with revenue on every day and indexes both to 100 in the first.",
+      "Monthly NEAR Intents revenue through the fee windows' last day, in USD and in NEAR (each day at its own price), as a total and per day. The chart uses revenue per day in months with revenue on every day, and indexes both to 100 in the first of those months.",
     sql: `WITH ${THROUGH}, ${FEES_THROUGH}, ${FLOWS}
 SELECT substr(flows.day, 1, 7) AS month, COUNT(*) AS days, SUM(revenue_usd > 0) AS revenue_days, SUM(revenue_usd) AS revenue_usd, SUM(revenue_near) AS revenue_near,
   SUM(revenue_usd) / SUM(revenue_usd > 0) AS revenue_usd_per_day, SUM(revenue_near) / SUM(revenue_usd > 0) AS revenue_near_per_day

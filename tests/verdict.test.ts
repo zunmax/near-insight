@@ -48,7 +48,7 @@ describe("thesisVerdict", () => {
     });
     assert.match(v.summary, /^The latest data supports the mechanism and the outcome/);
     assert.match(v.summary, /equals all the NEAR minted/);
-    assert.match(v.summary, /The breaking point of \*\*No supply overhang left to unlock\*\* is broken\./);
+    assert.match(v.summary, /The breaking point of \*\*No supply overhang left to unlock\*\* is broken: NEAR's circulating supply grew .+ median of .+ larger coins?\./);
     assert.match(v.points[0]!, /2 hold and 1 is broken/);
   });
 

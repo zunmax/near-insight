@@ -4,6 +4,7 @@ import { StatTile, StatTileSkeleton } from "@/components/ui/StatTile";
 import { getThesisMetrics } from "@/data/thesis-metrics";
 import { formatCount, formatNear, formatUsd } from "@/lib/format";
 
+/** Validator count, Nakamoto coefficient and the two seat prices of the latest stored epoch. */
 export async function ValidatorTiles() {
   await io();
   const { staking, market } = await getThesisMetrics();

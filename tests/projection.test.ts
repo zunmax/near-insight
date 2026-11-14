@@ -9,13 +9,20 @@ import {
   growthTerms,
   hsp029Ramp,
   measuredBurnNote,
+  modelInput,
+  modelInputs,
+  modelOutcome,
+  modelScenarios,
   project,
   projectedVolumeUsd,
   scenarioOutcome,
   seedInput,
+  stressScenarios,
   valuationScenarios,
+  type CoverageScenario,
+  type ProjectionInput,
+  type ProjectionSeed,
 } from "../src/lib/projection.ts";
-import type { CoverageScenario, ProjectionInput, ProjectionSeed } from "../src/lib/projection.ts";
 import { assertClose } from "./assert-close.ts";
 import { holdingMetrics } from "./thesis-metrics-fixture.ts";
 
@@ -278,6 +285,59 @@ describe("valuationScenarios", () => {
     assert.deepEqual(ids({ required: 0 }), ["no-growth"]);
     assert.deepEqual(ids({ required: -0.2, pace: -0.05 }), ["no-growth", "recent-pace"]);
     assert.deepEqual(valuationScenarios(seed, { valuation: null, buybacks: null }).map((scenario) => scenario.id), ["no-growth"]);
+  });
+});
+
+describe("stressScenarios", () => {
+  test("stops the buying or halves it at today's max issuance, and ramps max issuance to HSP-029's target at today's buying", () => {
+    const [stops, halves, hsp029] = stressScenarios(seed, true);
+    assert.deepEqual([stops!.id, halves!.id, hsp029!.id], ["buying-stops", "bought-halves", "hsp029"]);
+    assert.ok(stops!.rows.every((row) => row.boughtNear === 0 && row.issuanceRate === seed.maxInflationRate));
+    assert.ok(halves!.rows.every((row) => row.boughtNear === seed.boughtNearPerMonth / 2 && row.issuanceRate === seed.maxInflationRate));
+    assert.ok(hsp029!.rows.every((row) => row.boughtNear === seed.boughtNearPerMonth));
+    assertClose(hsp029!.rows.at(-1)?.issuanceRate, HSP029.targetRate);
+    assert.ok(stressScenarios(seed, true).every((scenario) => scenario.rows.length === COVERAGE_HORIZON_MONTHS));
+  });
+
+  test("leaves out HSP-029 once it can no longer take effect", () => {
+    assert.deepEqual(stressScenarios(seed, false).map((scenario) => scenario.id), ["buying-stops", "bought-halves"]);
+  });
+
+  test("has no Intents volume for a cut in buying, which no volume change causes", () => {
+    const [stops, halves, hsp029] = stressScenarios(seed, true);
+    assert.equal(scenarioOutcome(stops!, seed, 3_000_000).volumePerYearUsd, null);
+    assert.equal(scenarioOutcome(halves!, seed, 3_000_000).volumePerYearUsd, null);
+    assert.notEqual(scenarioOutcome(hsp029!, seed, 3_000_000).volumePerYearUsd, null);
+  });
+});
+
+describe("modelScenarios and modelInputs", () => {
+  test("list the Valuation scenarios, then the stress ones, and leave HSP-029 out once it failed", () => {
+    const metrics = holdingMetrics();
+    const inputs = modelInputs({ ...metrics, seed }, false)!;
+    assert.equal(inputs.hsp029Applies, true);
+    assert.equal(inputs.volume30dUsd, metrics.intents!.total30d);
+    assert.deepEqual(
+      modelScenarios(inputs).map((scenario) => scenario.id),
+      ["no-growth", "growth-needed", "recent-pace", "buying-stops", "bought-halves", "hsp029"],
+    );
+    assert.equal(modelInputs({ ...metrics, seed }, true)!.hsp029Applies, false);
+    assert.equal(modelInputs({ ...metrics, seed: null }, false), null);
+  });
+});
+
+describe("modelInput and modelOutcome", () => {
+  test("apply every choice to the seed and report the model's numbers", () => {
+    const input = modelInput(seed, 12, { priceMultiple: 2, buybackGrowth: 0.05, feeGrowth: 0.01, targetInflationRate: 0.016, burnShareOfFees: 1 });
+    assert.equal(input.boughtNearPerMonth, seed.boughtNearPerMonth / 2);
+    assert.deepEqual([input.buybackGrowth, input.feeGrowth, input.targetInflationRate, input.burnShareOfFees, input.months], [0.05, 0.01, 0.016, 1, 12]);
+    const rows = project(input);
+    const outcome = modelOutcome(rows, seed);
+    assert.equal(outcome.firstCoverage, rows[0]!.coverage);
+    assert.equal(outcome.lastCoverage, rows.at(-1)!.coverage);
+    assert.equal(outcome.reachedMonth, rows.find((row) => row.coverage >= 1)?.month ?? null);
+    assertClose(outcome.supplyGrowthPerYear, rows.at(-1)!.supplyNear / seed.totalSupplyNear - 1);
+    assertClose(outcome.heldNear, rows.reduce((sum, row) => sum + row.boughtNear, 0));
   });
 });
 

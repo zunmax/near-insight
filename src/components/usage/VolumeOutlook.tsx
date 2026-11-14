@@ -85,12 +85,11 @@ export function VolumeOutlook({ seed, paces }: { seed: ProjectionSeed; paces: Vo
       </div>
       <HowCalculated>
         Starts from NEAR Intents volume over the 30 days to <NoBreakTokens text={seed.through} />, scaled to a month (× 365 ÷ 30 ÷ 12):{" "}
-        {formatUsd(seed.volumeUsdPerMonth)}, and grows it at the chosen rate every
-        month for {MONTHS} months. NEAR bought grows with it, because the share of volume that buys NEAR
-        {seed.takeRate === null ? "" : ` (${formatBps(seed.takeRate)})`} and today&apos;s price are held; today&apos;s max issuance also stays as it is, the same
-        projection as the Valuation page. The burn each month is the gas fees of those 30 days, scaled to a month, with {burnNote(seed)}. The 90-day pace is the
-        last 90 days&apos; volume against the 90 days before as a monthly rate; year on year is the last 30 days against the same 30 days a year earlier as a monthly
-        rate. The model on the Revenue page also has sliders for the fee rate, the share of fees that buys NEAR and the price.
+        {formatUsd(seed.volumeUsdPerMonth)}. It grows at the chosen rate each month for {MONTHS} months. NEAR bought grows with it, because the share of
+        volume that buys NEAR{seed.takeRate === null ? "" : ` (${formatBps(seed.takeRate)})`} and today&apos;s price stay fixed. Max issuance stays at
+        today&apos;s rate, as in the Valuation projection. The burn each month is the gas fees of those 30 days, scaled to a month, with {burnNote(seed)}. The
+        90-day pace compares the last 90 days&apos; volume with the 90 days before; year on year compares the last 30 days with the same 30 days a year
+        earlier. Both are shown as monthly rates. The Revenue page model adds sliders for the fee rate, the share of fees that buys NEAR and the price.
       </HowCalculated>
     </div>
   );

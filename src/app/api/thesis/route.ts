@@ -1,10 +1,13 @@
 import { cacheLife } from "next/cache";
 import { connection } from "next/server";
 import { thesisDocument } from "@/app/api/thesis/markdown/document";
+import { checkDifference, checkWindow, DATA_CHECKS } from "@/content/data-checks";
 import { getLiveSnapshot } from "@/data/live";
 import { getNearAndPeers } from "@/data/market";
 import { getNetworkState, getReleases } from "@/data/network";
-import { getThesisMetrics } from "@/data/thesis-metrics";
+import { getThesisMetrics, type ThesisMetrics } from "@/data/thesis-metrics";
+import { breakingPoints } from "@/lib/thesis/breaking-points";
+import { thesisVerdict } from "@/lib/thesis/verdict";
 
 /** Stored nearcore releases read, newest first: more than a year of releases and release candidates. */
 const RELEASE_LIMIT = 100;
@@ -30,9 +33,35 @@ async function renderThesis(): Promise<string | null> {
   });
 }
 
-/** THESIS.md rendered from the database. */
-export async function GET() {
+/** The verdict, every breaking point's status and the data checks as plain text, as `npm run verify` prints them. */
+function summary(metrics: ThesisMetrics) {
+  const verdict = thesisVerdict(metrics);
+  const plain = (text: string) => text.replaceAll("**", "");
+  return {
+    dataThrough: metrics.dataThrough,
+    verdict: verdict ? { summary: plain(verdict.summary), points: verdict.points.map(plain) } : null,
+    breakingPoints: breakingPoints(metrics).map(({ name, status, detail }) => ({ name, status, detail })),
+    dataChecks: DATA_CHECKS.map(({ key, title, format }) => {
+      const check = metrics.dataChecks[key];
+      return {
+        title,
+        a: check ? format(check.a) : null,
+        b: check ? format(check.b) : null,
+        difference: check?.difference == null ? null : checkDifference(check.difference),
+        window: check ? `${checkWindow(check.days)}, as of ${check.through}` : null,
+      };
+    }),
+  };
+}
+
+/** THESIS.md rendered from the database; with `?format=json`, its verdict, breaking points and data checks alone. */
+export async function GET(request: Request) {
   await connection();
+  if (new URL(request.url).searchParams.get("format") === "json") {
+    const metrics = await getThesisMetrics();
+    if (!metrics.dataThrough) return Response.json({ error: "No data yet" }, { status: 503 });
+    return Response.json(summary(metrics), { headers: { "cache-control": "no-store" } });
+  }
   const thesis = await renderThesis();
   if (thesis === null) return Response.json({ error: "No data yet" }, { status: 503 });
   return new Response(thesis, {

@@ -1,5 +1,6 @@
 /** Shape of every number the thesis pages, the projections and the model read. */
 import type { ProposalStatus } from "@/data/governance";
+import type { ReferralTotals } from "@/data/intents-flows";
 import type { LeadLagResult } from "@/lib/lead-lag";
 import type { Absorption, BreakEven, DailyPoint, DataCheck, FeeChain, FlowYoY } from "@/lib/metrics";
 import type { ProjectionSeed } from "@/lib/projection";
@@ -106,7 +107,7 @@ export type ThesisMetrics = {
     boughtPrior90dNear: number | null;
     /** Compound monthly growth of NEAR bought implied by the 90-day change. */
     monthlyGrowth: number | null;
-    /** 95% range of that growth from block bootstraps of each window's days (BOUGHT_GROWTH_RANGE); null with the growth. */
+    /** 95% range of that growth from block bootstraps of each window's days (BOUGHT_GROWTH_RANGE), widened to include the growth itself; null with the growth. */
     monthlyGrowthRange: { low: number; high: number } | null;
     /** NEAR bought since buybacks began, and NEAR bought per calendar month (oldest first). */
     boughtNearTotal: number;
@@ -140,6 +141,9 @@ export type ThesisMetrics = {
     /** `days` counts the month's fee days; `buyingDays` the days since buying began; `revenueDays` the days with revenue above zero; `revenueNear` is the month's revenue with each day at that day's NEAR price. */
     monthly: Array<{ month: string; days: number; buyingDays: number; revenueDays: number; revenueNear: number } & FeeChain>;
   } | null;
+  /** Completed 1Click swaps (Explorer API) over the 30 days to `through`, the newest stored day: their totals and each
+      referral's, largest fees first; null until every one of the 30 days is stored. */
+  referrals: { through: string; swaps: number; volumeUsd: number; feesUsd: number; byReferral: ReferralTotals[] } | null;
   /** NEAR Intents volume ÷ volume of every DEX on NEAR, both from DefiLlama (which counts Intents among them). */
   dexShare: {
     d30: number | null;
@@ -194,6 +198,8 @@ export type ThesisMetrics = {
     revenueMultiple: DataCheck | null;
     /** a: gain of treasury.near's balance over 30 days; b: the protocol treasury share of the NEAR minted in those days (block headers). */
     treasuryShare: DataCheck | null;
+    /** a: app fees of completed 1Click swaps (Explorer API); b: NEAR Intents gross fees, protocol fee plus every front end's fee. 30 days to the last day both have. */
+    referralFees: DataCheck | null;
   };
   /** The protocol treasury (treasury.near): its daily balance, and over the 30 days to the data-through day (earlier if its
       balance or minted NEAR ends first), its gain against PROTOCOL_TREASURY_SHARE of the NEAR minted. Null until both cover 30 days. */

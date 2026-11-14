@@ -18,8 +18,8 @@ const order = (i: number) => ({ "--i": i + 1 }) as CSSProperties;
 const VOLUME_TREND_DAYS = 90;
 
 /** Home's market numbers: NEAR Intents volume, NEAR's market cap, the share of new supply absorbed and NEAR bought over 30
-    days. Phones show them as cards that swipe sideways, NEAR's price and its 12 months last; from 768px they are a grid of
-    tiles without the price card, as the NEAR price panel follows them there. */
+    days. Phones show them as cards that swipe sideways, with NEAR's 12-month price as the last card; from 768px they are a
+    grid of tiles without the price card, as the NEAR price panel follows them there. */
 export async function MarketKpis() {
   await io();
   const [market, volume, metrics, prices] = await Promise.all([
@@ -88,7 +88,7 @@ export async function MarketKpis() {
   ];
 
   /** The same daily series and 12-month change as the NEAR price panel, which wider screens show instead; the card's
-      `md:hidden!` is important to outrank the unlayered `.tile` display. */
+      `md:hidden!` is marked important so it outranks the unlayered `.tile` display. */
   const last = prices.at(-1);
   const change1y = levelChange(prices, 365);
   return (

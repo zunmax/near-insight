@@ -1,4 +1,4 @@
-/** Thesis section 6: the validator set, the stake needed for a seat and the Nakamoto coefficient. */
+/** The network section: the validator set, the stake needed for a seat and the Nakamoto coefficient. */
 import { COINGECKO_MARKETS, DASH, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
 import { section } from "@/app/api/thesis/markdown/section";
 import { formatNear as near, formatPercent, formatUsd } from "@/lib/format";
@@ -7,7 +7,6 @@ export function networkSection(input: ThesisDocumentInput): string {
   const { staking, market } = input.metrics;
   const epoch = `epoch ${show(staking?.epochHeight, String)}`;
   return section(
-    6,
     "network",
     input,
     [

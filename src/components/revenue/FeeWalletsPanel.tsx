@@ -86,7 +86,7 @@ export async function FeeWalletsPanel() {
       </div>
       <HowCalculated>
         <NoBreakTokens
-          text={`NEAR Intents fees reach these three wallets: ${WALLETS.map((w) => w.account).join(", ")}. NEAR that arrives at any of them counts as bought, so the NEAR bought is compared with the change of the three balances together over the same days. The wallets already held NEAR before buybacks began on ${BUYBACKS_START_DAY}.`}
+          text={`NEAR Intents fees reach these three wallets: ${WALLETS.map((w) => w.account).join(", ")}. NEAR that arrives at any of them counts as bought, so NEAR bought is compared with the combined change of the three balances over the same days. The wallets already held NEAR before buybacks began on ${BUYBACKS_START_DAY}.`}
         />
       </HowCalculated>
     </Panel>

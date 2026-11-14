@@ -1,0 +1,103 @@
+{
+  "seed": {
+    "priceUsd": 3.09,
+    "totalSupplyNear": 1311701519.844213,
+    "maxInflationRate": 0.025,
+    "boughtNearPerMonth": 603440.7452355268,
+    "feesNearPerMonth": 29839.3985814944,
+    "measuredBurnShare": 0.8491324800171842,
+    "fullBurn": true,
+    "burnShareOfFees": 1,
+    "takeRate": 0.00048728516840415017,
+    "volumeUsdPerMonth": 3826572249.0270176,
+    "feeRate": 0.0016056999750833282,
+    "captureRate": 0.30347211556683396,
+    "hsp029Ramp": {
+      "delayMonths": 3.113427877092833,
+      "months": 24,
+      "startsAt": "2027-02-14T16:48:08.461Z"
+    },
+    "through": "2026-11-12"
+  },
+  "buybacks": {
+    "total30dUsd": 1839089,
+    "bought30dNear": 422753.3717410005,
+    "change90d": 0.7528198700157287,
+    "bought90dNear": 1507793.8968611346,
+    "boughtPrior90dNear": 860210.4087555811,
+    "monthlyGrowth": 0.2088549020701418,
+    "monthlyGrowthRange": {
+      "low": 0.10737944443188309,
+      "high": 0.3181864759953808
+    },
+    "boughtNearTotal": 3323509.406216222,
+    "monthlyNear": [
+      {
+        "month": "2026-02",
+        "value": 173015.237475388,
+        "days": 6
+      },
+      {
+        "month": "2026-03",
+        "value": 447383.81023587525,
+        "days": 31
+      },
+      {
+        "month": "2026-04",
+        "value": 193911.55321972843,
+        "days": 30
+      },
+      {
+        "month": "2026-05",
+        "value": 333290.0331044746,
+        "days": 31
+      },
+      {
+        "month": "2026-06",
+        "value": 282728.8288887376,
+        "days": 30
+      },
+      {
+        "month": "2026-07",
+        "value": 266842.41269833903,
+        "days": 31
+      },
+      {
+        "month": "2026-08",
+        "value": 412166.25704925024,
+        "days": 31
+      },
+      {
+        "month": "2026-09",
+        "value": 595067.3059959081,
+        "days": 30
+      },
+      {
+        "month": "2026-10",
+        "value": 449450.8339089327,
+        "days": 31
+      },
+      {
+        "month": "2026-11",
+        "value": 169653.1336395876,
+        "days": 12
+      }
+    ],
+    "takeRate90d": 0.00041327658733050646,
+    "takeRatePrior90d": 0.00023955685287076103
+  },
+  "valuation": {
+    "marketCapUsd": 4048721833,
+    "tokenRevenueRunRateUsd": 16832931.31203434,
+    "multiple": 240.523872993259,
+    "holderYield": 0.004157591458823825,
+    "requiredMonthlyGrowth": 0.04594606953714653
+  },
+  "hsp029Applies": true,
+  "volume30dUsd": 3774153451.0951405,
+  "breakEven30d": {
+    "multiple": 6.000068603725591,
+    "volumePerDayUsd": 562575836.6348666,
+    "currentVolumePerDayUsd": 125805115.03650469
+  }
+}

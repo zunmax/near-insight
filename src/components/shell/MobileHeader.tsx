@@ -7,7 +7,7 @@ import { MobileSectionTabs } from "@/components/shell/MobileSectionTabs";
 /** Scroll distance, in pixels, that counts as a change of direction. */
 const SCROLL_SLOP = 6;
 
-/** Phone header: the account avatar that opens the menu, and the section tabs. It slides away while the page scrolls
+/** Phone header: the brand mark that opens the menu, and the section tabs. It slides away while the page scrolls
     down and comes back on scroll up (`data-scroll-dir` on <html>). */
 export function MobileHeader() {
   const header = useRef<HTMLElement>(null);

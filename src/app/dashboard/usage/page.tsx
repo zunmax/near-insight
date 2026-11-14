@@ -27,7 +27,7 @@ import { VolumeOutlookPanel, VolumeOutlookPanelSkeleton } from "@/components/usa
 
 export const metadata: Metadata = {
   title: "NEAR Intents volume and NEAR usage",
-  description: "NEAR Intents volume, swaps, confidential share and funds held, its share of NEAR transactions and DEX volume, and activity on NEAR against a year earlier.",
+  description: "NEAR Intents volume, swaps, confidential share and funds held, its share of NEAR transactions and DEX volume, and activity on NEAR vs a year earlier.",
   alternates: { canonical: "/dashboard/usage" },
 };
 
@@ -42,7 +42,7 @@ export default function UsagePage() {
           <ThesisHeader id="demand" />
         </Suspense>
       </PanelBoundary>
-      <PanelSlot title="NEAR Intents volume" skeleton={<IntentsVolumePanelSkeleton />}>
+      <PanelSlot title="NEAR Intents volume, 30-day totals" skeleton={<IntentsVolumePanelSkeleton />}>
         <IntentsVolumePanel />
       </PanelSlot>
       <PanelSlot title="NEAR Intents volume by chain" skeleton={<IntentsChainMixPanelSkeleton />}>
@@ -54,7 +54,7 @@ export default function UsagePage() {
       <PanelSlot title="NEAR Intents share of NEAR transactions" skeleton={<IntentsTxnSharePanelSkeleton />}>
         <IntentsTxnSharePanel />
       </PanelSlot>
-      <PanelSlot title="Public and confidential NEAR Intents volume" skeleton={<IntentsConfidentialPanelSkeleton />}>
+      <PanelSlot title="Confidential share of NEAR Intents volume" skeleton={<IntentsConfidentialPanelSkeleton />}>
         <IntentsConfidentialPanel />
       </PanelSlot>
       <PanelSlot title="Funds held in NEAR Intents" skeleton={<IntentsTvlPanelSkeleton />}>

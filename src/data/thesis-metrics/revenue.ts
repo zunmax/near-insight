@@ -1,4 +1,4 @@
-/** NEAR Intents buybacks, the volume → fees → revenue → buybacks chain, and the three fee wallets' balances. */
+/** NEAR Intents buybacks, the volume → fees → revenue → buybacks chain, the three fee wallets' balances, and 1Click swaps by referral. */
 import { BUYBACKS_START_DAY } from "@/config/protocol";
 import { BOUGHT_GROWTH_RANGE } from "@/config/thesis-triggers";
 import { windowGrowthRange } from "@/lib/bootstrap";
@@ -17,6 +17,13 @@ export type FeeWalletWindow = {
   /** Change of the combined balance over the `days` ending at `endTime`. */
   gain: (endTime: number, days: number) => number;
 };
+
+/** Completed 1Click swaps by referral over 30 days, with the totals of every referral together. */
+export function referralMetrics({ referrals }: Pick<ThesisInputs, "referrals">): ThesisMetrics["referrals"] {
+  if (!referrals) return null;
+  const total = (key: "swaps" | "volumeUsd" | "feesUsd") => referrals.referrals.reduce((sum, r) => sum + r[key], 0);
+  return { through: referrals.through, swaps: total("swaps"), volumeUsd: total("volumeUsd"), feesUsd: total("feesUsd"), byReferral: referrals.referrals };
+}
 
 /** NEAR bought over the 30 days to the data-through day. Every day of them must be stored, so a missing day never prints a
     short total as the last 30 days; null otherwise. */

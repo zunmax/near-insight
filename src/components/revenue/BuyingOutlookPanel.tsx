@@ -20,7 +20,7 @@ export async function BuyingOutlookPanel() {
       sqlId="projection-inputs"
       viewLabel="Model"
     >
-      {/** Keyed by the data, so a page kept alive and shown again starts from the new rates, not the ones it first read. */}
+      {/** Keyed by the data, so a page kept alive and shown again starts from the current rates, not the ones it first read. */}
       <BuyingOutlook
         key={`${seed.through}|${seed.feeRate}|${seed.captureRate}|${feeChain.through}`}
         seed={seed}

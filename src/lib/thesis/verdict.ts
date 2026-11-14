@@ -36,11 +36,15 @@ type Verdict = { summary: string; points: string[] };
 /** A breaking point's title marked bold (`**title**`), as the dashboard and THESIS.md render it. */
 const bold = (title: string) => `**${title}**`;
 
-/** "a", "a and b", "a, b and c" */
+/** Joins items as a sentence list: "a", "a and b", "a, b and c". */
 const list = (items: string[]) => (items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`);
 
-/** Every section's breaking-point status, in thesis order. */
-const breakingPoints = (m: ThesisMetrics) => SECTION_ORDER.map((id) => ({ id, status: SECTION_TRIGGERS[id](m).status }));
+/** Every section's breaking-point status and short result, in thesis order. */
+const triggerResults = (m: ThesisMetrics) =>
+  SECTION_ORDER.map((id) => {
+    const { status, detailShort } = SECTION_TRIGGERS[id](m);
+    return { id, status, detailShort };
+  });
 
 /** How a group of breaking points stands: "4 hold", "2 hold and 1 is broken", "3 hold and 1 is too close to call". */
 function tally(statuses: TriggerStatus[]): string {
@@ -62,7 +66,7 @@ function tally(statuses: TriggerStatus[]): string {
 /** The breaking points counted in two groups, so the low bars of the supporting checks never pad the core result:
     "Of the 4 core breaking points (the pillars and valuation), 4 hold. Of the 3 supporting breaking points (…), 2 hold and 1 is broken." */
 function breakingPointTally(m: ThesisMetrics): string {
-  const statuses = breakingPoints(m);
+  const statuses = triggerResults(m);
   const core = statuses.filter(({ id }) => CORE_SECTIONS.has(id));
   const supporting = statuses.filter(({ id }) => !CORE_SECTIONS.has(id));
   return `Of the ${core.length} core breaking points (the pillars and valuation), ${tally(core.map(({ status }) => status))}. Of the ${supporting.length} supporting breaking points (${list(supporting.map(({ id }) => SECTIONS[id].eyebrow.toLowerCase()))}), ${tally(supporting.map(({ status }) => status))}.`;
@@ -78,7 +82,7 @@ export function thesisVerdict(m: ThesisMetrics): Verdict | null {
 
   const window = windowName(m, "30 days");
   const horizon = formatMonths(COVERAGE_HORIZON_MONTHS);
-  const triggers = breakingPoints(m);
+  const triggers = triggerResults(m);
   const broken = triggers.filter((t) => t.status === "happened").map((t) => SECTIONS[t.id].title);
   const tooClose = triggers.filter((t) => t.status === "too-close").map((t) => SECTIONS[t.id].title);
   const unmeasured = triggers.filter((t) => t.status === "no-data").length;
@@ -96,8 +100,12 @@ export function thesisVerdict(m: ThesisMetrics): Verdict | null {
   const range = growth?.range ?? null;
   const digits = valuationDigits(m);
   const pace = growth && range && required !== null ? buybackPace(growth.monthly, growthCheck(range, required), digits) : null;
+  /** Each broken point with its result, so its title is never read as the finding. */
+  const brokenNotes = triggers
+    .filter((t) => t.status === "happened")
+    .map((t) => `The breaking point of ${bold(SECTIONS[t.id].title)} is broken: ${t.detailShort.replace(/\.$/, "")}.`);
   const notes = [
-    broken.length === 0 ? null : `The breaking ${broken.length === 1 ? "point" : "points"} of ${list(broken.map(bold))} ${broken.length === 1 ? "is" : "are"} broken.`,
+    ...brokenNotes,
     tooClose.length === 0 ? null : `The breaking ${tooClose.length === 1 ? "point" : "points"} of ${list(tooClose.map(bold))} ${tooClose.length === 1 ? "is" : "are"} too close to call.`,
     unmeasured === 0 ? null : `${unmeasured === 1 ? "One breaking point" : `${unmeasured} breaking points`} cannot be measured yet.`,
   ].filter((note): note is string => note !== null);
@@ -120,7 +128,7 @@ export function thesisVerdict(m: ThesisMetrics): Verdict | null {
         ? `The latest data does not show the mechanism working: ${notWorking}.`
         : absorbsAll
           ? `The latest data supports ${notes.length === 0 ? "the whole thesis" : "the mechanism and the outcome"}: trading through NEAR Intents buys NEAR, and the NEAR burned plus bought ${a.share > 1 ? "exceeds" : "equals"} all the NEAR minted.${note}`
-          : `The latest data supports the mechanism but not yet the outcome: trading through NEAR Intents buys NEAR${pace ? `, and the buying is ${pace}` : ""}, but the NEAR burned plus bought still equals only part of the NEAR minted.${note}`;
+          : `The latest data supports the mechanism but not yet the outcome: trading through NEAR Intents buys NEAR${pace ? `, and the buying is ${pace}` : ""}. The NEAR burned plus bought still equals only part of the NEAR minted.${note}`;
 
   const multiple = breakEven?.d30?.multiple ?? null;
   /** NEAR counted as bought from the buyback data (a) against what the three fee wallets gained on chain (b): the same
@@ -136,7 +144,7 @@ export function thesisVerdict(m: ThesisMetrics): Verdict | null {
     namedInSummary
       ? breakingPointTally(m)
       : `${breakingPointTally(m)}${broken.length === 0 ? "" : ` The broken ${broken.length === 1 ? "one is" : "ones are"} ${list(broken.map(bold))}.`}${
-          tooClose.length === 0 ? "" : ` The ${tooClose.length === 1 ? "one" : "ones"} too close to call: ${list(tooClose.map(bold))}.`
+          tooClose.length === 0 ? "" : ` The ${tooClose.length === 1 ? "one too close to call is" : "ones too close to call are"} ${list(tooClose.map(bold))}.`
         }`,
     i && i.changeYoY30d !== null
       ? `NEAR Intents volume over the ${window} was ${formatUsd(i.total30d)}, ${formatMoveFromZero(i.changeYoY30d)} from ${formatUsd(i.yearAgo30d)} in the same 30 days a year earlier.`
@@ -151,17 +159,17 @@ export function thesisVerdict(m: ThesisMetrics): Verdict | null {
     `${
       absorbsAll
         ? `Burn plus buybacks equaled ${sharePrinted} of the NEAR minted over the ${window}${a.share > 1 ? ", more than all of it" : ""}.`
-        : `Burn plus buybacks equaled ${sharePrinted} of the NEAR minted over the ${window}${multiple === null ? "" : `; to match all of it, they would need to be ${formatMultiple(multiple, digitsApart(multiple, 1, 2))} as large`}.`
+        : `Burn plus buybacks equaled ${sharePrinted} of the NEAR minted over the ${window}${multiple === null ? "" : `; to match all of it, they would need to be ${formatMultiple(multiple, digitsApart(multiple, 1, 2))} as large, with NEAR bought counted at the prices paid, not today's`}.`
     }${v?.multiple == null ? "" : ` At today's price, NEAR's market cap is ${formatMultiple(v.multiple)} the yearly value of NEAR burned and bought (the same 30 days, annualized).`}`,
     required === null
       ? b.bought30dNear > 0 || !v || !m.seed
         ? null
         : `With no NEAR bought over the ${window}, ${noGrowthMatches(horizon)}.`
       : required <= 0
-        ? `At today's price, ${alreadyAbsorbed(required, horizon, digits)}${pace && range && growthCheck(range, required) !== "not-happened" ? `; NEAR bought is ${pace}` : ""}.`
-        : `For burn plus buybacks to match monthly issuance by the end of ${horizon}${pace ? "" : " at today's price"}, with the burn held at its current rate, NEAR bought needs to grow ${formatPercent(required, digits)} a month${pace ? `, and it is ${pace}. That pace compares only the ${windowName(m, "90 days")} with the 90 before, and buybacks began on ${BUYBACKS_START_DAY}` : ""}.`,
+        ? `At today's price, ${alreadyAbsorbed(required, horizon, digits)}${pace && range && growthCheck(range, required) !== "not-happened" ? `. NEAR bought is ${pace}` : ""}.`
+        : `NEAR bought needs to grow ${formatPercent(required, digits)} a month for burn plus buybacks to match monthly issuance by the end of ${horizon}${pace ? "" : " at today's price"}, with burn held at its current rate${pace ? `. It is ${pace}. That pace compares only the ${windowName(m, "90 days")} with the 90 before, and buybacks began on ${BUYBACKS_START_DAY}` : ""}.`,
     act?.txns.change != null
-      ? `NEAR handled ${formatCompact(act.txns.last30d, 2)} transactions over the ${windowName(m, "30 days", act.through)}, ${formatMoveFromZero(act.txns.change)} from ${formatCompact(act.txns.yearAgo30d, 2)} in the same 30 days a year earlier; Intents users need not hold NEAR, so NEAR Intents creates demand for the token mainly through the fees that buy it, not through activity on NEAR itself.`
+      ? `NEAR handled ${formatCompact(act.txns.last30d, 2)} transactions over the ${windowName(m, "30 days", act.through)}, ${formatMoveFromZero(act.txns.change)} from ${formatCompact(act.txns.yearAgo30d, 2)} in the same 30 days a year earlier. Intents users need not hold NEAR, so NEAR Intents creates demand for the token mainly through the fees that buy it, not through activity on NEAR itself.`
       : null,
   ].filter((point): point is string => point !== null);
   return { summary, points };

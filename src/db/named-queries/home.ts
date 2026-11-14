@@ -9,7 +9,7 @@ export const HOME_QUERIES: NamedQuery[] = [
     title: "NEAR market and network state",
     page: "/dashboard/home",
     sentence:
-      "NEAR's latest price, market cap, rank, FDV, circulating supply and 1-year price change, with the latest network state: total supply, max issuance rate, gas price, protocol version, block-producer seats and minimum stake ratio.",
+      "NEAR's latest price, market cap, rank, FDV, circulating supply and 1-year price change. Beside them, the latest network state: total supply, max issuance rate, gas price, protocol version, block-producer seats and minimum stake ratio.",
     sql: `SELECT c.price_usd, c.market_cap_usd, c.rank, c.fdv_usd, c.circulating_supply, c.change_1y / 100 AS change_1y, c.fetched_at AS market_at,
   n.total_supply_near, n.max_inflation_rate, n.gas_price_yocto, n.protocol_version, n.block_producer_seats, n.minimum_stake_ratio,
   n.fetched_at AS network_at
@@ -22,7 +22,7 @@ WHERE c.coin_id = 'near'`,
     title: "NEAR price",
     page: "/dashboard/home",
     sentence:
-      "NEAR's daily price in USD, each day's 00:00 UTC price except today's live one; the change over 12 months is the newest price against the price 365 days earlier.",
+      "NEAR's daily USD price at 00:00 UTC; today's row is the live price. The 12-month change is the newest price against the price 365 days earlier.",
     sql: `SELECT day, value AS price_usd
 FROM daily_series
 WHERE series = '${SERIES.nearPriceUsd}'

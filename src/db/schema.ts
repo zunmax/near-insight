@@ -193,6 +193,20 @@ export const MIGRATIONS: string[] = [
     as_of TEXT NOT NULL
   );
   `,
+  /** 2: NEAR Intents 1Click swaps by referral */
+  `
+  -- Completed 1Click swaps created on each UTC day, by referral (the front end, wallet or app a swap came through; '(none)'
+  -- when it carries none), from the NEAR Intents Explorer API: swaps, dollars swapped in (amountInUsd) and app fees (each
+  -- fee's basis points of amountInUsd). Daily totals only: the API's terms allow no swap record to be kept beyond 24 hours.
+  CREATE TABLE intents_referral_daily (
+    day TEXT NOT NULL,
+    referral TEXT NOT NULL,
+    swaps INTEGER NOT NULL,
+    volume_usd REAL NOT NULL,
+    fees_usd REAL NOT NULL,
+    PRIMARY KEY (day, referral)
+  );
+  `,
 ];
 
 /** The schema version a database has once every migration is applied. */
@@ -286,6 +300,7 @@ export const JOBS = {
   liveBlock: "near.live_block",
   nearblocks: "nearblocks.sync",
   dune: "dune.intents",
+  intentsExplorer: "intents_explorer.referrals",
   releases: "github.releases",
   developers: "electric_capital.developers",
   cryptopanicNews: "cryptopanic.news",

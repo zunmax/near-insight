@@ -43,7 +43,7 @@ export async function ProtocolPanel() {
           <span className="text-[12px] font-semibold text-ink-2">{versions.testnet >= FULL_BURN_PROTOCOL ? "Testnet only" : "Not live yet"}</span>
         )}
       </div>
-      <ul className="mt-4 m-0 list-none p-0">
+      <ul className="m-0 mt-4 list-none p-0">
         {releases.map((r) => (
           <li key={r.tag} className="flex items-center justify-between gap-3 border-t border-line py-2 text-[13px]">
             <a href={r.url} target="_blank" rel="noreferrer" className="min-w-0 py-1 font-medium hover:underline">

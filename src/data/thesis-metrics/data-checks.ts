@@ -9,13 +9,14 @@ import type { ThesisMetrics } from "./types";
 
 /** Every data check; `networkRevenue` is NEAR Intents revenue plus gas fees per day. */
 export function dataChecksMetrics(
-  { txnFees, burnt, txns, epochs, supply, marketCapHistory }: ThesisInputs,
+  { txnFees, burnt, txns, epochs, supply, marketCapHistory, referralFees, intentsFees }: ThesisInputs,
   { end, covered, sum, feesNear, boughtNear }: FlowContext,
   wallets: FeeWalletWindow,
   treasury: TreasuryWindow | null,
   networkRevenue: DailyPoint[],
 ): ThesisMetrics["dataChecks"] {
   const feesCheckEnd = txnFees.length > 0 && feesNear.length > 0 ? commonEnd(txnFees, feesNear) : null;
+  const referralCheckEnd = referralFees.length > 0 && intentsFees.length > 0 ? commonEnd(referralFees, intentsFees) : null;
   const lastNearblocksDay = txns.at(-1) ? isoDay(txns.at(-1)!.time) : null;
   const checkIndex = lastNearblocksDay ? epochs.findLastIndex((e) => e.endTime.slice(0, 10) <= lastNearblocksDay) : -1;
   const checkEpoch = epochs[checkIndex];
@@ -52,5 +53,9 @@ export function dataChecksMetrics(
         : null,
     revenueMultiple: publishedCheck,
     treasuryShare: treasury ? dataCheck(treasury.gain, treasury.expected, 30, treasury.end) : null,
+    referralFees:
+      referralCheckEnd !== null && coversWindow(referralFees, 30, 0, referralCheckEnd) && coversWindow(intentsFees, 30, 0, referralCheckEnd)
+        ? dataCheck(sumWindow(referralFees, 30, 0, referralCheckEnd), sumWindow(intentsFees, 30, 0, referralCheckEnd), 30, referralCheckEnd)
+        : null,
   };
 }

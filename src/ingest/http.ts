@@ -117,10 +117,9 @@ async function requestWithLimits<T>(
   throw lastError instanceof UpstreamError ? lastError : new UpstreamError(`${host} did not respond`);
 }
 
-/** fetch through requestWithLimits; the caller reads the body. Signature-compatible with global fetch for string URLs.
-    `minRetryDelayMs` is the source's pacing gap, so a retry keeps it. */
-export function fetchWithLimits(url: string, init: RequestInit = {}, minRetryDelayMs = 0): Promise<Response> {
-  return requestWithLimits(url, init, async (res) => res, minRetryDelayMs);
+/** fetch through requestWithLimits; the caller reads the body. Signature-compatible with global fetch for string URLs. */
+export function fetchWithLimits(url: string, init: RequestInit = {}): Promise<Response> {
+  return requestWithLimits(url, init, async (res) => res, 0);
 }
 
 /** Fetches and parses JSON through requestWithLimits, so a body that times out is retried like the request. */

@@ -2,7 +2,7 @@ import { connection } from "next/server";
 import { getHealth } from "@/data/health";
 
 /** For uptime monitors: 200 when the database is readable, no core ingest job is overdue and the flow and live data are
-    fresh; 503 otherwise. Optional jobs (news, developers, releases, Dune) are reported but never fail it. Never cached. */
+    fresh; 503 otherwise. Optional jobs (news, developers, releases, Dune, the Explorer API) are reported but never fail it. Never cached. */
 export async function GET() {
   await connection();
   const health = getHealth();

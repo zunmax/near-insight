@@ -4,7 +4,7 @@ import { HSP029 } from "@/config/protocol";
 import { HOUSE_OF_STAKE_CONTRACT } from "@/config/sources";
 import { getEpochSupply } from "@/data/epochs";
 import { getProposal } from "@/data/governance";
-import { getIntentsReach } from "@/data/intents-flows";
+import { getIntentsReach, getReferralFeesDaily, getReferralWindow } from "@/data/intents-flows";
 import { getNearAndPeers, getNearMarketCapHistory, getSupplyGrowth1y, getSupplyGrowthThrough } from "@/data/market";
 import { getLatestValidators, getNetworkState, getProtocolVersions } from "@/data/network";
 import { getNearPrices, getSeries } from "@/data/series";
@@ -49,6 +49,8 @@ export async function loadThesisInputs() {
     confidentialVolume,
     tvl,
     confidentialTvl,
+    referrals,
+    referralFees,
   ] = await Promise.all([
     getNearAndPeers(),
     getSupplyGrowth1y(),
@@ -84,6 +86,8 @@ export async function loadThesisInputs() {
     getSeries(SERIES.intentsConfidentialVolumeUsd),
     getSeries(SERIES.intentsTvlUsd),
     getSeries(SERIES.intentsConfidentialTvlUsd),
+    getReferralWindow(30),
+    getReferralFeesDaily(),
   ]);
   return {
     market,
@@ -120,5 +124,7 @@ export async function loadThesisInputs() {
     confidentialVolume,
     tvl,
     confidentialTvl,
+    referrals,
+    referralFees,
   };
 }

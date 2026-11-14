@@ -1,4 +1,4 @@
-/** Thesis section 7: NEAR's circulating supply growth against larger coins, and its FDV ÷ market cap. */
+/** The peers section: NEAR's circulating supply growth against larger coins, and its FDV ÷ market cap. */
 import { COINGECKO, COINGECKO_MARKETS, daysTo, EPOCH_HEADERS, NEARBLOCKS_V1, NEARBLOCKS_V3, reading, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
 import { section } from "@/app/api/thesis/markdown/section";
 import { SOURCES } from "@/config/sources";
@@ -11,7 +11,6 @@ export function peersSection(input: ThesisDocumentInput): string {
   const lastDay = daysTo(365, p?.through ?? null);
   const digits = coins ? peerDigits(coins) : 1;
   return section(
-    7,
     "peers",
     input,
     [

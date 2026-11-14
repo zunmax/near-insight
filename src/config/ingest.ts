@@ -10,6 +10,8 @@ export const INGEST_SCHEDULE_MS = {
   /** The NEAR team's Dune dashboard refreshes about once a day at no fixed hour; a run that finds no new result makes one
       call for the dashboard and one per query. */
   dune: 120 * MINUTE,
+  /** A run with no unread day makes no call; one with unread days starts them until PAGED_RUN_BUDGET_MS and finishes the one it is reading. */
+  intentsExplorer: 10 * MINUTE,
   markets: 10 * MINUTE,
   network: 10 * MINUTE,
   validators: 30 * MINUTE,
@@ -27,9 +29,9 @@ export const INGEST_SCHEDULE_MS = {
   chaincatcherNews: 5 * MINUTE,
 } as const;
 
-/** Jobs health reports but that never fail it: no thesis number depends on their data (news, developer counts, releases),
-    or it keeps the last stored data and falls back to DefiLlama for Intents volume and fees (Dune). */
-export const OPTIONAL_JOBS = ["cryptopanicNews", "chaincatcherNews", "developers", "releases", "dune"] as const satisfies ReadonlyArray<
+/** Jobs health reports but that never fail it: no thesis number depends on their data (news, developer counts, releases), the thesis
+    shows "—" for it without them (swaps by referral), or the job keeps its last data and DefiLlama fills Intents volume and fees (Dune). */
+export const OPTIONAL_JOBS = ["cryptopanicNews", "chaincatcherNews", "developers", "releases", "dune", "intentsExplorer"] as const satisfies ReadonlyArray<
   keyof typeof INGEST_SCHEDULE_MS
 >;
 
@@ -47,8 +49,8 @@ export const LIVE_STALE_MS = 5 * MINUTE;
 export const FAILED_JOB_RETRY_MS = 10 * MINUTE;
 
 /** The worker exits when no job has finished for this long (a hang), so Docker restarts it; health (src/ingest/health.ts)
-    fails when no job has succeeded for this long. Every run stops well before it: the Dune helper at
-    SOURCES.dune.runTimeoutMs, epochs at EPOCHS_RUN_BUDGET_MS, paged jobs at PAGED_RUN_BUDGET_MS. */
+    fails when no job has succeeded for this long. Every run stops well before it: the Dune helper at SOURCES.dune.runTimeoutMs,
+    epochs at EPOCHS_RUN_BUDGET_MS, paged jobs at PAGED_RUN_BUDGET_MS (the Explorer API job after the day it is reading). */
 export const WORKER_STALL_MS = 15 * MINUTE;
 
 /** How often an ingest process touches its lock file; a lock untouched for three of these belongs to a process that is gone. */
@@ -60,6 +62,11 @@ export const EPOCH_HISTORY_START = "2025-10-01";
 /** First UTC day of the BTC, ETH and NEAR price history the lead-lag test reads: before NEAR Intents volume began (2024-12-10). */
 export const COIN_PRICE_HISTORY_START = "2024-11-01";
 
+/** Explorer API days: the job reads a UTC day once `lagDays` have passed since it began, so swaps created late in it have
+    settled, and its history starts with the `days` days ending on the newest such day: one 30-day window, and 5 days more so
+    the fee check's window, which ends on the last day of Intents fees (a day or two earlier), is covered too. */
+export const INTENTS_EXPLORER_DAYS = { days: 35, lagDays: 2 } as const;
+
 /** Days a run of the coin price job reads back from the newest stored day, to pick up corrected points. */
 export const COIN_PRICE_REFRESH_DAYS = 7;
 
@@ -68,7 +75,8 @@ export const COIN_PRICE_REFRESH_DAYS = 7;
 export const EPOCHS_RUN_BUDGET_MS = 8 * MINUTE;
 
 /** About how long `npm run ingest` takes on an empty database (measured 2026-11-12): with the committed snapshot's epochs copied
-    in, and without them at the default archival rate (26 epochs a minute). The README's `npm run rebuild` times add its later steps. */
+    in, and without them at the default archival rate (26 epochs a minute). With an Explorer API key, its first 35 days come on
+    top. The README's `npm run rebuild` times add its later steps. */
 export const FRESH_INGEST_MINUTES = { withSnapshot: 5, withoutSnapshot: 55 } as const;
 
 /** Longest a job that makes one paced call per coin or page keeps calling before it saves what it has (peer supply, news

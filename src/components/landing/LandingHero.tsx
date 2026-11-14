@@ -8,7 +8,7 @@ export function LandingHero() {
   return (
     <section aria-labelledby="landing-title" className="landing-hero">
       <h1 id="landing-title" className="sr-only">
-        NEAR Insights, a live thesis for NEAR
+        NEAR Insights, a live investment thesis for NEAR
       </h1>
       <HideOnError>
         <Suspense fallback={<div className="odometer-placeholder" />}>

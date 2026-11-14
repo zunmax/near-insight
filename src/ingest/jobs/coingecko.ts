@@ -47,7 +47,7 @@ export const nearPriceJob: Job = {
   },
 };
 
-/** Circulating-supply history of NEAR and every coin ranked above it, one paced CoinGecko call per coin. Each coin is saved
+/** Circulating-supply history of NEAR and every coin ranked above it, one paced CoinGecko call per coin, NEAR first. Each coin is saved
     as it arrives and a coin already stored today is skipped, so a run that fails or reaches PAGED_RUN_BUDGET_MS
     leaves the coins it read stored, and the retry reads only the rest. */
 export const peerSupplyJob: Job = {
@@ -60,7 +60,7 @@ export const peerSupplyJob: Job = {
       .prepare(
         `SELECT c.coin_id FROM coins_latest c
          WHERE c.rank <= ? AND COALESCE((SELECT MAX(day) FROM coin_supply_daily s WHERE s.coin_id = c.coin_id), '') < ?
-         ORDER BY c.rank`,
+         ORDER BY c.coin_id <> 'near', c.rank`,
       )
       .all(Number(near.rank), today())
       .map((r) => String(r.coin_id));

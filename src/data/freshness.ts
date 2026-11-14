@@ -13,6 +13,7 @@ type SourceFreshness = { source: string; everyMs: number; through: string | null
 const NEWEST: Record<SourceKey, { job: keyof typeof INGEST_SCHEDULE_MS; sql: string }> = {
   coingecko: { job: "markets", sql: "SELECT MAX(day) FROM coins_daily" },
   dune: { job: "dune", sql: `SELECT MAX(day) FROM daily_series WHERE series = '${SERIES.duneIntentsVolumeUsd}'` },
+  intentsExplorer: { job: "intentsExplorer", sql: "SELECT MAX(day) FROM intents_referral_daily" },
   defillama: { job: "defillama", sql: `SELECT MAX(day) FROM daily_series WHERE series = '${SERIES.intentsBuybacksUsd}'` },
   nearRpc: { job: "network", sql: "SELECT fetched_at FROM network_latest" },
   nearArchive: { job: "epochs", sql: "SELECT MAX(end_time) FROM epoch_supply" },

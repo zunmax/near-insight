@@ -29,7 +29,7 @@ async function getNewsPage(page: number): Promise<NewsPage> {
   return readNews("", page);
 }
 
-/** Returns an empty result before the worker has stored any news. */
+/** One page of stories and the count of all matches, read uncached; empty before the database exists. */
 function readNews(query: string, page: number): NewsPage {
   const db = getReader();
   if (!db) return { items: [], total: 0 };

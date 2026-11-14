@@ -1,9 +1,10 @@
-/** Writes THESIS.md from GET /api/thesis on a running dashboard (SITE_URL). `node scripts/thesis.ts` rewrites it from the
-    server's database; with `--check` it writes nothing and exits with code 1 when it differs from what the server renders. */
+/** Writes THESIS.md, and THESIS.pdf from it (scripts/thesis-pdf.ts), from GET /api/thesis on a running dashboard (SITE_URL). With
+    `--check` it writes nothing and exits with code 1 when THESIS.md differs from what the server renders. */
 import { readFile, writeFile } from "node:fs/promises";
 import { SITE } from "../src/config/site.ts";
 import { HTTP_LIMITS } from "../src/config/sources.ts";
 import { errorMessage } from "../src/lib/validate.ts";
+import { writeThesisPdf } from "./thesis-pdf.ts";
 
 const THESIS_FILE = new URL("../THESIS.md", import.meta.url);
 
@@ -31,6 +32,8 @@ async function main() {
 
   await writeFile(THESIS_FILE, thesis);
   console.log(`Wrote THESIS.md from ${SITE.url}.`);
+  writeThesisPdf(thesis);
+  console.log("Wrote THESIS.pdf from THESIS.md.");
 }
 
 try {

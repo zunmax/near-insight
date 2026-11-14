@@ -1,11 +1,11 @@
 import { io } from "next/cache";
-import { PriceGrowthPicker, PriceGrowthPickerSkeleton, type PriceGrowth } from "@/components/valuation/PriceGrowthPicker";
 import { HowCalculated, HowCalculatedSkeleton } from "@/components/ui/HowCalculated";
 import { KpiCard, KpiCardSkeleton } from "@/components/ui/KpiCard";
 import { NoBreakTokens } from "@/components/ui/NoBreakTokens";
 import { NoData } from "@/components/ui/NoData";
 import { Panel } from "@/components/ui/Panel";
 import { PanelSkeleton, SkeletonWords } from "@/components/ui/PanelSkeleton";
+import { PriceGrowthPicker, PriceGrowthPickerSkeleton, type PriceGrowth } from "@/components/valuation/PriceGrowthPicker";
 import { REQUIREMENT_HORIZON_MONTHS, REQUIREMENT_PRICE_MULTIPLES } from "@/config/projections";
 import { getThesisMetrics } from "@/data/thesis-metrics";
 import { digitsApart, formatChange, formatChangeFromZero, formatMonths, formatMultiple, formatPercent, formatUsd } from "@/lib/format";
@@ -26,8 +26,8 @@ const HEADING_CLASS = "mt-4 mb-2 text-[13.5px] font-bold";
 export async function ValuationAnchorPanel() {
   await io();
   const metrics = await getThesisMetrics();
-  const { valuation: v, seed, breakEven, dataThrough } = metrics;
-  if (!v || !seed) return <NoData title={TITLE} />;
+  const { valuation, seed, breakEven, dataThrough } = metrics;
+  if (!valuation || !seed) return <NoData title={TITLE} />;
   const today = breakEven?.d30 ?? null;
   const window = windowName(metrics, "30 days");
   const prices: PriceGrowth[] = REQUIREMENT_PRICE_MULTIPLES.map((multiple) => ({
@@ -63,16 +63,16 @@ export async function ValuationAnchorPanel() {
     >
       <div className="@container flex min-w-0 flex-col">
         <h3 className="mb-2.5 text-[13.5px] font-medium">
-          Monthly growth of NEAR bought needed for burn + buybacks to match monthly issuance by the end of each period shown, with burn held at the pace of the{" "}
+          Monthly growth of NEAR bought needed for burn + buybacks to match monthly issuance by the end of each period, with burn held at the pace of the{" "}
           <NoBreakTokens text={window} />
         </h3>
         <PriceGrowthPicker prices={prices} initial={REQUIREMENT_PRICE_MULTIPLES.indexOf(1)} />
         <h3 className={HEADING_CLASS}>Today</h3>
         <dl className={VALUATION_CLASS}>
-          <KpiCard icon="bars" label="Market cap" value={formatUsd(v.marketCapUsd)} />
-          <KpiCard icon="flame" label="Burn + buybacks a year" value={formatUsd(v.tokenRevenueRunRateUsd)} detail="Run rate, at today's price" />
-          <KpiCard icon="divide" label="Market cap multiple" value={v.multiple === null ? "—" : formatMultiple(v.multiple)} detail="÷ burn + buybacks a year" />
-          <KpiCard icon="percent" label="Burn + buybacks yield" value={formatPercent(v.holderYield, 2)} detail={`Against ${formatMaxIssuance(seed.maxInflationRate)} max issuance`} />
+          <KpiCard icon="bars" label="Market cap" value={formatUsd(valuation.marketCapUsd)} />
+          <KpiCard icon="flame" label="Burn + buybacks a year" value={formatUsd(valuation.tokenRevenueRunRateUsd)} detail="Run rate, at today's price" />
+          <KpiCard icon="divide" label="Market cap multiple" value={valuation.multiple === null ? "—" : formatMultiple(valuation.multiple)} detail="÷ burn + buybacks a year" />
+          <KpiCard icon="percent" label="Burn + buybacks yield" value={formatPercent(valuation.holderYield, 2)} detail={`Against ${formatMaxIssuance(seed.maxInflationRate)} max issuance`} />
         </dl>
         {today ? (
           <>
@@ -118,7 +118,7 @@ export function ValuationAnchorPanelSkeleton() {
     <PanelSkeleton title={TITLE.length} tabs="Values">
       <div className="@container flex min-w-0 flex-col">
         <h3 className="mb-2.5 text-[13.5px] font-medium">
-          <SkeletonWords chars={162} />
+          <SkeletonWords chars={156} />
         </h3>
         <PriceGrowthPickerSkeleton prices={REQUIREMENT_PRICE_MULTIPLES.length} labels={REQUIREMENT_HORIZON_MONTHS.map((months) => formatMonths(months).length)} />
         <h3 className={HEADING_CLASS}>

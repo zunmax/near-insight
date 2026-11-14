@@ -4,9 +4,9 @@ import { asArray, asRecord, readNumber, readRatio, readString, readYocto, ShapeE
 import { EPOCH_LENGTH } from "../../config/protocol.ts";
 import { rateGate, rpcCall, RpcError, UpstreamError } from "../http.ts";
 
-/** JSON-RPC call to a NEAR node, with the optional FastNEAR key. */
+/** JSON-RPC call to a NEAR node; the optional FastNEAR key goes only to the mainnet RPC it is set for. */
 const call = (method: string, params: unknown, url: string = SOURCES.nearRpc.baseUrl) =>
-  rpcCall(url, method, params, bearer(SOURCES.nearRpc.apiKey));
+  rpcCall(url, method, params, url === SOURCES.nearRpc.baseUrl ? bearer(SOURCES.nearRpc.apiKey) : {});
 
 const archiveGate = rateGate(SOURCES.nearArchive.ratePerMinute);
 

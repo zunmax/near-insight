@@ -1,9 +1,21 @@
 /** The frame every thesis section shares: heading, claim, bull and bear case, breaking point, and the re-run line. */
 import { day, daysTo, evidenceTable, sectionHeading, show, table, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
-import { PILLARS, SECTIONS, type SectionId } from "@/content/thesis";
+import { SECTION_ORDER, sectionName, SECTIONS, type SectionId } from "@/content/thesis";
 import { SECTION_FINDINGS } from "@/lib/thesis/findings";
 import { SECTION_STATS } from "@/lib/thesis/stats";
 import { SECTION_TRIGGERS, TRIGGER_STATUS_LABEL } from "@/lib/thesis/triggers";
+
+/** Sections 1 and 2 are the introduction and the data, so the thesis sections start at 3. */
+const FIRST_THESIS_SECTION = 3;
+
+/** A thesis section's number in THESIS.md. */
+export const sectionNumber = (id: SectionId) => FIRST_THESIS_SECTION + SECTION_ORDER.indexOf(id);
+
+/** The number of the first section after the thesis sections. */
+export const AFTER_THESIS_SECTIONS = FIRST_THESIS_SECTION + SECTION_ORDER.length;
+
+/** A thesis section's numbered title, as its heading and the breaking-point table print it: "3. Cross-chain trading runs through NEAR". */
+export const thesisSectionTitle = (id: SectionId) => `${sectionNumber(id)}. ${sectionName(id)}`;
 
 /** The emoji that frames each section's heading in THESIS.md. */
 const SECTION_EMOJI: Record<SectionId, string> = {
@@ -15,12 +27,6 @@ const SECTION_EMOJI: Record<SectionId, string> = {
   network: "🛡️",
   peers: "🔓",
 };
-
-/** Section heading as the dashboard titles it: pillars by number, the others with their label first. */
-function heading(n: number, id: SectionId): string {
-  const s = SECTIONS[id];
-  return sectionHeading(PILLARS.has(id) ? `${n}. ${s.title}` : `${n}. ${s.eyebrow}: ${s.title}`, SECTION_EMOJI[id]);
-}
 
 /** The days behind the numbers in each section's bull and bear case tables (`SECTION_STATS[id].against`); a day not known
     yet leaves its clause out rather than printing a dash. */
@@ -45,7 +51,7 @@ function statsDates(id: SectionId, input: ThesisDocumentInput): string {
 }
 
 /** One thesis section: claim, bull case, bear case, its live numbers on the side each supports, the breaking point and whether it has been reached, and how to re-run it. */
-export function section(n: number, id: SectionId, input: ThesisDocumentInput, evidence: string[][], notes: string[], rerun: string): string {
+export function section(id: SectionId, input: ThesisDocumentInput, evidence: string[][], notes: string[], rerun: string): string {
   const s = SECTIONS[id];
   const evidenceStats = SECTION_STATS[id].against(input.metrics);
   const finding = SECTION_FINDINGS[id](input.metrics);
@@ -61,7 +67,7 @@ export function section(n: number, id: SectionId, input: ThesisDocumentInput, ev
       ].join("\n\n")
     : "The database does not cover these numbers yet.";
   return [
-    heading(n, id),
+    sectionHeading(thesisSectionTitle(id), SECTION_EMOJI[id]),
     `**Claim:** ${s.claim}`,
     /** The evidence table holds numbers for and against, so it comes before both cases rather than under the bull case. */
     evidenceTable(evidence),

@@ -28,7 +28,7 @@ const STABLECOIN_SYMBOLS = [
 ] as const;
 
 /** Days on which DefiLlama's NEAR Intents volume counted only public swaps, leaving out confidential ones; it matches Dune
-    on every other day (checked 2026-11-11: 3% to 13% below Dune each month of this span). */
+    on every other day (checked 2026-11-14: 2% to 13% below Dune each month of this span). */
 export const DEFILLAMA_PUBLIC_ONLY = { from: "2026-04-01", through: "2026-08-31", label: "April to August 2026" } as const;
 
 /** STABLECOIN_SYMBOLS as a SQL list for `UPPER(symbol) IN (...)`. */
@@ -75,3 +75,9 @@ export const INTENTS_CHAIN_NAMES: Record<string, string> = {
 
 /** Chains shown by name in the chain mix; the rest are summed as "Other chains". */
 export const INTENTS_CHAIN_ROWS = 8;
+
+/** Referral stored for 1Click swaps that carry none (intents_referral_daily). */
+export const NO_REFERRAL = "(none)";
+
+/** Referrals (channels) shown by name in the fee panels on Revenue; the rest are summed. */
+export const REFERRAL_ROWS = 8;

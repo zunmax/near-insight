@@ -4,6 +4,14 @@
 
 # NEAR Long-Term Investment Thesis
 
+**A live test of whether NEAR Intents fees can absorb NEAR's new supply.**
+
+As of 2026-11-14 · flow data through 2026-11-12
+
+| NEAR Intents volume, 30 days | NEAR bought with its fees, 30 days | New NEAR burned or bought, 30 days | Monthly growth of NEAR bought | Monthly growth needed |
+| --- | --- | --- | --- | --- |
+| $3.77B | 422.8K NEAR | 16.7% | 20.9% | 4.6% |
+
 *For research and education only. This is not investment, financial or legal advice.*
 
 <img src="assets/thesis-banner.svg" width="100%" alt="NEAR Long-Term Investment Thesis: NEAR Intents turns cross-chain trading into buying of NEAR on the open market." />
@@ -14,274 +22,284 @@
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">⚖️ Verdict ⚖️</h2>
+<h2 align="center">📄 Abstract 📄</h2>
 
-**The latest data supports the mechanism but not yet the outcome: trading through NEAR Intents buys NEAR, and the buying is growing faster than needed at today's price, but the NEAR burned plus bought still equals only part of the NEAR minted. The breaking point of *No supply overhang left to unlock* is broken.**
+Since 2026-02-23, the NEAR Intents app and the 1Click API have spent the fees they keep on buying NEAR on the open market. This paper tests whether that buying, plus the NEAR burned, can grow to match the NEAR minted. It tests 3 pillars, the valuation and 3 supporting claims on data through 2026-11-12, and each claim names in advance the result that would break it. The latest data supports the mechanism but not yet the outcome: trading through NEAR Intents buys NEAR, and the buying is growing faster than needed at today's price. The NEAR burned plus bought still equals only part of the NEAR minted. The breaking point of **No supply overhang left to unlock** is broken: NEAR's circulating supply grew 2.5% over 12 months, above the 1.6% median of 16 larger coins. Every number comes from free sources and is rebuilt with `npm run rebuild`; section 11 checks every breaking point.
+
+**Key findings**
 
 - Of the 4 core breaking points (the pillars and valuation), 4 hold. Of the 3 supporting breaking points (technology, network and peers), 2 hold and 1 is broken.
-- NEAR Intents volume over the last 30 days was $3.73B, up 60% from $2.33B in the same 30 days a year earlier.
-- NEAR Intents fees bought 403.8K NEAR over the last 30 days. NEAR bought over the last 90 days was 1.48M NEAR, up 71% from 862.95K NEAR in the 90 days before, a pace of 19.9% growth a month (95% range +9.6% to +31.3% a month).
-- On chain, the three fee wallets gained 406.6K NEAR over the last 30 days, against 403.8K NEAR counted as bought over the same days. The two differ by 0.7%, so the NEAR bought is still held.
-- Burn plus buybacks equaled 16.1% of the NEAR minted over the last 30 days; to match all of it, they would need to be 6.22× as large. At today's price, NEAR's market cap is 250× the yearly value of NEAR burned and bought (the same 30 days, annualized).
-- For burn plus buybacks to match monthly issuance by the end of 3 years, with the burn held at its current rate, NEAR bought needs to grow 5.1% a month, and it is growing faster than needed at today's price. That pace compares only the last 90 days with the 90 before, and buybacks began on 2026-02-23.
-- NEAR handled 19.74M transactions over the 30 days to 2026-11-10, down 85% from 132.84M in the same 30 days a year earlier; Intents users need not hold NEAR, so NEAR Intents creates demand for the token mainly through the fees that buy it, not through activity on NEAR itself.
+- NEAR Intents volume over the last 30 days was $3.77B, up 48% from $2.55B in the same 30 days a year earlier.
+- NEAR Intents fees bought 422.8K NEAR over the last 30 days. NEAR bought over the last 90 days was 1.51M NEAR, up 75% from 860.21K NEAR in the 90 days before, a pace of 20.9% growth a month (95% range +10.7% to +31.8% a month).
+- On chain, the three fee wallets gained 426.7K NEAR over the last 30 days, against 422.8K NEAR counted as bought over the same days. The two differ by 0.9%, so the NEAR bought is still held.
+- Burn plus buybacks equaled 16.7% of the NEAR minted over the last 30 days; to match all of it, they would need to be 6.00× as large, with NEAR bought counted at the prices paid, not today's. At today's price, NEAR's market cap is 241× the yearly value of NEAR burned and bought (the same 30 days, annualized).
+- NEAR bought needs to grow 4.6% a month for burn plus buybacks to match monthly issuance by the end of 3 years, with burn held at its current rate. It is growing faster than needed at today's price. That pace compares only the last 90 days with the 90 before, and buybacks began on 2026-02-23.
+- NEAR handled 20.34M transactions over the 30 days to 2026-11-13, down 85% from 131.36M in the same 30 days a year earlier. Intents users need not hold NEAR, so NEAR Intents creates demand for the token mainly through the fees that buy it, not through activity on NEAR itself.
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">💡 The thesis 💡</h2>
+<h2 align="center">💡 1. Introduction 💡</h2>
 
-**NEAR Intents turns cross-chain trading into buying of NEAR on the open market. If the NEAR it buys plus the NEAR burned grows to match the NEAR the protocol issues, all newly issued NEAR is either burned or held off the market.**
-
-The case rests on 3 pillars, followed by the valuation and 3 supporting theses:
-
-1. **Cross-chain trading runs through NEAR.**
-2. **That trading buys NEAR.**
-3. **New supply is growing more slowly.**
-4. **Valuation:** What today's price requires of buybacks.
-5. **Technology:** The chain can carry the usage.
-6. **Network:** No single party controls the network.
-7. **Peers:** No supply overhang left to unlock.
+**NEAR Intents turns cross-chain trading into buying NEAR on the open market. If NEAR bought plus NEAR burned grows to match the NEAR minted, all new NEAR is either burned or held off the market.**
 
 How it works:
 
-1. People swap tokens across chains through NEAR Intents, and they never need to hold NEAR to do it.
-2. Since February 2026, the NEAR Intents app and the 1Click API have spent the fees they keep on buying NEAR on the open market, and the NEAR bought is not burned. Gas fees on NEAR are burned, all of them from protocol 87 on.
-3. New supply grows more slowly: max issuance was halved from 5% to 2.5% a year in October 2025, and HSP-029, a House of Stake proposal, would ramp max issuance down to 1.6% over 2 years, starting 90 days after its vote's timelock ends; it changes issuance only once it is approved and validators adopt it in a protocol upgrade.
+1. People swap tokens across chains through NEAR Intents without ever holding NEAR.
+2. Since February 2026, the NEAR Intents app and the 1Click API have spent the fees they keep to buy NEAR on the open market. The NEAR bought stays in fee wallets and is not burned. NEAR burns its gas fees, all of them from protocol 87 on.
+3. New supply grows more slowly: max issuance was halved from 5% to 2.5% a year in October 2025. HSP-029, a House of Stake proposal, would lower max issuance gradually to 1.6% over 2 years, starting 90 days after its vote's timelock ends. It changes issuance only after its vote passes, its timelock ends without a veto and validators adopt it in a protocol upgrade.
 
-Each section below states the claim and its numbers, then the bull case (the evidence for it) and the bear case (the evidence against it), then the breaking point (the result that would change the view), whether the data shows it, and how to re-run the numbers. The dashboard shows the same sections with live data.
+The thesis splits into claims that can each fail: 3 pillars, the valuation and 3 supporting claims. Each section states its claim and evidence, then the bull case (the evidence for it) and the bear case (the evidence against it). It ends with its breaking point, the result that would change the view, and whether the latest data shows it.
+
+- **Pillar 1** (section 3): Cross-chain trading runs through NEAR.
+- **Pillar 2** (section 4): That trading buys NEAR.
+- **Pillar 3** (section 5): New supply is growing more slowly.
+- **Valuation** (section 6): What today's price requires of buybacks.
+- **Technology** (section 7): The chain can carry the usage.
+- **Network** (section 8): No single party controls the network.
+- **Peers** (section 9): No supply overhang left to unlock.
+
+Section 10 tests whether Intents volume leads NEAR's price or usage. Section 11 checks every breaking point against the latest data, section 12 lists what the free sources cannot measure, and section 13 shows how to rebuild every number. The live dashboard shows the same sections with current data.
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🗂️ About the data 🗂️</h2>
+<h2 align="center">🗂️ 2. Data and method 🗂️</h2>
 
-- **Snapshot:** 2026-11-11, generated by `npm run thesis` from the dashboard's database (`GET /api/thesis`). The dashboard updates these numbers as the worker stores new data; this document is a dated copy.
-- **Data through:** flow windows end on **2026-11-09**, 2 days before the snapshot; windows that use Intents gross fees (the fee chain, the fee rate and the share of fees that buys NEAR) on 2026-11-08; NearBlocks figures (transactions and accounts) on 2026-11-10. The first item under Formulas gives the rule behind each day.
-- **NEAR Intents:** volume (public and confidential), swaps, fees, volume by chain and token, fees by channel and TVL come from the NEAR team's Dune dashboard (`https://dune.com/near/near-intents`), refreshed about once a day. Volume and fees use Dune's value on each day it has one and DefiLlama's otherwise. From April to August 2026, DefiLlama counted only public swaps, leaving out confidential ones, so it is not the primary source. Revenue and buybacks come from DefiLlama.
-- **Market:** NEAR at **$3.62**, rank **#21**, market cap **$4.75B** (CoinGecko, reading of 2026-11-11).
+- **Snapshot:** 2026-11-14. `npm run thesis` writes this document from the dashboard's database (`GET /api/thesis`). The dashboard updates as the worker stores new data; this document is a dated copy.
+- **Data through:** flow windows end on **2026-11-12**, 2 days before the snapshot. Windows built on Intents gross fees (the fee chain, the fee rate and the share of fees that buys NEAR) end on 2026-11-11, and NearBlocks figures (transactions and accounts) on 2026-11-13. The first item of Appendix A gives the rule behind each day.
+- **NEAR Intents:** volume (public and confidential), swaps, fees, volume by chain and token, fees by channel and TVL come from the NEAR team's Dune dashboard (`https://dune.com/near/near-intents`), which refreshes about once a day. On a day Dune does not have, volume and fees come from DefiLlama. DefiLlama is not the primary source because from April to August 2026 it counted only public swaps. Revenue and buybacks come from DefiLlama.
+- **Market:** NEAR at **$3.09**, rank **#23**, market cap **$4.05B** (CoinGecko, reading of 2026-11-14).
 - **Network:** mainnet runs **protocol 88**; testnet runs 88.
-- **Burn and issuance** are measured from block headers (a NEAR archival RPC node, FastNEAR's by default), one epoch at a time, from 2025-10-01.
-- **Units:** issuance is paid in NEAR, so buybacks are measured in NEAR: each day's dollar amount is converted at that day's NEAR price. Burn is read in NEAR from block headers.
-- **Windows:** Intents buybacks began on 2026-02-23. Growth comparisons use 90-day windows; year-on-year comparisons use 30 days against the same 30 days a year earlier.
-- **Missing values:** "—" means the database does not cover that window yet. No value is estimated in its place.
+- **Burn and issuance:** measured epoch by epoch from block headers on a NEAR archival RPC node (FastNEAR's by default), from 2025-10-01.
+- **Units:** issuance is paid in NEAR, so buybacks are measured in NEAR too: each day's dollar amount is converted at that day's NEAR price. Burn is read in NEAR from block headers.
+- **Windows:** Intents buybacks began on 2026-02-23. Growth compares the last 90 days with the 90 days before; year-on-year compares the last 30 days with the same 30 days a year earlier.
+- **Missing values:** "—" marks a window the database does not cover yet. Nothing is estimated in its place.
+- **Statuses:** each breaking point is **Holding** (not reached), **Broken** (reached), **Too close to call** (the measured range spans the limit) or **Not measured yet** (the data does not cover it).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🌐 1. Cross-chain trading runs through NEAR 🌐</h2>
+<h2 align="center">🌐 3. Cross-chain trading runs through NEAR 🌐</h2>
 
 **Claim:** NEAR Intents settles swaps across chains. Its users never need to hold NEAR, so they can come from any chain, not only from apps built on NEAR.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| NEAR Intents volume | $3.73B | 30 days to 2026-11-09 |
-| NEAR Intents volume, same 30 days a year earlier | $2.33B | 30 days to 2025-11-09 |
-| Change in NEAR Intents volume against the same 30 days a year earlier | +60% | 30 days to 2026-11-09 |
-| NEAR Intents volume | $33.83B | 365 days to 2026-11-09 |
-| Change in NEAR Intents volume, 90 days against the 90 days before | +73% | 90 days to 2026-11-09, against the 90 days before |
-| NEAR Intents swaps, public and confidential | 1.84M | 30 days to 2026-11-09 |
-| NEAR Intents swaps, same 30 days a year earlier | 2.45M | 30 days to 2025-11-09 |
-| Change in swaps against the same 30 days a year earlier | −25% | 30 days to 2026-11-09 |
-| Average swap (volume ÷ swaps) | $2.03K | 30 days to 2026-11-09 |
-| Average swap (volume ÷ swaps), same 30 days a year earlier | $951.45 | 30 days to 2025-11-09 |
-| Confidential swaps' share of volume | 56.3% | 30 days to 2026-11-09 |
-| Funds held in NEAR Intents (TVL) | $232.43M | 2026-11-09 |
-| NEAR Intents share of all DEX volume on NEAR | 92.6% | 30 days to 2026-11-09 |
-| NEAR Intents share of all DEX volume on NEAR; the window overlaps April to August 2026, when DefiLlama counted only public swaps | 83.7% | 180 days to 2026-11-09 |
-| intents.near share of all NEAR transactions | 16.2% | 30 days to 2026-11-10 |
+| NEAR Intents volume | $3.77B | 30 days to 2026-11-12 |
+| NEAR Intents volume, same 30 days a year earlier | $2.55B | 30 days to 2025-11-12 |
+| Change in NEAR Intents volume against the same 30 days a year earlier | +48% | 30 days to 2026-11-12 |
+| NEAR Intents volume | $33.89B | 365 days to 2026-11-12 |
+| Change in NEAR Intents volume, 90 days against the 90 days before | +73% | 90 days to 2026-11-12, against the 90 days before |
+| NEAR Intents swaps, public and confidential | 1.83M | 30 days to 2026-11-11 |
+| NEAR Intents swaps, same 30 days a year earlier | 2.18M | 30 days to 2025-11-11 |
+| Change in swaps against the same 30 days a year earlier | −16% | 30 days to 2026-11-11 |
+| Average swap (volume ÷ swaps) | $2.04K | 30 days to 2026-11-11 |
+| Average swap (volume ÷ swaps), same 30 days a year earlier | $1.11K | 30 days to 2025-11-11 |
+| Confidential swaps' share of volume | 60.2% | 30 days to 2026-11-11 |
+| Funds held in NEAR Intents (TVL) | $228.31M | 2026-11-11 |
+| NEAR Intents share of all DEX volume on NEAR | 93.2% | 30 days to 2026-11-12 |
+| NEAR Intents share of all DEX volume on NEAR; the window overlaps April to August 2026, when DefiLlama counted only public swaps | 83.9% | 180 days to 2026-11-12 |
+| intents.near share of all NEAR transactions | 16.7% | 30 days to 2026-11-13 |
 
-**Bull case:** On 2026-11-09, NEAR Intents volume was counted under 91 token symbols on 34 chains. NEAR Intents volume was $3.73B over the last 30 days, up 60% from $2.33B in the same 30 days a year earlier. The NEAR Intents contract, intents.near, accounted for 16.2% of all NEAR transactions over the 30 days to 2026-11-10, and NEAR Intents made up 92.6% of all DEX volume on NEAR over the last 30 days.
+**Bull case:** NEAR Intents volume on 2026-11-11 spanned 85 token symbols on 35 chains. NEAR Intents volume was $3.77B over the last 30 days, up 48% from $2.55B in the same 30 days a year earlier. The NEAR Intents contract, intents.near, accounted for 16.7% of all NEAR transactions over the 30 days to 2026-11-13. NEAR Intents made up 93.2% of all DEX volume on NEAR over the last 30 days.
 
-**Bear case:** NEAR Intents settled 1.84M swaps over the last 30 days, down 25% from 2.45M in the same 30 days a year earlier. The average swap (volume ÷ swaps) was $2.03K, up 113% from $951.45 in the same 30 days a year earlier. NEAR handled 19.74M transactions over the 30 days to 2026-11-10, down 85% from 132.84M in the same 30 days a year earlier. New accounts over the same days totaled 287.9K, down 96% from 6.57M a year earlier, and a median of 54.12K accounts a day signed a transaction, down 80% from a median of 265.93K a year earlier. Activity on NEAR itself need not follow Intents volume. Because Intents users never need to hold NEAR, their trading creates demand for the token mainly through the fees that buy it.
+**Bear case:** NEAR Intents settled 1.83M swaps over the 30 days to 2026-11-11, down 16% from 2.18M in the same 30 days a year earlier. The average swap (volume ÷ swaps) was $2.04K, up 83% from $1.11K in the same 30 days a year earlier. NEAR handled 20.34M transactions over the 30 days to 2026-11-13, down 85% from 131.36M in the same 30 days a year earlier. New accounts over the same days totaled 283.95K, down 96% from 6.52M a year earlier. A median of 54.12K accounts a day signed a transaction over the same days, down 79% from a median of 262.53K a year earlier. Activity on NEAR itself need not follow Intents volume. Intents users never need to hold NEAR, so their trading creates demand for the token mainly through the fees that buy it.
 
 | Bear case | Value |
 | --- | --- |
-| Change in NEAR transactions, 30 days to 2026-11-10 vs the same 30 days a year earlier | −85% |
-| Change in new NEAR accounts, 30 days to 2026-11-10 vs the same 30 days a year earlier | −96% |
-| Change in median daily active accounts, 30 days to 2026-11-10 vs the same 30 days a year earlier | −80% |
+| Change in NEAR transactions, 30 days to 2026-11-13 vs the same 30 days a year earlier | −85% |
+| Change in new NEAR accounts, 30 days to 2026-11-13 vs the same 30 days a year earlier | −96% |
+| Change in median daily active accounts, 30 days to 2026-11-13 vs the same 30 days a year earlier | −79% |
 
-Chain activity: 30 days to 2026-11-10 against the same 30 days a year earlier.
+Chain activity: 30 days to 2026-11-13 against the same 30 days a year earlier.
 
-**Breaking point:** The thesis breaks if NEAR Intents volume over the last 30 days falls below its volume in the same 30 days a year earlier, or if its volume over the last 90 days falls below its volume in the 90 days before: cross-chain trading through NEAR would then be shrinking, not growing.
+**Breaking point:** The thesis breaks if NEAR Intents volume over the last 30 days falls below the same 30 days a year earlier, or volume over the last 90 days falls below the 90 days before. Either would mean cross-chain trading through NEAR is shrinking.
 
-**Status:** Holding. NEAR Intents volume was $3.73B over the 30 days to 2026-11-09, up 60% from $2.33B in the same 30 days a year earlier. NEAR Intents volume over the 90 days to 2026-11-09 was $12.37B, up 73% from $7.17B in the 90 days before. Trading through NEAR Intents grew both against a year earlier and over those 90 days.
+**Status:** Holding. NEAR Intents volume was $3.77B over the 30 days to 2026-11-12, up 48% from $2.55B in the same 30 days a year earlier. NEAR Intents volume over the 90 days to 2026-11-12 was $12.57B, up 73% from $7.25B in the 90 days before. Trading through NEAR Intents grew on both checks.
 
 **Re-run:** Dune: the NEAR team's dashboard `https://dune.com/near/near-intents`, queries 5179085 (volume, public and confidential), 4374089 (swaps), 5157565 (volume by chain), 5157527 (volume by token) and 7586891 (TVL), each at `https://dune.com/queries/{id}`; DefiLlama `GET https://api.llama.fi/summary/dexs/near-intents?excludeTotalDataChartBreakdown=true` (Intents volume on days Dune does not have, and for the DEX share) and `GET https://api.llama.fi/overview/dexs/near?excludeTotalDataChartBreakdown=true` (every DEX on NEAR); NearBlocks `GET https://api.nearblocks.io/v3/accounts/intents.near/stats/txns?limit=365`, `GET https://api.nearblocks.io/v3/txn-stats?limit=365` and `GET https://api.nearblocks.io/v1/charts` (active and new accounts, and transactions before v3's 365 days).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">💰 2. That trading buys NEAR 💰</h2>
+<h2 align="center">💰 4. That trading buys NEAR 💰</h2>
 
-**Claim:** Since 2026-02-23, the NEAR Intents app and the 1Click API have sent the fees they keep to their fee wallets and used them to buy NEAR on the open market. Their operators chose this; no protocol rule requires it. The NEAR bought stays in the three fee wallets and is not burned, so it remains in total supply. Gas fees on NEAR are burned, all of them from protocol 87 on. Burn removes NEAR from total supply; buying holds it off the market.
+**Claim:** Since 2026-02-23, the NEAR Intents app and the 1Click API have sent the fees they keep to their fee wallets and used them to buy NEAR on the open market. Their operators chose this; no protocol rule requires it. The NEAR bought stays in the three fee wallets and is not burned, so it still counts in total supply. NEAR burns its gas fees, all of them from protocol 87 on. Burning removes NEAR from total supply; buying holds it off the market.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| NEAR bought by NEAR Intents buybacks | 403.8K NEAR ($1.84M) | 30 days to 2026-11-09 |
-| NEAR bought | 1.48M NEAR | 90 days to 2026-11-09 |
-| NEAR bought, the 90 days before | 862.95K NEAR | 90 days ending 90 days before 2026-11-09 |
-| Monthly growth rate of NEAR bought | +19.9% (95% range +9.6% to +31.3%) | 90 days to 2026-11-09, against the 90 days before |
-| NEAR bought since buybacks began | 3.3M NEAR | 2026-02-23 to 2026-11-09 |
-| NEAR bought by month | 2026-02: 173K (from 2026-02-23), 2026-03: 447.4K, 2026-04: 193.9K, 2026-05: 333.3K, 2026-06: 282.7K, 2026-07: 266.8K, 2026-08: 412.2K, 2026-09: 595.1K, 2026-10: 449.5K, 2026-11: 113.6K (to 2026-11-09) | 2026-02-23 to 2026-11-09 |
-| NEAR Intents volume, gross fees, revenue and buybacks (USD) | $3.71B volume, $5.78M gross fees, $1.86M revenue, $1.86M buybacks | 30 days to 2026-11-08 |
-| Gross fees ÷ volume (fee rate) | 15.6 bps | 30 days to 2026-11-08 |
-| Buybacks ÷ volume (share of volume that buys NEAR) | 4.1 bps | 90 days to 2026-11-09 |
-| Buybacks ÷ volume (share of volume that buys NEAR), the 90 days before | 2.4 bps | 90 days ending 90 days before 2026-11-09 |
-| Buybacks ÷ gross fees (capture rate) | 32.1% | 30 days to 2026-11-08 |
-| Buybacks ÷ gross fees (capture rate) | 26.7% | 90 days to 2026-11-08 |
-| Buybacks ÷ gross fees (capture rate) | 21.3% | 2026-02-23 to 2026-11-08 |
-| NEAR burned ÷ gas fees in NEAR (measured burn share); all are burned since protocol 87 | 81.6% | 30 days to 2026-11-09 |
-| NEAR held in buybacks.multisignature.near | 2.2M NEAR | balance on 2026-11-11 |
-| NEAR held in fefundsadmin.sputnik-dao.near (NEAR Intents app) | 2M NEAR | balance on 2026-11-11 |
-| NEAR held in 1csfundsadmin.sputnik-dao.near (1Click API) | 270.9 NEAR | balance on 2026-11-11 |
-| NEAR held in the three fee wallets | 4.2M NEAR | balance on 2026-11-11 |
-| Change of the three wallets' combined balance | 406.6K NEAR | 30 days to 2026-11-09 |
-| NEAR bought as DefiLlama counts it, same 30 days | 403.8K NEAR | 30 days to 2026-11-09 |
-| Largest daily gap: NEAR bought since the window began less the wallets' gain since then | 2K NEAR | 30 days to 2026-11-09 |
+| NEAR bought by NEAR Intents buybacks | 422.8K NEAR ($1.84M) | 30 days to 2026-11-12 |
+| NEAR bought | 1.51M NEAR | 90 days to 2026-11-12 |
+| NEAR bought, the 90 days before | 860.21K NEAR | 90 days ending 90 days before 2026-11-12 |
+| Monthly growth rate of NEAR bought | +20.9% (95% range +10.7% to +31.8%) | 90 days to 2026-11-12, against the 90 days before |
+| NEAR bought since buybacks began | 3.3M NEAR | 2026-02-23 to 2026-11-12 |
+| NEAR bought by month | 2026-02: 173K (from 2026-02-23), 2026-03: 447.4K, 2026-04: 193.9K, 2026-05: 333.3K, 2026-06: 282.7K, 2026-07: 266.8K, 2026-08: 412.2K, 2026-09: 595.1K, 2026-10: 449.5K, 2026-11: 169.7K (to 2026-11-12) | 2026-02-23 to 2026-11-12 |
+| NEAR Intents volume, gross fees, revenue and buybacks (USD) | $3.73B volume, $5.99M gross fees, $1.8M revenue, $1.8M buybacks | 30 days to 2026-11-11 |
+| Gross fees ÷ volume (fee rate) | 16.1 bps | 30 days to 2026-11-11 |
+| Buybacks ÷ volume (share of volume that buys NEAR) | 4.1 bps | 90 days to 2026-11-12 |
+| Buybacks ÷ volume (share of volume that buys NEAR), the 90 days before | 2.4 bps | 90 days ending 90 days before 2026-11-12 |
+| Buybacks ÷ gross fees (capture rate) | 30.0% | 30 days to 2026-11-11 |
+| Buybacks ÷ gross fees (capture rate) | 26.6% | 90 days to 2026-11-11 |
+| Buybacks ÷ gross fees (capture rate) | 21.3% | 2026-02-23 to 2026-11-11 |
+| NEAR burned ÷ gas fees in NEAR (measured burn share); all are burned since protocol 87 | 84.9% | 30 days to 2026-11-12 |
+| NEAR held in buybacks.multisignature.near | 2.3M NEAR | balance on 2026-11-14 |
+| NEAR held in fefundsadmin.sputnik-dao.near (NEAR Intents app) | 2M NEAR | balance on 2026-11-14 |
+| NEAR held in 1csfundsadmin.sputnik-dao.near (1Click API) | 270.9 NEAR | balance on 2026-11-14 |
+| NEAR held in the three fee wallets | 4.3M NEAR | balance on 2026-11-14 |
+| Change of the three wallets' combined balance | 426.7K NEAR | 30 days to 2026-11-12 |
+| NEAR bought as DefiLlama counts it, same 30 days | 422.8K NEAR | 30 days to 2026-11-12 |
+| Largest daily gap: NEAR bought since the window began less the wallets' gain since then | 2.2K NEAR | 30 days to 2026-11-12 |
+| App fees of completed 1Click swaps (on their volume) | — | 30 days |
+| Largest referral's share of 1Click app fees (and of their volume) | — | 30 days |
+| 1Click app fees ÷ NEAR Intents gross fees | — | 30 days |
 
-**How the buying works.** The intents.near contract itself charges 1 pip (0.0001%) a swap. The money that buys NEAR comes from the fees of two apps on top of it, the near-intents.org app and the 1Click API. Their fees reach three wallets: `fefundsadmin.sputnik-dao.near`, `1csfundsadmin.sputnik-dao.near` and `buybacks.multisignature.near`. The NEAR bought is held in these three wallets (each balance is in the table above), off the market. It is not burned, so it stays in total supply (CoinGecko's circulating supply still counts it).
+**How the buying works.** The intents.near contract itself charges 1 pip (0.0001%) a swap. The buying is paid from the fees of two apps built on it, the near-intents.org app and the 1Click API. Their fees reach three wallets: `fefundsadmin.sputnik-dao.near`, `1csfundsadmin.sputnik-dao.near` and `buybacks.multisignature.near`. The NEAR bought is held in these wallets, off the market; the table above gives each balance. It is not burned, so it stays in total supply, and CoinGecko still counts it as circulating.
 
 | Fact | Value | Source |
 | --- | --- | --- |
 | intents.near contract | 1 pip (0.0001%) a swap | NEAR Intents docs, Fees (2026-11-03) |
 | near-intents.org app | 0.2% a swap | NEAR Intents docs, Fees (2026-11-03) |
-| 1Click API | about 0.2–0.25% on most routes | NEAR Intents docs, Fees (2026-11-03) |
+| 1Click API | 0.25% without an API key, 0.2% with one; 0.01% on stablecoin pairs | NEAR Intents docs, Fees (2026-11-14) |
 
-**DefiLlama's count against the wallets.** DefiLlama counts NEAR arriving at all three fee wallets as bought, so its total can exceed the buyback wallet's balance. Over the 30 days to 2026-11-09, DefiLlama counts 403.8K NEAR as bought, and the three wallets' combined balance changed by 406.6K NEAR on chain; DefiLlama's count is 0.7% below it.
+**DefiLlama's count against the wallets.** DefiLlama counts all NEAR and wNEAR that reaches the three fee wallets from other accounts as bought; it does not see the trades that bought it. The wallets' balances therefore test whether that NEAR stays, not whether it was bought on the market. Over the 30 days to 2026-11-12, DefiLlama counts 422.8K NEAR as bought, and the three wallets' combined balance changed by 426.7K NEAR on chain; DefiLlama's count is 0.9% below it.
 
-**Bull case:** NEAR Intents fees bought 403.8K NEAR over the last 30 days. NEAR bought over the last 90 days was 1.48M NEAR, up 71% from 862.95K NEAR in the 90 days before, a pace of 19.9% growth a month (95% range +9.6% to +31.3% a month).
+**Bull case:** NEAR Intents fees bought 422.8K NEAR over the last 30 days. NEAR bought over the last 90 days was 1.51M NEAR, up 75% from 860.21K NEAR in the 90 days before, a pace of 20.9% growth a month (95% range +10.7% to +31.8% a month).
 
-**Bear case:** 32.1% of NEAR Intents fees were spent buying NEAR over the 30 days to 2026-11-08. The 4.2M NEAR held in the three fee wallets on 2026-11-11 is not burned, so it is still in total supply. The buying depends on the operators keeping their fee switch on, and no protocol rule makes them. Fees kept by other front ends and partners never buy NEAR, and the NEAR bought is not burned, so it can be sold.
+**Bear case:** 30.0% of NEAR Intents fees were spent buying NEAR over the 30 days to 2026-11-11. The three fee wallets held 4.3M NEAR on 2026-11-14. That NEAR is not burned, so it still counts in total supply. The buying lasts only while the operators keep their fee switch on, and no protocol rule requires it. Fees kept by other front ends and partners never buy NEAR. The NEAR bought can be sold.
 
 | Bear case | Value |
 | --- | --- |
-| Share of Intents fees that buys NEAR, 30 days to 2026-11-08 | 32.1% |
-| NEAR held in the three fee wallets, still in total supply | 4.2M NEAR |
+| Share of Intents fees that buys NEAR, 30 days to 2026-11-11 | 30.0% |
+| NEAR held in the three fee wallets, still in total supply | 4.3M NEAR |
+| Share of 1Click app fees paid through the largest referral, 30 days | — |
 
-Share of fees: 30 days to 2026-11-08. NEAR held: balance on 2026-11-11.
+Share of fees: 30 days to 2026-11-11. NEAR held: balance on 2026-11-14.
 
 **Breaking point:** The thesis breaks if, over 30 days, NEAR Intents fees buy no NEAR, the three fee wallets lose NEAR, or on any day the wallets' gain since the window began falls short of the NEAR bought since then by more than 5% of the 30 days' buying. The last two would mean the NEAR bought was sold or moved out.
 
-**Status:** Holding. In the 30 days to 2026-11-09, NEAR Intents fees bought 403.8K NEAR and the three fee wallets gained 406.6K NEAR. On the day the gap was largest, the wallets' gain since the window began fell 2K NEAR short of the NEAR bought since then, 0.5% of the 30 days' buying, below the 5% limit. The buying continues, and the NEAR bought is still held.
+**Status:** Holding. In the 30 days to 2026-11-12, NEAR Intents fees bought 422.8K NEAR and the three fee wallets gained 426.7K NEAR. On the day of the largest gap, the wallets' gain since the window began fell 2.2K NEAR short of the NEAR bought since then: 0.5% of the 30 days' buying, below the 5% limit. The buying continues, and the NEAR bought is still held.
 
-**Re-run:** Dune query 6162763 on the NEAR team's dashboard `https://dune.com/near/near-intents` (gross fees, with volume from query 5179085); DefiLlama `GET https://api.llama.fi/summary/fees/near-intents?dataType=dailyFees&excludeTotalDataChartBreakdown=true` (gross fees on days Dune does not have), the same with `dataType=dailyRevenue` (revenue) and `dataType=dailyHoldersRevenue` (buybacks), and `GET https://api.llama.fi/summary/fees/near?excludeTotalDataChartBreakdown=true` (gas fees); NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary (NEAR burned, for the measured burn share); CoinGecko `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (daily price; older days: DefiLlama `GET https://coins.llama.fi/chart/coingecko:near?start={unix}&span=500&period=1d&searchWidth=600`); NEAR RPC `view_account` on each of the three fee wallets (today's balance) and NearBlocks `GET https://api.nearblocks.io/v3/accounts/<wallet>/stats/balance?limit=365` (each past day's balance, behind the 30-day change and the NEAR bought over the same days).
+**Re-run:** Dune query 6162763 on the NEAR team's dashboard `https://dune.com/near/near-intents` (gross fees, with volume from query 5179085); DefiLlama `GET https://api.llama.fi/summary/fees/near-intents?dataType=dailyFees&excludeTotalDataChartBreakdown=true` (gross fees on days Dune does not have), the same with `dataType=dailyRevenue` (revenue) and `dataType=dailyHoldersRevenue` (buybacks), and `GET https://api.llama.fi/summary/fees/near?excludeTotalDataChartBreakdown=true` (gas fees); NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary (NEAR burned, for the measured burn share); CoinGecko `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (daily price; older days: DefiLlama `GET https://coins.llama.fi/chart/coingecko:near?start={unix}&span=500&period=1d&searchWidth=600`); NEAR RPC `view_account` on each of the three fee wallets (today's balance) and NearBlocks `GET https://api.nearblocks.io/v3/accounts/<wallet>/stats/balance?limit=365` (each past day's balance, behind the 30-day change and the NEAR bought over the same days); NEAR Intents Explorer API `GET https://explorer.near-intents.org/api/v0/transactions?statuses=SUCCESS&numberOfTransactions=1000&startTimestamp={a millisecond before the day}&endTimestamp={the next day's start}` with a free partner key (both bounds exclusive; each day's completed swaps, added up by referral; paged by `lastDepositAddress` and `lastDepositMemo`).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">📉 3. New supply is growing more slowly 📉</h2>
+<h2 align="center">📉 5. New supply is growing more slowly 📉</h2>
 
-**Claim:** Max issuance was halved from 5% to 2.5% a year in October 2025, and NEAR's vesting schedule ended on 2025-10-13. HSP-029, a House of Stake proposal, would ramp max issuance down to 1.6% over 2 years, starting 90 days after its vote's timelock ends; it changes issuance only once it is approved and validators adopt it in a protocol upgrade.
+**Claim:** Max issuance was halved from 5% to 2.5% a year in October 2025, and NEAR's vesting schedule ended on 2025-10-13. HSP-029, a House of Stake proposal, would lower max issuance gradually to 1.6% over 2 years, starting 90 days after its vote's timelock ends. It changes issuance only after its vote passes, its timelock ends without a veto and validators adopt it in a protocol upgrade.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| Max issuance (5% before 2025-10-29) | 2.5% a year | reading of 2026-11-11 |
-| NEAR minted, measured from block headers | 2.7M NEAR | 30 days to 2026-11-09 |
-| Measured issuance, yearly rate (NEAR minted ÷ supply at the window's start) | 2.49% | 30 days to 2026-11-09 |
-| NEAR minted, measured from block headers | 32.2M NEAR | 365 days to 2026-11-09 |
-| Measured issuance, yearly rate (NEAR minted ÷ supply at the window's start) | 2.52% | 365 days to 2026-11-09 |
-| Total supply | 1.31B NEAR | reading of 2026-11-11 |
-| Total supply growth | 2.48% | 365 days to 2026-11-11 |
-| New supply absorbed: (burned + bought) ÷ minted | 16.07% (1.01% burned, 15.06% bought) | 30 days to 2026-11-09 |
-| New supply absorbed | 19.39% (0.97% burned, 18.42% bought) | 90 days to 2026-11-09 |
-| New supply absorbed | 15.24% (1.07% burned, 14.17% bought) | 2026-02-23 to 2026-11-09 |
-| New supply absorbed | 11.65% (1.51% burned, 10.14% bought) | 365 days to 2026-11-09 |
-| New supply absorbed by month | 2025-10: 1.6%, 2025-11: 3.1%, 2025-12: 2.7%, 2026-01: 2.5%, 2026-02: 9.5%, 2026-03: 18.8%, 2026-04: 8.0%, 2026-05: 12.9%, 2026-06: 11.5%, 2026-07: 10.4%, 2026-08: 15.7%, 2026-09: 23.3%, 2026-10: 17.4%, 2026-11: 14.9% (9 of 30 days) | calendar months to 2026-11-09 |
-| Staked share of total supply | 44.4% | epoch 4958 |
-| Gross staking yield, before validator commission (90% of the NEAR minted goes to stakers) | 5.0% | 30 days to 2026-11-09; stake of epoch 4958 |
-| Staking yield after supply growth (minted less burned) | 2.51% | 30 days to 2026-11-09 |
-| NEAR held by treasury.near | 1.6M NEAR | end of 2026-11-09 |
-| Gain of treasury.near against its 10% share of NEAR minted | 270.1K NEAR against 268.2K NEAR | 30 days to 2026-11-09 |
-| FDV ÷ market cap | 1.00× | reading of 2026-11-11 |
-| HSP-029 vote | Passed | reading of 2026-11-11 |
+| Max issuance (5% before 2025-10-29) | 2.5% a year | reading of 2026-11-14 |
+| NEAR minted, measured from block headers | 2.7M NEAR | 30 days to 2026-11-12 |
+| Measured issuance, yearly rate (NEAR minted ÷ supply at the window's start) | 2.50% | 30 days to 2026-11-12 |
+| NEAR minted, measured from block headers | 32.2M NEAR | 365 days to 2026-11-12 |
+| Measured issuance, yearly rate (NEAR minted ÷ supply at the window's start) | 2.52% | 365 days to 2026-11-12 |
+| Total supply | 1.31B NEAR | reading of 2026-11-14 |
+| Total supply growth | 2.48% | 365 days to 2026-11-14 |
+| New supply absorbed: (burned + bought) ÷ minted | 16.67% (0.93% burned, 15.74% bought) | 30 days to 2026-11-12 |
+| New supply absorbed | 19.77% (0.98% burned, 18.79% bought) | 90 days to 2026-11-12 |
+| New supply absorbed | 15.32% (1.07% burned, 14.25% bought) | 2026-02-23 to 2026-11-12 |
+| New supply absorbed | 11.81% (1.50% burned, 10.31% bought) | 365 days to 2026-11-12 |
+| New supply absorbed by month | 2025-10: 1.6%, 2025-11: 3.1%, 2025-12: 2.7%, 2026-01: 2.5%, 2026-02: 9.5%, 2026-03: 18.8%, 2026-04: 8.0%, 2026-05: 12.9%, 2026-06: 11.5%, 2026-07: 10.4%, 2026-08: 15.7%, 2026-09: 23.3%, 2026-10: 17.4%, 2026-11: 16.7% (12 of 30 days) | calendar months to 2026-11-12 |
+| Staked share of total supply | 45.0% | epoch 4970 |
+| Gross staking yield, before validator commission (90% of the NEAR minted goes to stakers) | 5.0% | 30 days to 2026-11-12; stake of epoch 4970 |
+| Staking yield after supply growth (minted less burned) | 2.45% | 30 days to 2026-11-12 |
+| NEAR held by treasury.near | 1.6M NEAR | end of 2026-11-12 |
+| Gain of treasury.near against its 10% share of NEAR minted | 269.7K NEAR against 268.6K NEAR | 30 days to 2026-11-12 |
+| FDV ÷ market cap | 1.00× | reading of 2026-11-14 |
+| HSP-029 vote | Passed | reading of 2026-11-14 |
 
-**Full burn.** Protocol 87 (HSP-027) removed the gas rebate to contracts, so all gas is burned. Before protocol 87, the protocol returned part of contract-call gas to the contract (`burnt_gas_reward`). Measured over the 30 days to 2026-11-09, 81.6% of all gas fees were burned; days in the window before mainnet ran protocol 87 still paid part of contract-call gas to contracts, and DefiLlama's fee count can differ from the burn read from block headers.
+**Full burn.** Protocol 87 (HSP-027) removed the gas rebate to contracts, so all gas is now burned. Before it, part of contract-call gas went back to the contract (`burnt_gas_reward`). Over the 30 days to 2026-11-12, 84.9% of all gas fees were burned: the window can include days before mainnet ran protocol 87, when part of contract-call gas went to contracts, and DefiLlama's fee count can differ from the burn read from block headers.
 
 **Bull case:** Max issuance is 2.5% a year, down from 5% before 2025-10-29. HSP-029, the proposal to lower max issuance to 1.6% a year, has the vote status **Passed**.
 
-**Bear case:** Measured issuance ran at 2.49% a year over the last 30 days, and the NEAR burned plus bought equaled 16.1% of the NEAR minted over the same days, so the NEAR on the market grew. The protocol treasury (treasury.near) held 28.5M NEAR on 2025-11-05 and 1.6M NEAR on 2026-11-09. Issuance adds NEAR every epoch (a fixed run of blocks), so total supply grows unless burn exceeds it, and the NEAR on the market grows unless burn plus buybacks exceed it. 10% of the NEAR minted goes to the protocol treasury, a multisig (an account whose transfers need approval from several keyholders) that can send it on to other accounts; that NEAR is not burned and stays in total supply. HSP-029 lowers issuance only after validators adopt it in a protocol upgrade.
+**Bear case:** Measured issuance ran at 2.50% a year over the last 30 days. NEAR burned plus bought equaled 16.7% of the NEAR minted over the same days, so the NEAR on the market grew. The protocol treasury (treasury.near) held 28.5M NEAR on 2025-11-05 and 1.6M NEAR on 2026-11-12. Issuance adds NEAR every epoch (a fixed run of blocks). Total supply grows unless burn exceeds issuance, and the NEAR on the market grows unless burn plus buybacks exceed it. 10% of the NEAR minted goes to the protocol treasury, a multisig (an account whose transfers need approval from several keyholders) that can send it on to other accounts. That NEAR is not burned and stays in total supply. HSP-029 lowers issuance only after validators adopt it in a protocol upgrade.
 
 | Bear case | Value |
 | --- | --- |
-| Measured issuance, last 30 days, yearly rate | 2.49% |
-| Total supply growth, 12 months to 2026-11-11 | +2.48% |
-| Share of NEAR minted that was burned + bought, last 30 days | 16.1% |
+| Measured issuance, last 30 days, yearly rate | 2.50% |
+| Total supply growth, 12 months to 2026-11-14 | +2.48% |
+| Share of NEAR minted that was burned + bought, last 30 days | 16.7% |
 | Protocol treasury NEAR, change since 2025-11-05 | −94% |
 
-Issuance and absorption: 30 days to 2026-11-09. Supply growth: 365 days to 2026-11-11.
+Issuance and absorption: 30 days to 2026-11-12. Supply growth: 365 days to 2026-11-14.
 
-**Breaking point:** The thesis breaks if HSP-029 can no longer take effect (its vote fails, is vetoed, rejected or expires, or its execution fails), if max issuance rises above 2.5% a year again, or if NEAR burned plus bought equals a smaller share of the NEAR minted over the last 90 days than over the 90 days before.
+**Breaking point:** The thesis breaks if HSP-029 can no longer take effect (it is defeated, vetoed, rejected or expires, or fails on execution), if max issuance rises above 2.5% a year again, or if NEAR burned plus bought equals a smaller share of the NEAR minted over the last 90 days than over the 90 days before.
 
-**Status:** Holding. Max issuance is 2.5% a year. For HSP-029, the vote passed: 99.97% of the voting power (veNEAR) that voted was for it. It is in a timelock until 2026-11-16 16:48 UTC, a waiting period in which the council can still veto it. NEAR burned plus bought equaled 19.4% of the NEAR minted over the 90 days to 2026-11-09, up from 11.6% in the 90 days before.
+**Status:** Holding. Max issuance is 2.5% a year. For HSP-029, the vote passed: 99.97% of the voting power (veNEAR) that voted was for it. It is in a timelock until 2026-11-16 16:48 UTC, a waiting period in which the council can still veto it. NEAR burned plus bought equaled 19.8% of the NEAR minted over the 90 days to 2026-11-12, up from 11.6% in the 90 days before.
 
-**Re-run:** NEAR RPC `EXPERIMENTAL_protocol_config`, fields `max_inflation_rate` and `transaction_costs.burnt_gas_reward` (the gas rebate to contracts); NEAR RPC `block` with `{"finality":"final"}` (today's total supply) and `status` on mainnet and testnet (protocol versions); DefiLlama `GET https://api.llama.fi/summary/fees/near-intents?dataType=dailyHoldersRevenue&excludeTotalDataChartBreakdown=true` (buybacks, for NEAR bought) and `GET https://api.llama.fi/summary/fees/near?excludeTotalDataChartBreakdown=true` (gas fees, for the measured burn share); CoinGecko `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (daily price; older days: DefiLlama `GET https://coins.llama.fi/chart/coingecko:near?start={unix}&span=500&period=1d&searchWidth=600`), for NEAR bought and gas fees in NEAR; NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary for NEAR minted and burned (see Formulas); `query` `call_function` `get_proposal` on `vote.dao` with `{"proposal_id":29}`; NearBlocks `GET https://api.nearblocks.io/v3/block-stats?limit=365` (daily total supply; `GET https://api.nearblocks.io/v1/charts` for older days); NEAR RPC `validators` with `[null]` (staked share and gross yield); `query` `view_account` on `treasury.near` (today's balance) and NearBlocks `GET https://api.nearblocks.io/v3/accounts/treasury.near/stats/balance?limit=365` (past days); CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (FDV ÷ market cap).
+**Re-run:** NEAR RPC `EXPERIMENTAL_protocol_config`, fields `max_inflation_rate` and `transaction_costs.burnt_gas_reward` (the gas rebate to contracts); NEAR RPC `block` with `{"finality":"final"}` (today's total supply) and `status` on mainnet and testnet (protocol versions); DefiLlama `GET https://api.llama.fi/summary/fees/near-intents?dataType=dailyHoldersRevenue&excludeTotalDataChartBreakdown=true` (buybacks, for NEAR bought) and `GET https://api.llama.fi/summary/fees/near?excludeTotalDataChartBreakdown=true` (gas fees, for the measured burn share); CoinGecko `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (daily price; older days: DefiLlama `GET https://coins.llama.fi/chart/coingecko:near?start={unix}&span=500&period=1d&searchWidth=600`), for NEAR bought and gas fees in NEAR; NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary for NEAR minted and burned (see Appendix A); `query` `call_function` `get_proposal` on `vote.dao` with `{"proposal_id":29}`; NearBlocks `GET https://api.nearblocks.io/v3/block-stats?limit=365` (daily total supply; `GET https://api.nearblocks.io/v1/charts` for older days); NEAR RPC `validators` with `[null]` (staked share and gross yield); `query` `view_account` on `treasury.near` (today's balance) and NearBlocks `GET https://api.nearblocks.io/v3/accounts/treasury.near/stats/balance?limit=365` (past days); CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (FDV ÷ market cap).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">📐 4. Valuation: What today's price requires of buybacks 📐</h2>
+<h2 align="center">📐 6. Valuation: What today's price requires of buybacks 📐</h2>
 
-**Claim:** This section compares two monthly growth rates of NEAR bought. The first is the rate needed for burn plus buybacks to match monthly issuance by the end of 3 years, at today's price and with the burn held at its current rate. The second is the rate measured over the last 90 days against the 90 days before, with its 95% range. More NEAR bought needs more NEAR Intents volume or a larger share of that volume spent buying NEAR.
+**Claim:** This section compares two monthly growth rates of NEAR bought. The first is the rate needed for burn plus buybacks to match monthly issuance by the end of 3 years, at today's price and with burn held at its current rate. The second is the measured rate, the last 90 days against the 90 days before, with its 95% range. More NEAR bought needs more NEAR Intents volume or a larger share of that volume spent buying NEAR.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| Monthly growth rate of NEAR bought | +19.9% (95% range +9.6% to +31.3%) | 90 days to 2026-11-09, against the 90 days before |
-| Monthly growth rate of NEAR bought needed for burn + buybacks to match monthly issuance by the end of 3 years, burn held at its current rate | +5.1% (+81% a year) | from the 30 days to 2026-11-09 |
-| Market cap | $4.75B | reading of 2026-11-11 |
-| Burn + buybacks a year, run rate | $18.98M | 30 days to 2026-11-09, × 365 ÷ 30, at the price of 2026-11-11 |
-| Market cap ÷ (burn + buybacks a year) | 250× | 30 days to 2026-11-09, × 365 ÷ 30, at the price of 2026-11-11 |
-| Burn + buybacks a year ÷ market cap (against max issuance of 2.5% a year) | 0.40% | 30 days to 2026-11-09, × 365 ÷ 30, at the price of 2026-11-11 |
-| Market cap ÷ network revenue (Intents revenue + gas fees), 30 days annualized | 193× | on 2026-11-09 |
-| Same multiple, median and range | 278× (157× to 553×) | since 2026-03-02 |
-| Market cap at that median and range on the latest yearly network revenue (against its own history, not a fair value) | $6.74B ($3.81B to $13.43B) | revenue of the 30 days to 2026-11-09, multiples since 2026-03-02 |
-| Break-even multiple: NEAR minted ÷ (NEAR burned + bought) | 6.22× | 30 days to 2026-11-09 |
-| Intents volume a day at which burn + buybacks match issuance | $649.68M (average over the same days $124.26M) | 30 days to 2026-11-09 |
-| Break-even multiple: NEAR minted ÷ (NEAR burned + bought) | 5.16× | 90 days to 2026-11-09 |
-| Intents volume a day at which burn + buybacks match issuance | $785.54M (average over the same days $137.47M) | 90 days to 2026-11-09 |
+| Monthly growth rate of NEAR bought | +20.9% (95% range +10.7% to +31.8%) | 90 days to 2026-11-12, against the 90 days before |
+| Monthly growth rate of NEAR bought needed for burn + buybacks to match monthly issuance by the end of 3 years, burn held at its current rate | +4.6% (+71% a year) | from the 30 days to 2026-11-12 |
+| Market cap | $4.05B | reading of 2026-11-14 |
+| Burn + buybacks a year, run rate | $16.83M | 30 days to 2026-11-12, × 365 ÷ 30, at the price of 2026-11-14 |
+| Market cap ÷ (burn + buybacks a year) | 241× | 30 days to 2026-11-12, × 365 ÷ 30, at the price of 2026-11-14 |
+| Burn + buybacks a year ÷ market cap (against max issuance of 2.5% a year) | 0.42% | 30 days to 2026-11-12, × 365 ÷ 30, at the price of 2026-11-14 |
+| Market cap ÷ network revenue (Intents revenue + gas fees), 30 days annualized | 196× | on 2026-11-12 |
+| Same multiple, median and range | 276× (157× to 553×) | since 2026-03-02 |
+| Market cap at that median and range on the latest yearly network revenue (against its own history, not a fair value) | $6.61B ($3.76B to $13.27B) | revenue of the 30 days to 2026-11-12, multiples since 2026-03-02 |
+| Break-even multiple: NEAR minted ÷ (NEAR burned + bought) | 6.00× | 30 days to 2026-11-12 |
+| Intents volume a day at which burn + buybacks match issuance | $562.58M (average over the same days $125.81M) | 30 days to 2026-11-12 |
+| Break-even multiple: NEAR minted ÷ (NEAR burned + bought) | 5.06× | 90 days to 2026-11-12 |
+| Intents volume a day at which burn + buybacks match issuance | $660.34M (average over the same days $139.63M) | 90 days to 2026-11-12 |
 
-**Scenarios** (month by month from the 30 days to 2026-11-09, with the price and the max issuance rate held at today's level and the burn at its current rate):
+**Scenarios.** Each runs month by month from the 30 days to 2026-11-12. Unless a scenario changes them, the price and the max issuance rate stay at today's level and the burn at its current rate.
 
 | Scenario | Growth of NEAR bought | Month burn + buybacks reach issuance | Share of issuance absorbed in month 36 | Intents volume a year in month 36 |
 | --- | --- | --- | --- | --- |
-| No growth | No growth | Not by month 36 | 19% | $45.35B (1.0× the 30-day run rate) |
-| Growth needed | +5.1% a month for 35 months (+81% a year, 5.6× in total) | Month 36 | 100% | $255.68B (5.6× the 30-day run rate) |
-| 90-day pace for 12 months | +19.9% a month for 12 months (+787% a year, 8.9× in total) | Month 11 | 157% | $402.11B (8.9× the 30-day run rate) |
+| No growth | No growth | Not by month 36 | 22% | $45.92B (1.0× the 30-day run rate) |
+| Growth needed | +4.6% a month for 35 months (+71% a year, 4.8× in total) | Month 36 | 100% | $221.22B (4.8× the 30-day run rate) |
+| 90-day pace for 12 months | +20.9% a month for 12 months (+874% a year, 9.7× in total) | Month 9 | 201% | $447.18B (9.7× the 30-day run rate) |
+| Buying stops | None bought | Not by month 36 | 1% | — |
+| NEAR bought halves | Half of today's pace, no growth | Not by month 36 | 11% | — |
+| Max issuance to 1.6% (HSP-029) | No growth | Not by month 36 | 34% | $45.92B (1.0× the 30-day run rate) |
 
-The needed growth is NEAR bought's alone, so it compares directly with its measured growth; it holds the price and the max issuance rate at today's level and the burn at its current rate while supply keeps growing. The growth-needed scenario is left out while no growth is needed or no growth reaches issuance, and the 90-day pace while it is not measured. At a higher price the same buyback dollars buy less NEAR, so more growth is needed; the burn does not depend on price, because gas is paid in NEAR. The Valuation page shows the growth needed at 4 prices and 3 horizons, and a model where the reader can change the price, the monthly growth of NEAR bought and of gas fees, and the max issuance (HSP-029).
+The growth needed applies to NEAR bought alone, so it compares directly with the measured growth. It holds the price and the max issuance rate at today's level and the burn at its current rate, while supply keeps growing. The last rows stress the case: buying stops (no protocol rule requires it), NEAR bought halves (as at twice today's price, or with half the buyback dollars), and max issuance ramps to 1.6% under HSP-029. At a higher price the same buyback dollars buy less NEAR, so more growth is needed. The burn does not depend on price, because gas is paid in NEAR. The Valuation page shows the growth needed at 4 prices and 3 horizons, and a model in which the reader can change the price, the monthly growth of NEAR bought and of gas fees, and the max issuance (HSP-029).
 
-**Bull case:** NEAR bought over the last 90 days was 1.48M NEAR, up 71% from 862.95K NEAR in the 90 days before, a pace of 19.9% growth a month (95% range +9.6% to +31.3% a month), faster than the 5.1% a month needed for burn plus buybacks to match monthly issuance by the end of 3 years. On 2026-11-09, NEAR's market cap was 193× its yearly network revenue (Intents revenue plus gas fees over the last 30 days, annualized), below the 278× median of the same multiple since 2026-03-02.
+**Bull case:** NEAR bought over the last 90 days was 1.51M NEAR, up 75% from 860.21K NEAR in the 90 days before, a pace of 20.9% growth a month (95% range +10.7% to +31.8% a month). That pace is faster than the 4.6% a month needed for burn plus buybacks to match monthly issuance by the end of 3 years. On 2026-11-12, NEAR's market cap was 196× its yearly network revenue (Intents revenue plus gas fees over the last 30 days, annualized). That is below the 276× median of this multiple since 2026-03-02.
 
-**Bear case:** NEAR's market cap is 250× the yearly value of NEAR burned and bought (the last 30 days, annualized at today's price). For burn plus buybacks to match the NEAR minted at today's price, daily Intents volume would need to be 5.2× its average over the last 30 days. The measured growth of NEAR bought covers only the buying since February 2026, and at a higher price the same fees buy less NEAR, so the growth needed rises with the price.
+**Bear case:** NEAR's market cap is 241× the yearly value of NEAR burned and bought (the last 30 days, annualized at today's price). Burn plus buybacks would match the NEAR minted at today's price if daily Intents volume rose to 4.5× its average over the last 30 days. The measured growth of NEAR bought covers only the buying since February 2026. At a higher price the same fees buy less NEAR, so the growth needed rises with the price.
 
 | Bear case | Value |
 | --- | --- |
-| Market cap ÷ (burn + buybacks a year) | 250× |
-| Burn + buybacks a year ÷ market cap (against max issuance of 2.5% a year) | 0.40% |
-| Intents volume a day at which burn + buybacks would match the NEAR minted (average over the last 30 days: $124.26M) | $649.68M |
+| Market cap ÷ (burn + buybacks a year) | 241× |
+| Burn + buybacks a year ÷ market cap (against max issuance of 2.5% a year) | 0.42% |
+| Intents volume a day at which burn + buybacks would match the NEAR minted (average over the last 30 days: $125.81M) | $562.58M |
 
-Burn and buybacks: 30 days to 2026-11-09, at the NEAR price of 2026-11-11.
+Burn and buybacks: 30 days to 2026-11-12, at the NEAR price of 2026-11-14.
 
-**Breaking point:** The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth rate (the last 90 days against the 90 days before) is below the monthly growth rate needed for burn plus buybacks to match monthly issuance by the end of 3 years, at today's price and with the burn held at its current rate. The 95% range shows how far day-to-day swings in buying alone can move the measured rate. While the growth needed falls inside that range, the check is too close to call.
+**Breaking point:** The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth rate (the last 90 days against the 90 days before) is below the monthly growth rate needed for burn plus buybacks to match monthly issuance by the end of 3 years. The growth needed assumes today's price and burn held at its current rate. The 95% range shows how far day-to-day swings in buying alone can move the measured rate; while the growth needed falls inside it, the check is too close to call.
 
-**Status:** Holding. NEAR bought in the 90 days to 2026-11-09 was 1.48M NEAR, up 71% from 862.95K NEAR in the 90 days before, a pace of 19.9% growth a month (95% range +9.6% to +31.3% a month); for burn plus buybacks to match monthly issuance by the end of 3 years, NEAR bought needs 5.1% growth a month. NEAR bought is growing faster than needed at today's price.
+**Status:** Holding. NEAR bought in the 90 days to 2026-11-12 was 1.51M NEAR, up 75% from 860.21K NEAR in the 90 days before, a pace of 20.9% growth a month (95% range +10.7% to +31.8% a month). NEAR bought needs to grow 4.6% a month for burn plus buybacks to match monthly issuance by the end of 3 years, and it is growing faster than needed at today's price.
 
-**Re-run:** `GET /api/model` on the dashboard returns the same scenarios month by month as CSV, with the inputs they start from. The inputs come from the requests in sections 1 to 3, CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (price and market cap) and `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (`market_caps`, the daily market cap behind the revenue multiple).
+**Re-run:** `GET /api/model` on the dashboard returns the same scenarios month by month as CSV, with the inputs they start from. The inputs come from the requests in sections 3 to 5, CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (price and market cap) and `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (`market_caps`, the daily market cap behind the revenue multiple).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">⚡ 5. Technology: The chain can carry the usage ⚡</h2>
+<h2 align="center">⚡ 7. Technology: The chain can carry the usage ⚡</h2>
 
-**Claim:** NEAR finalizes blocks within seconds and charges low gas fees, so the NEAR side of a cross-chain trade settles quickly and cheaply. Protocol upgrades ship through nearcore releases.
+**Claim:** NEAR finalizes blocks within seconds and charges low gas fees, so the NEAR side of a cross-chain trade settles quickly and cheaply. Protocol upgrades ship in releases of nearcore, NEAR's node software.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
 | Time to finality | ~1.2 s, deterministic | Chainspect, NEAR mainnet (2026-10-21) |
-| Block time, measured from block heights and timestamps | ~0.6 s | average over the last 120 minutes of samples, 2026-11-11 |
-| Protocol upgrades shipped: stable nearcore releases with a new minor version (x.y.0) | 5: 2.10.0, 2.11.0, 2.12.0, 2.13.0, 2.14.0 | 365 days to 2026-11-11 |
-| Simple transfer (0.446 Tgas) | 0.0000446 NEAR ($0.000161) | gas price reading of 2026-11-11, NEAR price reading of 2026-11-11 |
-| Shards | 10 | reading of 2026-11-11 |
-| Protocol version | mainnet 88, testnet 88 | reading of 2026-11-11 |
-| nearcore on mainnet | 2.14.0 | reading of 2026-11-11 |
-| NEAR price | $3.62 | reading of 2026-11-11 |
+| Block time, measured from block heights and timestamps | — | — |
+| Protocol upgrades shipped: stable nearcore releases with a new minor version (x.y.0) | 5: 2.10.0, 2.11.0, 2.12.0, 2.13.0, 2.14.0 | 365 days to 2026-11-14 |
+| Simple transfer (0.446 Tgas) | 0.0000446 NEAR ($0.000138) | gas price reading of 2026-11-14, NEAR price reading of 2026-11-14 |
+| Shards | 10 | reading of 2026-11-14 |
+| Protocol version | mainnet 88, testnet 88 | reading of 2026-11-14 |
+| nearcore on mainnet | 2.14.1 | reading of 2026-11-14 |
+| NEAR price | $3.09 | reading of 2026-11-14 |
 
 A nearcore release reaches mainnet once validators upgrade to it.
 
-Dated facts that no free API returns, each with its source:
+Dated facts no free API returns, each with its source:
 
 | Fact | Value | Source |
 | --- | --- | --- |
@@ -295,137 +313,158 @@ NEAR account features, from docs.near.org:
 
 | Fact | Value | Source |
 | --- | --- | --- |
-| Chain Signatures | An MPC network (v1.signer) lets a NEAR account, contracts included, sign native transactions for Bitcoin, EVM chains, Solana and others | docs.near.org, Chain Signatures (2026-11-03) |
+| Chain Signatures | A multi-party computation (MPC) network, v1.signer, lets any NEAR account, contracts included, sign native transactions for Bitcoin, EVM chains, Solana and others | docs.near.org, Chain Signatures (2026-11-03) |
 | Named accounts | Human-readable account names such as alice.near, beside 64-character implicit accounts | docs.near.org, Access keys (2026-11-03) |
 | Function-call keys | Keys limited to one contract, optionally to a list of its methods, with a gas allowance | docs.near.org, Access keys (2026-11-03) |
 | Relayer-paid gas | Meta transactions (NEP-366): a relayer pays the gas, so users need no NEAR to transact | docs.near.org, Meta transactions (2026-11-03) |
 
-**Bull case:** A simple NEAR transfer costs $0.000161 at the gas price read on 2026-11-11 08:07 UTC. Mainnet runs protocol 88, which burns all gas fees instead of paying part of them to contracts.
+**Bull case:** A simple NEAR transfer costs $0.000138 at the gas price read on 2026-11-14 19:54 UTC. Mainnet runs protocol 88, which burns all gas fees instead of paying part of them to contracts.
 
-**Bear case:** 27.2K NEAR of gas fees was burned over the last 30 days, equal to 1.0% of the NEAR minted over the same days. Cheap transactions cut both ways: the lower the gas fees, the less NEAR the burn removes against issuance.
+**Bear case:** 25K NEAR of gas fees was burned over the last 30 days, equal to 0.9% of the NEAR minted over the same days. Cheap transactions cut both ways: the lower the gas fees, the less NEAR the burn removes against issuance.
 
 | Bear case | Value |
 | --- | --- |
-| NEAR burned by gas fees, last 30 days | 27.2K NEAR |
-| Share of NEAR minted that was burned, last 30 days | 1.0% |
+| NEAR burned by gas fees, last 30 days | 25K NEAR |
+| Share of NEAR minted that was burned, last 30 days | 0.9% |
 
-Burn: 30 days to 2026-11-09.
+Burn: 30 days to 2026-11-12.
 
-**Breaking point:** The thesis breaks if a simple NEAR transfer costs more than $0.01 at the latest gas price read, because trades would then stop settling cheaply.
+**Breaking point:** The thesis breaks if a simple NEAR transfer costs more than $0.01 at the latest gas price read. Trades would then no longer settle cheaply.
 
-**Status:** Holding. A simple NEAR transfer costs $0.000161 at the gas price read on 2026-11-11 08:07 UTC, below the $0.01 limit; it would have to rise 62× to pass it.
+**Status:** Holding. A simple NEAR transfer costs $0.000138 at the gas price read on 2026-11-14 19:54 UTC, below the $0.01 limit; it would have to rise 73× to pass it.
 
 **Re-run:** NEAR RPC `block` with `{"finality":"final"}` (`gas_price`; the worker also samples the latest final block's height and time every minute, for the block time), `EXPERIMENTAL_protocol_config` (`shard_layout`) and `status` on mainnet and testnet (protocol and nearcore versions); `GET https://api.github.com/repos/near/nearcore/releases?per_page=50`; CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (NEAR price, for the transfer cost in USD); NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary (NEAR burned and minted).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🛡️ 6. Network: No single party controls the network 🛡️</h2>
+<h2 align="center">🛡️ 8. Network: No single party controls the network 🛡️</h2>
 
 **Claim:** Independent validators secure NEAR, and anyone with enough stake can join: a chunk-validator seat (the validator role open to the smallest stakes) needs only a fixed minimum share of total stake.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| Active validators | 351 (100 produce blocks) | epoch 4958 |
-| Chunk-validator seat: total stake × `minimum_stake_ratio` | 9.3K NEAR ($33.72K) | epoch 4958 |
-| Block-producer seat: the smallest stake among block producers | 635.8K NEAR | epoch 4958 |
-| Nakamoto coefficient: the fewest validators (staking pools) that together hold more than a third of stake | 9 | epoch 4958 |
-| Staked share of total supply | 44.4% | epoch 4958 |
+| Active validators | 355 (100 produce blocks) | epoch 4970 |
+| Chunk-validator seat: total stake × `minimum_stake_ratio` | 9.4K NEAR ($29.16K) | epoch 4970 |
+| Block-producer seat: the smallest stake among block producers | 634.6K NEAR | epoch 4970 |
+| Nakamoto coefficient: the fewest validators (staking pools) that together hold more than a third of stake | 10 | epoch 4970 |
+| Staked share of total supply | 45.0% | epoch 4970 |
 
-**Bull case:** 351 validators (staking pools) are active, and a chunk-validator seat needs 9.3K NEAR, 1.5% of the stake a block-producer seat needs.
+**Bull case:** 355 validators (staking pools) are active, and a chunk-validator seat needs 9.4K NEAR, 1.5% of the stake a block-producer seat needs.
 
-**Bear case:** The 9 largest staking pools together hold more than a third of all stake, and only 100 of the 351 produce blocks. One operator can run several pools, so fewer separate parties may stand behind them. A group holding more than a third of all stake can stop the chain from finalizing blocks if it acts together, and block-producer seats go to the largest stakes.
+**Bear case:** The 10 largest staking pools together hold more than a third of all stake, and only 100 of the 355 produce blocks. One operator can run several pools, so fewer separate parties may stand behind them. A group holding more than a third of all stake can stop the chain from finalizing blocks if it acts together, and block-producer seats go to the largest stakes.
 
 | Bear case | Value |
 | --- | --- |
-| Validators (staking pools) needed to hold more than a third of stake | 9 |
-| Block-producer seat, smallest stake of the 100 block producers | 635.8K NEAR |
+| Validators (staking pools) needed to hold more than a third of stake | 10 |
+| Block-producer seat, smallest stake of the 100 block producers | 634.6K NEAR |
 
-Validator set of epoch 4958.
+Validator set of epoch 4970.
 
-**Breaking point:** The thesis breaks if fewer than 8 validators together hold more than a third of all stake, because a group that small could stop the chain from finalizing blocks by acting together. Validators are counted by staking pool, and one operator can run several pools, so the number of separate parties can be lower.
+**Breaking point:** The thesis breaks if fewer than 8 validators together hold more than a third of all stake. A group that small could stop the chain from finalizing blocks by acting together. Validators are counted by staking pool, and one operator can run several pools, so there can be fewer separate parties.
 
-**Status:** Holding. In the latest epoch, the 9 largest of 351 validators together hold more than a third of all stake, 1 validator above the floor of 8.
+**Status:** Holding. In the latest epoch, the 10 largest of 355 validators together hold more than a third of all stake, 2 above the floor of 8.
 
 **Re-run:** NEAR RPC `validators` with `[null]` (block producers are those with `num_expected_blocks` > 0), `EXPERIMENTAL_protocol_config` (`minimum_stake_ratio`) and `block` with `{"finality":"final"}` (total supply, for the staked share); CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (NEAR price, for the seat in USD).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🔓 7. Peers: No supply overhang left to unlock 🔓</h2>
+<h2 align="center">🔓 9. Peers: No supply overhang left to unlock 🔓</h2>
 
-**Claim:** NEAR's vesting schedule ended on 2025-10-13, so no scheduled unlocks remain. NEAR's supply still grows through issuance, so this thesis compares its yearly circulating-supply growth with that of the coins ranked above it.
+**Claim:** NEAR's vesting schedule ended on 2025-10-13, so no scheduled unlocks remain. Issuance still grows NEAR's supply, so this thesis compares NEAR's yearly circulating-supply growth with that of the coins ranked above it by market cap.
 
 | Evidence | Value | Window |
 | --- | --- | --- |
-| NEAR circulating supply growth (CoinGecko market cap ÷ price) | +2.5% | 365 days to 2026-11-11 |
-| Median circulating supply growth of the 15 larger coins with a year of history, not dollar-pegged | +2.1% | 365 days to 2026-11-11 |
-| FDV ÷ market cap for NEAR | 1.00× | reading of 2026-11-11 |
+| NEAR circulating supply growth (CoinGecko market cap ÷ price) | +2.5% | 365 days to 2026-11-14 |
+| Median circulating supply growth of the 16 larger coins with a year of history, not dollar-pegged | +1.6% | 365 days to 2026-11-14 |
+| FDV ÷ market cap for NEAR | 1.00× | reading of 2026-11-14 |
 
-**Bull case:** NEAR's FDV is 1.00× its market cap, so no NEAR is left to unlock, while 8 of the 15 larger coins that are not dollar-pegged still have FDV above market cap (supply not yet circulating).
+**Bull case:** NEAR's FDV is 1.00× its market cap, so no NEAR is left to unlock. 8 of the 16 larger coins that are not dollar-pegged still have FDV above market cap (supply not yet circulating).
 
-**Bear case:** NEAR's circulating supply grew 2.5% over 12 months, above the 2.1% median circulating supply growth of the 15 larger coins with a year of history, dollar-pegged coins left out; 7 of them had a higher supply growth rate than NEAR. NEAR minted over the last 12 months came to 2.52% of total supply at the window's start. Having no unlocks left does not mean no new supply: issuance still adds NEAR every year. Only burn offsets it in circulating supply, because the NEAR bought still counts as circulating. FDV (fully diluted value: the price × the total or maximum supply, counting tokens not yet circulating) ÷ market cap cannot show this, because newly issued NEAR adds to both.
+**Bear case:** NEAR's circulating supply grew 2.5% over 12 months, above the 1.6% median growth of the 16 larger coins with a year of history (dollar-pegged coins left out). 7 of them grew their supply faster than NEAR. NEAR minted over the last 12 months equaled 2.52% of total supply at the window's start. Having no unlocks left does not mean no new supply: issuance still adds NEAR every year. In circulating supply only burn offsets it, because the NEAR bought still counts as circulating. FDV (fully diluted value: price × total or maximum supply, counting tokens not yet circulating) ÷ market cap cannot show this, because new NEAR adds to both.
 
 | Bear case | Value |
 | --- | --- |
 | NEAR minted, last 12 months, share of supply | 2.52% |
 
-NEAR minted: 365 days to 2026-11-09.
+NEAR minted: 365 days to 2026-11-12.
 
 **Breaking point:** The thesis breaks if NEAR's circulating supply grows faster over 12 months than the median circulating supply growth of the coins ranked above it by market cap, leaving out dollar-pegged coins.
 
-**Status:** Broken. NEAR's circulating supply grew 2.5% over 12 months; the median circulating supply growth of the 15 larger coins with a year of history, dollar-pegged coins left out, was 2.1%. NEAR's supply growth is above that median, so having no tokens left to unlock does not keep its supply growth low.
+**Status:** Broken. NEAR's circulating supply grew 2.5% over 12 months. The median growth of the 16 larger coins with a year of history (dollar-pegged coins left out) was 1.6%. NEAR's supply growth is above that median, so having no tokens left to unlock has not kept it low.
 
 **Re-run:** CoinGecko `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` (`fully_diluted_valuation` ÷ `market_cap`; `current_price` and `price_change_percentage_1y_in_currency` leave out dollar-pegged coins) and `GET https://api.coingecko.com/api/v3/coins/{id}/market_chart?vs_currency=usd&days=365&interval=daily` (`market_caps` ÷ `prices`; the public API serves at most 365 days); NEAR archival RPC `POST https://archival-rpc.mainnet.fastnear.com` `block` with `{"block_id":<height or hash>}` at each epoch boundary (NEAR minted); NearBlocks `GET https://api.nearblocks.io/v3/block-stats?limit=365` and `GET https://api.nearblocks.io/v1/charts` (total supply at the window's start, for NEAR minted as a share of supply).
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🧪 Test: does NEAR Intents volume lead NEAR's price or usage? 🧪</h2>
+<h2 align="center">🧪 10. Lead-lag test: volume, price and usage 🧪</h2>
+
+This test checks whether weekly changes in NEAR Intents volume run ahead of NEAR's price or usage, or behind them.
 
 **Result:** 0 of 17 tests are significant at 5% after the Holm correction: no test finds a link, same-week or lagged, in either direction.
 
-**Sample:** 75 weekly changes from 2025-06-09 to 2026-11-09, in 7-day blocks ending on 2026-11-09, from the first week with at least $25M of Intents volume. NEAR's weekly return moved 1.41× the market's (the average of BTC and ETH); that market part is removed before NEAR's return is tested against Intents volume, while the tests of NEAR's return against active accounts use its whole return.
+**Sample:** 76 weekly changes from 2025-06-05 to 2026-11-12, in 7-day blocks ending on 2026-11-12, from the first week with at least $25M of Intents volume. NEAR's weekly return moved 1.03× the market's (the average of BTC and ETH). The tests against Intents volume remove that market part first; the tests against active accounts use NEAR's whole return.
 
 | Test | Lag | Correlation | p | p, adjusted |
 | --- | --- | --- | --- | --- |
-| Intents volume growth moves with NEAR's return beyond the market | same week | +0.12 | 0.278 | 1.000 |
-| Intents volume growth leads NEAR's return beyond the market | 1 wk | +0.02 | 0.893 | 1.000 |
-| Intents volume growth leads NEAR's return beyond the market | 2 wk | +0.06 | 0.602 | 1.000 |
-| Intents volume growth leads NEAR's return beyond the market | 3 wk | −0.11 | 0.353 | 1.000 |
-| Intents volume growth leads NEAR's return beyond the market | 4 wk | +0.02 | 0.871 | 1.000 |
-| NEAR's return beyond the market leads Intents volume growth | 1 wk | −0.01 | 0.897 | 1.000 |
-| NEAR's return beyond the market leads Intents volume growth | 2 wk | +0.09 | 0.424 | 1.000 |
-| NEAR's return beyond the market leads Intents volume growth | 3 wk | −0.18 | 0.129 | 1.000 |
-| NEAR's return beyond the market leads Intents volume growth | 4 wk | −0.22 | 0.060 | 1.000 |
-| Intents volume growth leads active-accounts growth | 1 wk | +0.10 | 0.427 | 1.000 |
-| Intents volume growth leads active-accounts growth | 2 wk | +0.13 | 0.293 | 1.000 |
-| Intents volume growth leads active-accounts growth | 3 wk | −0.10 | 0.422 | 1.000 |
-| Intents volume growth leads active-accounts growth | 4 wk | +0.08 | 0.506 | 1.000 |
-| NEAR's return leads active-accounts growth | 1 wk | −0.06 | 0.628 | 1.000 |
-| NEAR's return leads active-accounts growth | 2 wk | +0.11 | 0.306 | 1.000 |
-| NEAR's return leads active-accounts growth | 3 wk | −0.05 | 0.673 | 1.000 |
-| NEAR's return leads active-accounts growth | 4 wk | −0.03 | 0.768 | 1.000 |
+| Intents volume growth moves with NEAR's return beyond the market | same week | +0.12 | 0.282 | 1.000 |
+| Intents volume growth leads NEAR's return beyond the market | 1 wk | +0.04 | 0.704 | 1.000 |
+| Intents volume growth leads NEAR's return beyond the market | 2 wk | 0.00 | 0.978 | 1.000 |
+| Intents volume growth leads NEAR's return beyond the market | 3 wk | 0.00 | 0.976 | 1.000 |
+| Intents volume growth leads NEAR's return beyond the market | 4 wk | −0.08 | 0.504 | 1.000 |
+| NEAR's return beyond the market leads Intents volume growth | 1 wk | +0.03 | 0.766 | 1.000 |
+| NEAR's return beyond the market leads Intents volume growth | 2 wk | 0.00 | 0.970 | 1.000 |
+| NEAR's return beyond the market leads Intents volume growth | 3 wk | −0.13 | 0.273 | 1.000 |
+| NEAR's return beyond the market leads Intents volume growth | 4 wk | −0.18 | 0.140 | 1.000 |
+| Intents volume growth leads active-accounts growth | 1 wk | +0.06 | 0.625 | 1.000 |
+| Intents volume growth leads active-accounts growth | 2 wk | +0.15 | 0.187 | 1.000 |
+| Intents volume growth leads active-accounts growth | 3 wk | −0.13 | 0.267 | 1.000 |
+| Intents volume growth leads active-accounts growth | 4 wk | +0.08 | 0.486 | 1.000 |
+| NEAR's return leads active-accounts growth | 1 wk | −0.09 | 0.444 | 1.000 |
+| NEAR's return leads active-accounts growth | 2 wk | +0.02 | 0.887 | 1.000 |
+| NEAR's return leads active-accounts growth | 3 wk | +0.10 | 0.371 | 1.000 |
+| NEAR's return leads active-accounts growth | 4 wk | +0.04 | 0.759 | 1.000 |
 
-**Re-run:** DefiLlama `GET https://coins.llama.fi/chart/coingecko:{near|bitcoin|ethereum}?start={unix}&span=500&period=1d&searchWidth=600` (daily prices from 2024-11-01), Intents volume and NearBlocks active accounts as in section 1.
+**Re-run:** DefiLlama `GET https://coins.llama.fi/chart/coingecko:{near|bitcoin|ethereum}?start={unix}&span=500&period=1d&searchWidth=600` (daily prices from 2024-11-01), Intents volume and NearBlocks active accounts as in section 3.
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🚫 What could not be computed 🚫</h2>
+<h2 align="center">🚦 11. What would change our mind 🚦</h2>
 
-- **Days since March 2026 from the NEAR BigQuery public dataset (`bigquery-public-data.crypto_near_mainnet_us`).** The dataset is loaded from NEAR Lake, which NEAR's docs say "was deprecated on March 24, 2026 and no longer indexes new blocks" (docs.near.org/data-infrastructure/big-query). Its loader repository (github.com/near/near-public-lakehouse) names no other source. The thesis needs windows of 30 to 365 days ending on the data-through day, and buybacks began on 2026-02-23. Daily transactions and active and new accounts therefore come from NearBlocks, whose daily transactions and active accounts match the figures NEAR reported for Q2 2026 (854K transactions and 121K active accounts a day).
-- **Per-swap NEAR Intents data from the Intents Explorer API.** It needs a JWT from the partner dashboard. Volume, swaps, fees, TVL and volume by chain and token come from the daily totals on the NEAR team's Dune dashboard, and revenue and buybacks from DefiLlama, so single swap sizes, routes and solvers are not measured.
-- **Accounts that swapped through NEAR Intents.** No query on the NEAR team's Dune dashboard counts them by day, and NearBlocks' count covers public swaps only, leaving out confidential swaps (56.3% of volume over the 30 days to 2026-11-09), so it is not used.
-- **Contract usage beyond `intents.near`.** The free sources give daily transactions of named contracts, not a ranking of all contracts; the dashboard measures the one contract the thesis rests on.
+Each claim names, in advance, the result that would change the view. The table checks each one against the latest data; sections 3 to 9 give every rule and result in full.
+
+| Section | Breaking point | Latest data | Status |
+| --- | --- | --- | --- |
+| 3. Cross-chain trading runs through NEAR | The thesis breaks if Intents volume falls below the same 30 days a year earlier, or below the 90 days before. | Intents volume is up 48% from the same 30 days a year earlier and up 73% from the 90 days before. | **Holding** |
+| 4. That trading buys NEAR | The thesis breaks if fees buy no NEAR, or the fee wallets lose NEAR or fall more than 5% behind the NEAR bought. | The fee wallets gained 426.7K NEAR against 422.8K NEAR bought; the largest daily gap was 0.5% of the buying, under the 5% limit. | **Holding** |
+| 5. New supply is growing more slowly | The thesis breaks if HSP-029 fails, max issuance rises above 2.5%, or burn plus buybacks take a smaller share of the NEAR minted over the last 90 days than in the 90 days before. | Burn plus buybacks took 19.8% of the NEAR minted over the 90 days to 2026-11-12, up from 11.6% in the 90 days before. | **Holding** |
+| 6. Valuation: What today's price requires of buybacks | The thesis breaks if even the top of the 95% range of NEAR bought's monthly growth is below the growth needed for burn plus buybacks to match monthly issuance by the end of 3 years. | NEAR bought's growth is +20.9% a month (95% range +10.7% to +31.8%); 4.6% a month is needed. | **Holding** |
+| 7. Technology: The chain can carry the usage | The thesis breaks if a simple NEAR transfer costs more than $0.01. | A transfer costs $0.000138, below the $0.01 limit; it would have to rise 73× to pass it. | **Holding** |
+| 8. Network: No single party controls the network | The thesis breaks if fewer than 8 staking pools together hold more than a third of all stake. | The 10 largest pools together hold more than a third of all stake, 2 above the floor of 8. | **Holding** |
+| 9. Peers: No supply overhang left to unlock | The thesis breaks if NEAR's circulating supply grows faster over 12 months than the median of the larger coins. | NEAR's circulating supply grew 2.5% over 12 months, above the 1.6% median of 16 larger coins. | **Broken** |
+
+<img src="assets/divider.svg" width="100%" alt="">
+
+<h2 align="center">🚫 12. What we could not measure 🚫</h2>
+
+The free sources cannot give the following, and nothing is estimated in their place.
+
+- **Days since March 2026 from the NEAR BigQuery public dataset (`bigquery-public-data.crypto_near_mainnet_us`).** The dataset is loaded from NEAR Lake, which NEAR's docs say "was deprecated on March 24, 2026 and no longer indexes new blocks" (docs.near.org/data-infrastructure/big-query). The same page says the dataset itself remains available, but its loader repository (github.com/near/near-public-lakehouse) names no source other than NEAR Lake. The thesis needs windows of 30 to 365 days ending on the data-through day, and buybacks began on 2026-02-23, so daily transactions and active and new accounts come from NearBlocks instead. Its Q2 2026 averages match Nansen's NEAR report for that quarter: 854K transactions and 121K active addresses a day (nansen.ai/post/nansen-near-quarterly-report-q2-2026).
+- **Single NEAR Intents swaps.** The NEAR Intents Explorer API lists every 1Click swap, but its terms allow no API data to be kept beyond 24 hours. The worker therefore adds up each finished day's swaps by referral and stores only those daily totals. Single swap sizes, routes and solvers are not measured, and the API does not list swaps made outside 1Click (section 4 compares the 1Click swaps' app fees with all NEAR Intents gross fees). The data also does not show how each app fee splits between the front end and NEAR Intents, so the share of fees that buys NEAR comes from DefiLlama's revenue and buybacks.
+- **Accounts that swapped through NEAR Intents.** No query on the NEAR team's Dune dashboard counts them by day. NearBlocks' count covers public swaps only and leaves out confidential swaps (60.2% of volume over the 30 days to 2026-11-11), so it is not used.
+- **Contract usage beyond `intents.near`.** The free sources give daily transactions of named contracts, not a ranking of all contracts, so the dashboard measures only the contract the thesis rests on.
 - **Burn and issuance before 2025-10-01.** The stored epoch block headers start that day; longer windows show "—" until the stored epochs cover them.
-- **NEAR held from buybacks that is later sold.** The fee wallets' balances are measured, but a sale cannot be told apart from another outflow without labeling every counterparty.
+- **The trades that buy NEAR.** DefiLlama's buybacks are the NEAR and wNEAR that reach the three fee wallets (its `near-intents` adapter in github.com/DefiLlama/dimension-adapters), and it books the same inflow as revenue. This paper measures NEAR delivered to the wallets, not the swaps that bought it, so buybacks ÷ revenue is 100% by construction.
+- **NEAR bought and later sold.** The fee wallets' balances are measured, but a sale cannot be told apart from another outflow without labeling every counterparty.
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🔁 How to re-run the data 🔁</h2>
+<h2 align="center">🔁 13. How to reproduce this 🔁</h2>
 
-All sources are free and public; each request below returns one dataset on its own.
+Every source is free. All are public except the NEAR Intents Explorer API, which needs a free partner key. Each request below returns one dataset on its own.
 
 | Data | Request |
 | --- | --- |
-| Every number in this document | `npm run rebuild` (every source, a new snapshot and this document) or `npm run verify` (offline, from the committed snapshot); setup and run times are in the Quick Start of [README.md](README.md) |
+| Every number in this document | `npm run rebuild` (every source, a new snapshot and this document) or `npm run verify` (offline, from the committed snapshot); setup and run times are under Reproduce and verify in [README.md](README.md) |
 | The SQL behind every chart | `/dashboard/queries` on the dashboard, `GET /api/query/{id}` (add `?format=csv` for CSV), or `npm run query -- {id}` (add `--db snapshot/dashboard.db` for the snapshot) |
 | Market cap, FDV, rank | `GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&price_change_percentage=1y` |
 | Daily NEAR price and market cap | CoinGecko `GET https://api.coingecko.com/api/v3/coins/near/market_chart?vs_currency=usd&days=365&interval=daily` (daily price; older days: DefiLlama `GET https://coins.llama.fi/chart/coingecko:near?start={unix}&span=500&period=1d&searchWidth=600`) |
@@ -433,7 +472,7 @@ All sources are free and public; each request below returns one dataset on its o
 | Peer circulating supply | `GET https://api.coingecko.com/api/v3/coins/{id}/market_chart?vs_currency=usd&days=365&interval=daily` (the public API serves at most 365 days) |
 | Max issuance rate, shards, contract gas rebate | `POST https://free.rpc.fastnear.com` with `{"jsonrpc":"2.0","id":1,"method":"EXPERIMENTAL_protocol_config","params":{"finality":"final"}}`. `protocol_reward_rate` reads [0, 1], a fraction equal to 0, but nearcore hard-codes the 10% treasury share. |
 | Total supply, gas price | Same endpoint, `block` with `{"finality":"final"}` |
-| NEAR minted and burned per epoch | `POST https://archival-rpc.mainnet.fastnear.com` with `{"jsonrpc":"2.0","id":1,"method":"block","params":{"block_id":<height or hash>}}` for the three blocks named under Formulas; each epoch's previous block is read by the hash in the next block's `prev_hash` |
+| NEAR minted and burned per epoch | `POST https://archival-rpc.mainnet.fastnear.com` with `{"jsonrpc":"2.0","id":1,"method":"block","params":{"block_id":<height or hash>}}` for the three blocks named in Appendix A; each epoch's previous block is read by the hash in the next block's `prev_hash` |
 | Validators, stake | Same endpoint as the max issuance rate, `validators` with `[null]` |
 | Protocol status | `status` on `https://free.rpc.fastnear.com` and `https://rpc.testnet.fastnear.com` |
 | nearcore releases (protocol upgrades shipped) | `GET https://api.github.com/repos/near/nearcore/releases?per_page=50` |
@@ -447,6 +486,7 @@ All sources are free and public; each request below returns one dataset on its o
 | NEAR Intents daily volume by token | Dune query 5157527 on `https://dune.com/near/near-intents`: SQL and latest result at `https://dune.com/queries/5157527` |
 | NEAR Intents daily volume by chain | Dune query 5157565 on `https://dune.com/near/near-intents`: SQL and latest result at `https://dune.com/queries/5157565` |
 | NEAR Intents daily TVL, public and confidential | Dune query 7586891 on `https://dune.com/near/near-intents`: SQL and latest result at `https://dune.com/queries/7586891` |
+| NEAR Intents 1Click swaps, volume and app fees by referral | NEAR Intents Explorer API `GET https://explorer.near-intents.org/api/v0/transactions?statuses=SUCCESS&numberOfTransactions=1000&startTimestamp={a millisecond before the day}&endTimestamp={the next day's start}` with a free partner key (both bounds exclusive; each day's completed swaps, added up by referral; paged by `lastDepositAddress` and `lastDepositMemo`) |
 | Intents volume on days Dune does not have | `GET https://api.llama.fi/summary/dexs/near-intents?excludeTotalDataChartBreakdown=true` |
 | Intents revenue, buybacks (and gross fees on days Dune does not have) | `GET https://api.llama.fi/summary/fees/near-intents?dataType=dailyRevenue&excludeTotalDataChartBreakdown=true`, then with `dailyHoldersRevenue` and `dailyFees` |
 | DEX volume on NEAR | `GET https://api.llama.fi/overview/dexs/near?excludeTotalDataChartBreakdown=true` |
@@ -460,7 +500,7 @@ All sources are free and public; each request below returns one dataset on its o
 
 <img src="assets/divider.svg" width="100%" alt="">
 
-<h2 align="center">🧮 Formulas 🧮</h2>
+<h2 align="center">🧮 Appendix A. Formulas 🧮</h2>
 
 - Every flow window ends on `dataThrough`: the last day that Intents volume, Intents buybacks, gas fees and the NEAR price all have, or, when one of them or NEAR minted or burned misses a day in the 30 days before it, the latest earlier day (at most 30 days back) whose 30 days are all stored, so one missing day dates the figures earlier instead of emptying them. A metric built on another series (DEX volume) shows "—" unless that series has data on every day of its window. Metrics on Intents gross fees and revenue end on the last day both have, at most `dataThrough` and usually a day before it, as the newest day of fees is still filling, and earlier by the same missing-day rule applied to fees, revenue and Intents volume. NearBlocks metrics end on the last day their own series share. NEAR Intents swaps, average swap and confidential share, from Dune alone, end on the last day Dune's swaps and confidential volume both have, at most `dataThrough`, and earlier by the same missing-day rule.
 - The worker keeps DefiLlama's flow series only through the day before yesterday (UTC), because DefiLlama finishes a day's total during the next day.
@@ -473,7 +513,8 @@ All sources are free and public; each request below returns one dataset on its o
 - Fee chain, in four steps, over the 30 and 90 days to the last day Intents fees and revenue both have: NEAR Intents volume, the gross fees charged on it, the revenue kept from those fees (DefiLlama `dailyRevenue`), and the buybacks paid from that revenue (`dailyHoldersRevenue`). Fee rate = gross fees ÷ volume; fees per $1M swapped = fee rate × 1,000,000; each later step is also shown as a share of the step before (revenue ÷ fees, buybacks ÷ revenue). Capture rate (share of fees that buys NEAR) = buybacks ÷ gross fees, also from 2026-02-23 to that day. Share of volume that buys NEAR = buybacks ÷ volume; it needs no fees, so its windows (the 90-day rows, break-even and the projections) end on `dataThrough`.
 - Share of DEX volume = DefiLlama's NEAR Intents volume ÷ the volume of every DEX DefiLlama tracks on NEAR, which includes NEAR Intents, over 30 and 180 days; both from DefiLlama, so they count the same swaps.
 - Swaps, public and confidential, compare the 30-day total with the same 30 days a year earlier. Average swap = volume ÷ swaps over the same 30 days. Confidential share = confidential volume ÷ all volume, over 30 days and in 7-day blocks.
-- Chain mix and stablecoin share: Dune counts each swap's volume once, under one token and its chain, so the shares add up to 100%. Stablecoin share = volume under the symbols in `STABLECOIN_SYMBOLS` (`src/config/intents.ts`) ÷ all volume.
+- Chain mix and stablecoin share: Dune's volume by chain and its volume by token each sum to its total volume, so the shares add up to 100%. Stablecoin share = volume under the symbols in `STABLECOIN_SYMBOLS` (`src/config/intents.ts`) ÷ all volume.
+- 1Click swaps by referral: for each UTC day, once the day after it has ended, the completed swaps the Explorer API lists as created that day, added up by referral (`(none)` when a swap carries none). Volume = `amountInUsd`; app fees = each fee's basis points × `amountInUsd` ÷ 10,000. Over the 30 days to the newest stored day: largest referral's share of fees = its app fees ÷ all app fees; fee rate = app fees ÷ volume. 1Click share of gross fees = app fees ÷ NEAR Intents gross fees over the 30 days to the last day both have.
 - Share of transactions = intents.near transactions over 30 days ÷ all NEAR transactions over the same 30 days, ending on the last day both NearBlocks series have.
 - Chain activity: transactions and new accounts compare the 30-day total with the same 30 days a year earlier. Active accounts compare the median daily count of the 30 days with the median of the same 30 days a year earlier.
 - Monthly growth rate of NEAR bought = (1 + the change of NEAR bought over the 90 days to `dataThrough` against the 90 days before)^(365 ÷ 12 ÷ 90) − 1, a month being 365 ÷ 12 days as in the projection.
@@ -495,5 +536,11 @@ All sources are free and public; each request below returns one dataset on its o
 - Transfer cost = gas price × 0.446 Tgas × the NEAR price.
 - Block time = seconds between the first and the last block-height sample of the window ÷ the blocks between them; the worker samples the latest final block every minute.
 - Protocol upgrades shipped = stable (not release-candidate) nearcore releases on GitHub whose version ends in .0, published in the last 365 days; shown only when the stored releases reach back that far.
+
+<img src="assets/divider.svg" width="100%" alt="">
+
+<h2 align="center">📝 Disclosure 📝</h2>
+
+The code that builds this document was written with an AI coding assistant (Claude Code), and the text is generated from the database by that code. For research and education only. This is not investment, financial or legal advice.
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=90&color=0:00a37a,100:1ed39b&section=footer" alt="" width="100%">

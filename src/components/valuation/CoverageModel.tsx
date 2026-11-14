@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { LineChart, LineChartSkeleton } from "@/components/charts/LineChart";
+import { Choice, signedPercent as signed, Slider, SliderSkeleton } from "@/components/projections/ModelControls";
+import { burnNote, rampNote, usedUpNote } from "@/components/projections/projection-notes";
 import { HowCalculated, HowCalculatedSkeleton } from "@/components/ui/HowCalculated";
 import { MetricStrip, MetricStripSkeleton } from "@/components/ui/MetricStrip";
 import { NoBreakTokens } from "@/components/ui/NoBreakTokens";
@@ -10,10 +12,8 @@ import { COVERAGE_HORIZON_MONTHS as MONTHS } from "@/config/projections";
 import { FULL_BURN_PROTOCOL, HSP029 } from "@/config/protocol";
 import { formatChange, formatNear, formatPercent, formatPercentFromFull, formatUsd } from "@/lib/format";
 import { dayTime } from "@/lib/metrics";
-import { MONTH_SECONDS, project, seedInput, type ProjectionSeed } from "@/lib/projection";
+import { MONTH_SECONDS, modelInput, modelOutcome, project, type ProjectionSeed } from "@/lib/projection";
 import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
-import { Choice, signedPercent as signed, Slider, SliderSkeleton } from "@/components/projections/ModelControls";
-import { burnNote, rampNote, usedUpNote } from "@/components/projections/projection-notes";
 
 type Input = "price" | "bought" | "fees" | "issuance" | "burn";
 
@@ -30,23 +30,21 @@ export function CoverageModel({ seed, hsp029Status, hsp029Failed }: { seed: Proj
   const price = seed.priceUsd * priceMultiple;
   const rows = useMemo(
     () =>
-      project({
-        ...seedInput(seed, MONTHS, priceMultiple),
-        targetInflationRate: issuance === "hsp029" ? HSP029.targetRate : null,
-        burnShareOfFees: burn === "full" ? 1 : seed.burnShareOfFees,
-        buybackGrowth: buybackGrowth / 100,
-        feeGrowth: feeGrowth / 100,
-      }),
+      project(
+        modelInput(seed, MONTHS, {
+          priceMultiple,
+          targetInflationRate: issuance === "hsp029" ? HSP029.targetRate : null,
+          burnShareOfFees: burn === "full" ? 1 : seed.burnShareOfFees,
+          buybackGrowth: buybackGrowth / 100,
+          feeGrowth: feeGrowth / 100,
+        }),
+      ),
     [priceMultiple, seed, issuance, burn, buybackGrowth, feeGrowth],
   );
 
-  const first = rows[0]!;
-  const last = rows.at(-1)!;
-  const breakEven = rows.find((r) => r.coverage >= 1);
+  const { firstCoverage, lastCoverage, reachedMonth, supplyGrowthPerYear, heldNear } = modelOutcome(rows, seed);
   /** Once burn and buying have taken all NEAR, each month takes exactly what it mints, so it reads 100%. */
   const usedUp = usedUpNote(rows);
-  const supplyGrowthPerYear = (last.supplyNear / seed.totalSupplyNear) ** (12 / MONTHS) - 1;
-  const heldNear = rows.reduce((sum, r) => sum + r.boughtNear, 0);
   const start = dayTime(seed.through);
   const coveragePoints = rows.map((r) => ({ time: start + r.month * MONTH_SECONDS, value: r.coverage }));
   const issuanceOptions = [
@@ -104,12 +102,12 @@ export function CoverageModel({ seed, hsp029Status, hsp029Failed }: { seed: Proj
       <MetricStrip
         className="mt-4"
         metrics={[
-          { label: "Absorbed in month 1", value: formatPercentFromFull(first.coverage, 0), detail: "Burned + bought ÷ issuance at the max rate" },
-          { label: `Absorbed in month ${MONTHS}`, value: formatPercentFromFull(last.coverage, 0), detail: usedUp ?? "Under these assumptions" },
+          { label: "Absorbed in month 1", value: formatPercentFromFull(firstCoverage, 0), detail: "Burned + bought ÷ issuance at the max rate" },
+          { label: `Absorbed in month ${MONTHS}`, value: formatPercentFromFull(lastCoverage, 0), detail: usedUp ?? "Under these assumptions" },
           {
             label: "Reaches 100%",
-            value: breakEven ? `Month ${breakEven.month}` : "Not reached",
-            detail: breakEven ? "Burned + bought equals that month's issuance" : `Burned + bought stays below issuance for all ${MONTHS} months`,
+            value: reachedMonth !== null ? `Month ${reachedMonth}` : "Not reached",
+            detail: reachedMonth !== null ? "Burned + bought equals that month's issuance" : `Burned + bought stays below issuance for all ${MONTHS} months`,
           },
           { label: "Total supply growth", value: `${formatChange(supplyGrowthPerYear, 2)}/yr`, detail: `Net of burn; ${formatNear(heldNear)} bought stays in supply` },
         ]}

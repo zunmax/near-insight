@@ -10,7 +10,7 @@ export const NETWORK_QUERIES: NamedQuery[] = [
     title: "Stake by validator",
     page: "/dashboard/network",
     sentence:
-      "Validators of the latest stored epoch by stake, with their running share; the rank of the first row past a third of all stake is the Nakamoto coefficient (validators = staking pools).",
+      "Validators (staking pools) of the latest stored epoch, largest stake first, with their running share of all stake. The rank of the first row past a third of all stake is the Nakamoto coefficient: the fewest validators that together hold over a third.",
     sql: `WITH latest AS (SELECT MAX(epoch_height) AS epoch FROM validator_epochs),
 v AS (SELECT account_id, stake_near, produces_blocks FROM validator_epochs, latest WHERE epoch_height = latest.epoch),
 ranked AS (
@@ -30,7 +30,7 @@ ORDER BY rank`,
     id: "developers",
     title: "Monthly active developers",
     page: "/dashboard/network",
-    sentence: "Monthly active developers for NEAR, Ethereum, Solana and Bitcoin on the first of each month.",
+    sentence: "Monthly active developers for NEAR (all and full-time), Ethereum, Solana and Bitcoin on the first of each month.",
     sql: `SELECT day, near, near_full_time, ethereum, solana, bitcoin
 FROM (${pivot({
       near: SERIES.devsAllNear,

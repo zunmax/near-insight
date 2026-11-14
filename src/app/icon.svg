@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- The NEAR Insights mark (BrandMark in src/components/shell/BrandMark.tsx), in the light or dark theme colours of the browser. -->
+  <!-- The NEAR Insights mark (BrandMark in src/components/shell/BrandMark.tsx), in the light or dark theme colors of the browser. -->
   <style>
     .box { fill: #ffffff; stroke: #0f1419; }
     .stems { stroke: #0f1419; }

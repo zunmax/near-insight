@@ -20,7 +20,7 @@ export async function AtAGlance() {
   if (!market) return <NoData title={TITLE} />;
   const windowLabel = windowName(metrics, "30 days");
   const rows = [
-    { label: "NEAR price", value: formatUsd(market.priceUsd), change: levelChange(prices, 365), against: "in a year" },
+    { label: "NEAR price", value: formatUsd(market.priceUsd), change: levelChange(prices, 365), against: "last 12 months" },
     { label: "Market cap", value: formatUsd(market.marketCapUsd), note: `Rank #${market.rank}` },
     { label: `NEAR Intents volume, ${windowLabel}`, value: intents ? formatUsd(intents.total30d) : "—", change: intents?.changeYoY30d ?? null, against: "vs a year earlier" },
     {
@@ -58,7 +58,7 @@ export async function AtAGlance() {
 
 /** Lengths of each row's label and change line (0 for the market cap, which has a note beside its value instead). */
 const SKELETON_ROWS = [
-  { label: "NEAR price".length, change: "+38.1% in a year".length },
+  { label: "NEAR price".length, change: "+38.1% last 12 months".length },
   { label: "Market cap".length, change: 0 },
   { label: 41, change: "+58.2% vs a year earlier".length },
   { label: 34, change: `+20.0% ${MONTHLY_GROWTH_AGAINST}`.length },

@@ -15,14 +15,14 @@ const TITLE = "New supply absorbed by burn and buybacks";
 export async function AbsorptionPanel() {
   await io();
   const metrics = await getThesisMetrics();
-  const { absorption: a, dataThrough } = metrics;
-  if (!a?.d30) return <NoData title={TITLE} />;
+  const { absorption, dataThrough } = metrics;
+  if (!absorption?.d30) return <NoData title={TITLE} />;
   const window30 = windowName(metrics, "30 days");
   const windows = [
-    { label: upperFirst(window30), row: a.d30 },
-    { label: upperFirst(windowName(metrics, "90 days")), row: a.d90 },
-    { label: `Since buybacks began, ${BUYBACKS_START_DAY}`, row: a.sinceBuybacks },
-    { label: upperFirst(windowName(metrics, "365 days")), row: a.d365 },
+    { label: upperFirst(window30), row: absorption.d30 },
+    { label: upperFirst(windowName(metrics, "90 days")), row: absorption.d90 },
+    { label: `Since buybacks began, ${BUYBACKS_START_DAY}`, row: absorption.sinceBuybacks },
+    { label: upperFirst(windowName(metrics, "365 days")), row: absorption.d365 },
   ];
 
   return (
@@ -34,11 +34,11 @@ export async function AbsorptionPanel() {
       viewLabel="Values"
     >
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[30px] leading-none font-extrabold tabular-nums">{formatPercentFromFull(a.d30.share, 1)}</p>
+        <p className="text-[30px] leading-none font-extrabold tabular-nums">{formatPercentFromFull(absorption.d30.share, 1)}</p>
         <p className="text-right text-[13px] text-muted">over the {window30}</p>
       </div>
       <div className="mt-4">
-        <Meter share={a.d30.share} label={`Share of the NEAR minted over the ${window30} that was burned or bought`} />
+        <Meter share={absorption.d30.share} label={`Share of the NEAR minted over the ${window30} that was burned or bought`} />
       </div>
       <TableScroll label="New supply absorbed by window">
         <table className="data-table data-table-stack mt-5 sm:min-w-[360px]">

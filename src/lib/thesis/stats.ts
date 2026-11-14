@@ -22,6 +22,7 @@ import {
 } from "@/lib/format";
 import { isoDay, ratio } from "@/lib/metrics";
 import { measuredBurnNote } from "@/lib/projection";
+import { largestReferral, referralLabel } from "@/lib/referrals";
 import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
 import { proposalStatusLabel, votingClosed } from "@/lib/thesis/proposal-status";
 import { growthNeededValue, peerDigits, transferCost, valuationDigits } from "@/lib/thesis/triggers";
@@ -62,6 +63,17 @@ function hsp029Stat(p: ThesisMetrics["hsp029"]): SectionStat {
   return { label: "HSP-029 vote", value };
 }
 
+/** The largest referral's share of the 1Click swaps' app fees; it backs the claim only while no single front end pays most of them. */
+function referralFeesStat(m: ThesisMetrics): SectionStat {
+  const top = largestReferral(m.referrals);
+  if (!top || !m.referrals) return { label: "Share of 1Click app fees paid through the largest referral, 30 days", value: "—" };
+  return {
+    label: `Share of 1Click app fees paid through ${referralLabel(top.referral)}, ${windowName(m, "30 days", m.referrals.through)}`,
+    value: formatPercent(top.feeShare, digitsApart(top.feeShare * 100, FINDING_LEVELS.referralFeesMajority * 100, 1)),
+    supports: top.feeShare < FINDING_LEVELS.referralFeesMajority,
+  };
+}
+
 /** The live numbers for and against each section's claim. */
 export const SECTION_STATS: Record<SectionId, SectionStats> = {
   demand: {
@@ -83,8 +95,9 @@ export const SECTION_STATS: Record<SectionId, SectionStats> = {
       ],
   },
   capture: {
-    sources: ["dune", "defillama", "coingecko", "nearRpc", "nearblocks", "nearArchive"],
+    sources: ["dune", "defillama", "coingecko", "nearRpc", "nearblocks", "nearArchive", "intentsExplorer"],
     flows: true,
+    ownThrough: (m) => ({ label: "NEAR Intents explorer", day: m.referrals?.through ?? null }),
     stats: (m) =>
       m.buybacks && [
         { label: `NEAR bought, ${windowName(m, "30 days")}`, value: formatNear(m.buybacks.bought30dNear) },
@@ -106,6 +119,7 @@ export const SECTION_STATS: Record<SectionId, SectionStats> = {
               supports: m.feeChain.d30.captureRate >= FINDING_LEVELS.captureRateMajority,
             },
         { label: "NEAR held in the three fee wallets, still in total supply", value: m.feeWallets ? formatNear(m.feeWallets.totalNear) : "—" },
+        referralFeesStat(m),
       ],
   },
   supply: {

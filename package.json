@@ -23,8 +23,8 @@
     "snapshot": "node --env-file-if-exists=.env scripts/snapshot.ts",
     "verify": "node --env-file-if-exists=.env scripts/verify.ts",
     "query": "node --env-file-if-exists=.env scripts/query.ts",
-    "rebuild": "node --env-file-if-exists=.env scripts/rebuild.ts",
-    "worker:health": "node --env-file-if-exists=.env src/ingest/health.ts"
+    "model": "node --env-file-if-exists=.env scripts/model.ts",
+    "rebuild": "node --env-file-if-exists=.env scripts/rebuild.ts"
   },
   "dependencies": {
     "hyparquet": "1.31.3",
@@ -35,6 +35,8 @@
     "ws": "8.22.0"
   },
   "devDependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^24",
     "@types/react": "^19",
@@ -42,6 +44,7 @@
     "@types/ws": "^8.18.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "marked": "^18.1.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

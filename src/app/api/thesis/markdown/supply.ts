@@ -1,4 +1,4 @@
-/** Thesis section 3: issuance, total supply, the share of new supply absorbed, staking, the treasury and HSP-029. */
+/** The pillar 3 section: issuance, total supply, the share of new supply absorbed, staking, the treasury and HSP-029. */
 import { absorbed, COINGECKO_MARKETS, DASH, DEFILLAMA, daysTo, EPOCH_HEADERS, monthEntry, NEAR_DAILY_PRICE, NEARBLOCKS_V1, NEARBLOCKS_V3, reading, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
 import { section } from "@/app/api/thesis/markdown/section";
 import { BUYBACKS_START_DAY, FULL_BURN_PROTOCOL, HSP029, MAX_ISSUANCE_HALVED_DAY, PREVIOUS_MAX_INFLATION, PROTOCOL_TREASURY_SHARE } from "@/config/protocol";
@@ -13,19 +13,19 @@ function fullBurnNote(input: ThesisDocumentInput): string {
   /** Without both protocol readings, the protocol's burn share of gas fees (1 once no gas is paid to contracts) decides. */
   const live = p ? p.mainnet >= FULL_BURN_PROTOCOL : s?.burnShareOfFees === 1;
   const rebate = live
-    ? ` Before protocol ${FULL_BURN_PROTOCOL}, the protocol returned part of contract-call gas to the contract (\`burnt_gas_reward\`).`
+    ? ` Before it, part of contract-call gas went back to the contract (\`burnt_gas_reward\`).`
     : s
       ? ` Until then, the protocol returns ${formatPercent(1 - s.burnShareOfFees, 0)} of contract-call gas to the contract (\`burnt_gas_reward\`); transfers and fixed costs burn all of their gas.`
       : "";
   const measured = seed
-    ? ` Measured over the ${daysTo(30, t)}, ${formatPercentFromFull(seed.measuredBurnShare, 1)} of all gas fees were burned${
+    ? ` Over the ${daysTo(30, t)}, ${formatPercentFromFull(seed.measuredBurnShare, 1)} of all gas fees were burned${
         live && seed.measuredBurnShare < 1
-          ? `; days in the window before mainnet ran protocol ${FULL_BURN_PROTOCOL} still paid part of contract-call gas to contracts, and DefiLlama's fee count can differ from the burn read from block headers`
+          ? `: the window can include days before mainnet ran protocol ${FULL_BURN_PROTOCOL}, when part of contract-call gas went to contracts, and DefiLlama's fee count can differ from the burn read from block headers`
           : ""
       }.`
     : "";
   const rule = live
-    ? `Protocol ${FULL_BURN_PROTOCOL} (HSP-027) removed the gas rebate to contracts, so all gas is burned.`
+    ? `Protocol ${FULL_BURN_PROTOCOL} (HSP-027) removed the gas rebate to contracts, so all gas is now burned.`
     : `Protocol ${FULL_BURN_PROTOCOL} (HSP-027) removes the gas rebate to contracts, so all gas is burned once mainnet runs it.`;
   return `**Full burn.** ${rule}${rebate}${measured}`;
 }
@@ -37,7 +37,6 @@ export function supplySection(input: ThesisDocumentInput): string {
   const epoch = `epoch ${show(staking?.epochHeight, String)}`;
   const monthly = a?.monthly.length ? a.monthly.map((row) => monthEntry(row.month, formatPercent(row.share, 1), row.days)).join(", ") : DASH;
   return section(
-    3,
     "supply",
     input,
     [
@@ -70,6 +69,6 @@ export function supplySection(input: ThesisDocumentInput): string {
       ["HSP-029 vote", show(hsp029, proposalStatusLabel), reading(hsp029?.fetchedAt)],
     ],
     [fullBurnNote(input)],
-    `NEAR RPC \`EXPERIMENTAL_protocol_config\`, fields \`max_inflation_rate\` and \`transaction_costs.burnt_gas_reward\` (the gas rebate to contracts); NEAR RPC \`block\` with \`{"finality":"final"}\` (today's total supply) and \`status\` on mainnet and testnet (protocol versions); DefiLlama \`GET ${DEFILLAMA}/summary/fees/near-intents?dataType=dailyHoldersRevenue&excludeTotalDataChartBreakdown=true\` (buybacks, for NEAR bought) and \`GET ${DEFILLAMA}/summary/fees/near?excludeTotalDataChartBreakdown=true\` (gas fees, for the measured burn share); ${NEAR_DAILY_PRICE}, for NEAR bought and gas fees in NEAR; ${EPOCH_HEADERS} for NEAR minted and burned (see Formulas); \`query\` \`call_function\` \`get_proposal\` on \`${HOUSE_OF_STAKE_CONTRACT}\` with \`{"proposal_id":${HSP029.proposalId}}\`; NearBlocks \`GET ${NEARBLOCKS_V3}/block-stats?limit=${SOURCES.nearblocks.maxDailyRows}\` (daily total supply; \`GET ${NEARBLOCKS_V1}/charts\` for older days); NEAR RPC \`validators\` with \`[null]\` (staked share and gross yield); \`query\` \`view_account\` on \`${PROTOCOL_TREASURY_ACCOUNT}\` (today's balance) and NearBlocks \`GET ${NEARBLOCKS_V3}/accounts/${PROTOCOL_TREASURY_ACCOUNT}/stats/balance?limit=${SOURCES.nearblocks.maxDailyRows}\` (past days); CoinGecko \`GET ${COINGECKO_MARKETS}\` (FDV ÷ market cap).`,
+    `NEAR RPC \`EXPERIMENTAL_protocol_config\`, fields \`max_inflation_rate\` and \`transaction_costs.burnt_gas_reward\` (the gas rebate to contracts); NEAR RPC \`block\` with \`{"finality":"final"}\` (today's total supply) and \`status\` on mainnet and testnet (protocol versions); DefiLlama \`GET ${DEFILLAMA}/summary/fees/near-intents?dataType=dailyHoldersRevenue&excludeTotalDataChartBreakdown=true\` (buybacks, for NEAR bought) and \`GET ${DEFILLAMA}/summary/fees/near?excludeTotalDataChartBreakdown=true\` (gas fees, for the measured burn share); ${NEAR_DAILY_PRICE}, for NEAR bought and gas fees in NEAR; ${EPOCH_HEADERS} for NEAR minted and burned (see Appendix A); \`query\` \`call_function\` \`get_proposal\` on \`${HOUSE_OF_STAKE_CONTRACT}\` with \`{"proposal_id":${HSP029.proposalId}}\`; NearBlocks \`GET ${NEARBLOCKS_V3}/block-stats?limit=${SOURCES.nearblocks.maxDailyRows}\` (daily total supply; \`GET ${NEARBLOCKS_V1}/charts\` for older days); NEAR RPC \`validators\` with \`[null]\` (staked share and gross yield); \`query\` \`view_account\` on \`${PROTOCOL_TREASURY_ACCOUNT}\` (today's balance) and NearBlocks \`GET ${NEARBLOCKS_V3}/accounts/${PROTOCOL_TREASURY_ACCOUNT}/stats/balance?limit=${SOURCES.nearblocks.maxDailyRows}\` (past days); CoinGecko \`GET ${COINGECKO_MARKETS}\` (FDV ÷ market cap).`,
   );
 }

@@ -1,4 +1,4 @@
-# Python packages for the ingest worker's Dune reader (src/ingest/sources/dune.py). Python 3.10 or later.
+# Python packages for the ingest worker's Dune reader (src/ingest/sources/dune.py). Python 3.11 or later.
 # Every package is pinned, dependencies included, so a rebuild installs the same set it was tested with.
 certifi==2026.10.23
 cffi==2.1.1

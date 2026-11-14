@@ -23,7 +23,7 @@ export async function SupplyGrowthPeersPanel() {
   return (
     <Panel
       title={TITLE}
-      description={`The median that tests the thesis leaves out dollar-pegged coins (stablecoins and tokenized cash or credit funds): coins priced within ${formatPercent(PEG_PRICE_BAND, 0)} of $1 that moved less than ${PEG_CHANGE_1Y}% in a year. Their supply follows deposits or lending, not issuance. Every coin with at least ${minHistoryDays} days of supply history is still listed below.`}
+      description={`The peer median the breaking point uses leaves out dollar-pegged coins (stablecoins and tokenized cash or credit funds): coins priced within ${formatPercent(PEG_PRICE_BAND, 0)} of $1 that moved less than ${PEG_CHANGE_1Y}% in a year. Their supply follows deposits or lending, not issuance. Every coin with at least ${minHistoryDays} days of supply history is still listed below.`}
       sources={["coingecko"]}
       through={through ? `Data through ${through}` : undefined}
       sqlId="peer-supply-growth"
@@ -36,7 +36,7 @@ export async function SupplyGrowthPeersPanel() {
 /** Loading placeholder of SupplyGrowthPeersPanel: a bar for NEAR and each of the about 20 coins ranked above it. */
 export function SupplyGrowthPeersPanelSkeleton() {
   return (
-    <PanelSkeleton title={TITLE.length} text={311} tabs="Chart">
+    <PanelSkeleton title={TITLE.length} text={318} tabs="Chart">
       <BarListSkeleton rows={21} />
     </PanelSkeleton>
   );

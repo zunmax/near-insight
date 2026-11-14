@@ -1,4 +1,4 @@
-/** Thesis section 1: NEAR Intents volume, swaps, confidential share and TVL, and its share of NEAR's DEX volume and transactions. */
+/** The pillar 1 section: NEAR Intents volume, swaps, confidential share and TVL, and its share of NEAR's DEX volume and transactions. */
 import { DASH, DEFILLAMA, daysTo, NEARBLOCKS_V1, NEARBLOCKS_V3, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
 import { section } from "@/app/api/thesis/markdown/section";
 import { DEFILLAMA_PUBLIC_ONLY } from "@/config/intents";
@@ -18,7 +18,6 @@ const dexShareLabel = (publicOnly: boolean | undefined) =>
 export function demandSection(input: ThesisDocumentInput): string {
   const { intents: i, intentsTvl, dexShare, intentsTxnShare, dataThrough: t } = input.metrics;
   return section(
-    1,
     "demand",
     input,
     [

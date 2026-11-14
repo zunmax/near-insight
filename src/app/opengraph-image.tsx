@@ -24,7 +24,7 @@ export default function Image() {
       >
         <div style={{ display: "flex", fontSize: 34, fontWeight: 700, color: "#1ed39b" }}>{SITE.name}</div>
         <div style={{ display: "flex", fontSize: 46, fontWeight: 700, lineHeight: 1.2, maxWidth: 1000 }}>{THESIS_STATEMENT}</div>
-        <div style={{ display: "flex", fontSize: 26, color: "#71767b" }}>On-chain, market and NEAR Intents revenue data, every query open to re-run</div>
+        <div style={{ display: "flex", fontSize: 26, color: "#71767b" }}>On-chain, market and NEAR Intents revenue data. Every query can be re-run.</div>
       </div>
     ),
     size,

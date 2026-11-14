@@ -65,8 +65,8 @@ describe("flowContext", () => {
 
   test("a history too short for any complete window keeps the last shared day", () => {
     const short = (series: DailyPoint[]) => series.slice(-10);
-    const i = inputs();
-    const flow = flowContext({ ...i, volume: short(i.volume), buybacks: short(i.buybacks), fees: short(i.fees), prices: short(i.prices) });
+    const full = inputs();
+    const flow = flowContext({ ...full, volume: short(full.volume), buybacks: short(full.buybacks), fees: short(full.fees), prices: short(full.prices) });
     assert.equal(flow.throughDay, LAST);
     assert.equal(flow.covered(flow.boughtNear, 30), false);
   });

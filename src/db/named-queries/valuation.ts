@@ -12,11 +12,12 @@ export const VALUATION_QUERIES: NamedQuery[] = [
     title: "Starting values of the projections",
     page: "/dashboard/valuation",
     sentence: [
-      "Every projection and the model start from these values, taken over the 30 days to the data-through day; a 30-day value is empty unless its series cover all 30 days.",
-      "NEAR bought: the NEAR the 30 days' buyback dollars buy at today's price, as a monthly amount (the projections hold today's price), with the NEAR actually bought at each day's price beside it.",
+      "Every projection and the model start from these values, taken over the 30 days to the data-through day. A 30-day value is empty unless its series cover all 30 days.",
+      "NEAR bought: the 30 days' buyback dollars converted to NEAR at today's price, as a monthly amount (the projections hold today's price). The NEAR actually bought, at each day's price, sits beside it.",
       "Burn: gas fees in NEAR as a monthly amount, NEAR burned, the measured burned share of gas fees, and the share the projections burn (all of it once the protocol pays no gas to contracts).",
-      "Volume: Intents volume over the 30 days and as a monthly amount, the share of volume that buys NEAR, which sets the volume a scenario needs, its multiple of the 30-day run rate and break-even, the fee rate (gross fees ÷ volume over the 30 days to the fee windows' last day, as the newest day of fees is still filling) and the share of fees that buys NEAR (share of volume that buys NEAR ÷ fee rate).",
-      "Growth: NEAR bought over the 90 days to the data-through day against the 90 before, and as a monthly rate for the 90-day pace scenario; none until both 90-day windows fall after buying began.",
+      "Volume: Intents volume over the 30 days and as a monthly amount, and the share of volume that buys NEAR. That share sets the volume a scenario needs, its multiple of the 30-day run rate, and break-even.",
+      "The fee rate is gross fees ÷ volume over the 30 days to the fee windows' last day, as the newest day of fees is still filling. The share of fees that buys NEAR is the share of volume that buys NEAR ÷ fee rate.",
+      "Growth: NEAR bought over the 90 days to the data-through day against the 90 days before, also as a monthly rate for the 90-day pace scenario. It is empty until both 90-day windows fall after buying began.",
       "Market and protocol: today's price, market cap, total supply and max issuance rate, the NEAR minted behind break-even, and the end of HSP-029's timelock, which its ramp starts from.",
     ].join(" "),
     sql: `WITH ${THROUGH}, ${FEES_THROUGH}, ${FLOWS}, ${SUPPLY_FLOWS},
@@ -83,7 +84,7 @@ WHERE c.coin_id = 'near'`,
     title: "NEAR market cap ÷ network revenue",
     page: "/dashboard/valuation",
     sentence:
-      "NEAR's market cap each day against its network revenue (NEAR Intents revenue plus gas fees) of the 30 days to that day, annualized. It starts once the whole 30-day window falls in or after the first month with NEAR Intents revenue on every day, because earlier revenue arrived in occasional lumps; days without all 30 days of revenue are left out.",
+      "NEAR's market cap each day against its network revenue (NEAR Intents revenue plus gas fees) over the 30 days to that day, annualized. The series starts once the whole 30-day window falls in or after the first month with NEAR Intents revenue on every day, because earlier revenue arrived in occasional lumps. Days without all 30 days of revenue are left out.",
     sql: `WITH first_full AS (
   SELECT MIN(month) AS month FROM (
     SELECT substr(day, 1, 7) AS month, COUNT(*) AS days FROM daily_series

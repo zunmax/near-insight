@@ -11,7 +11,7 @@ export const SUPPLY_QUERIES: NamedQuery[] = [
     id: "absorption",
     title: "New supply absorbed by burn and buybacks",
     page: "/dashboard/supply",
-    sentence: `NEAR burned and bought against NEAR minted over the 30 and 90 days, the days since buybacks began on ${BUYBACKS_START_DAY}, and the 365 days to the data-through day. A window counts only when NEAR minted, burned and bought cover every one of its days.`,
+    sentence: `NEAR burned and bought against NEAR minted over the 30 and 90 days, the days since buybacks began on ${BUYBACKS_START_DAY}, and the 365 days to the data-through day. A window appears only when NEAR minted, burned and bought cover all its days.`,
     sql: `WITH ${THROUGH}, ${SUPPLY_FLOWS},
 windows AS (
   SELECT '30 days' AS name, 30 AS days UNION ALL SELECT '90 days', 90
@@ -34,7 +34,7 @@ ORDER BY w.days, w.name`,
     id: "absorption-monthly",
     title: "New supply absorbed by month",
     page: "/dashboard/supply",
-    sentence: "Each calendar month's NEAR burned and bought as shares of the NEAR minted that month.",
+    sentence: "Each calendar month's NEAR minted, burned and bought, and burn plus buybacks as a share of the NEAR minted that month.",
     sql: `WITH ${THROUGH}, ${SUPPLY_FLOWS}
 SELECT substr(supply_flows.day, 1, 7) AS month, COUNT(*) AS days, SUM(minted_near) AS minted_near, SUM(burnt_near) AS burnt_near,
   SUM(bought_near) AS bought_near, (SUM(burnt_near) + COALESCE(SUM(bought_near), 0)) / SUM(minted_near) AS absorbed_share

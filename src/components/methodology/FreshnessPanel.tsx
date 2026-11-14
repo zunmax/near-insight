@@ -8,7 +8,8 @@ import { getSourceFreshness } from "@/data/freshness";
 
 const TITLE = "Data freshness";
 
-const every = (ms: number) => (ms >= 3_600_000 ? `${ms / 3_600_000} h` : `${ms / 60_000} min`);
+/** A read interval in hours from one hour up, in minutes below that. */
+const intervalLabel = (ms: number) => (ms >= 3_600_000 ? `${ms / 3_600_000} h` : `${ms / 60_000} min`);
 
 /** Each source, how often the worker reads it, and the day its stored data runs through. */
 export async function FreshnessPanel() {
@@ -31,7 +32,7 @@ export async function FreshnessPanel() {
             {sources.map((s) => (
               <tr key={s.source}>
                 <th scope="row" className="text-left font-medium text-ink">{s.source}</th>
-                <td data-label="Read every" className="text-ink-2">{every(s.everyMs)}</td>
+                <td data-label="Read every" className="text-ink-2">{intervalLabel(s.everyMs)}</td>
                 <td data-label="Data through (UTC)" className="text-ink-2 tabular-nums">{s.through ?? "—"}</td>
               </tr>
             ))}

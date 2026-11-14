@@ -14,15 +14,27 @@ const { dashboard, queries: dune } = SOURCES.dune;
 /** A query on the NEAR team's Dune dashboard, read from its latest run. */
 const duneQuery = (id: number, name: string, gives: string) => `Dune ${dashboard.handle}/${dashboard.slug} query ${id} "${name}" (${gives}, latest run)`;
 
+/** What each Dune query gives. */
+export const DUNE_QUERY_DATA: Record<keyof typeof dune, string> = {
+  volume: "daily volume, public and confidential",
+  swaps: "daily swaps",
+  fees: "daily gross fees",
+  feeChannels: "fees since launch for the 100 largest channels above $10",
+  symbolVolume: "daily volume by token",
+  chainVolume: "daily volume by chain",
+  tvl: "daily TVL, public and confidential",
+};
+
 /** The request behind each stored series, as the query catalog lists it under each query. */
 export const SOURCE_REQUESTS = {
-  duneVolume: duneQuery(dune.volume, "NEAR Intents - All-time Volume", "daily volume, public and confidential"),
-  duneSwaps: duneQuery(dune.swaps, "NEAR Intents - Activity", "daily swaps"),
-  duneFees: duneQuery(dune.fees, "Total generated fees All-time", "daily gross fees"),
-  duneFeeChannels: duneQuery(dune.feeChannels, "Total generated fees by channel", "fees since launch for the 100 largest channels above $10"),
-  duneSymbolVolume: duneQuery(dune.symbolVolume, "NEAR Intents - Token Volume", "daily volume by token"),
-  duneChainVolume: duneQuery(dune.chainVolume, "NEAR Intents - Blockchain Volume", "daily volume by chain"),
-  duneTvl: duneQuery(dune.tvl, "NEAR Intents - TVL", "daily TVL, public and confidential"),
+  duneVolume: duneQuery(dune.volume, "NEAR Intents - All-time Volume", DUNE_QUERY_DATA.volume),
+  duneSwaps: duneQuery(dune.swaps, "NEAR Intents - Activity", DUNE_QUERY_DATA.swaps),
+  duneFees: duneQuery(dune.fees, "Total generated fees All-time", DUNE_QUERY_DATA.fees),
+  duneFeeChannels: duneQuery(dune.feeChannels, "Total generated fees by channel", DUNE_QUERY_DATA.feeChannels),
+  duneSymbolVolume: duneQuery(dune.symbolVolume, "NEAR Intents - Token Volume", DUNE_QUERY_DATA.symbolVolume),
+  duneChainVolume: duneQuery(dune.chainVolume, "NEAR Intents - Blockchain Volume", DUNE_QUERY_DATA.chainVolume),
+  duneTvl: duneQuery(dune.tvl, "NEAR Intents - TVL", DUNE_QUERY_DATA.tvl),
+  explorerSwaps: "NEAR Intents Explorer API GET /transactions?statuses=SUCCESS (each finished day's swaps, added up by referral)",
   intentsVolume: "DefiLlama GET /summary/dexs/near-intents (daily volume)",
   intentsFees: "DefiLlama GET /summary/fees/near-intents?dataType=dailyFees",
   intentsRevenue: "DefiLlama GET /summary/fees/near-intents?dataType=dailyRevenue",

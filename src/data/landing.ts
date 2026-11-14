@@ -8,8 +8,8 @@ import { intentsMetrics } from "@/data/thesis-metrics/intents";
 import { boughtNear30d } from "@/data/thesis-metrics/revenue";
 import { absorptionMetrics, issuanceMetrics } from "@/data/thesis-metrics/supply";
 import { SERIES, type SeriesName } from "@/db/schema";
-import { landingFigures, type LandingFigure, type LandingMetrics } from "@/lib/thesis/landing-figures";
 import type { DailyPoint } from "@/lib/metrics";
+import { landingFigures, type LandingFigure, type LandingMetrics } from "@/lib/thesis/landing-figures";
 
 /** A read that resolves to `empty` when it fails, so one failing source removes only the figures built on it. */
 const orEmpty = <T>(read: Promise<T>, empty: T): Promise<T> => read.catch(() => empty);

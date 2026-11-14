@@ -1,12 +1,14 @@
-/** Thesis section 4: the growth of NEAR bought against the growth needed, revenue multiples, break-even and the scenarios. */
+/** The valuation section: the growth of NEAR bought against the growth needed, revenue multiples, break-even and the scenarios. */
 import { boughtGrowth, COINGECKO_MARKETS, COINGECKO_NEAR_CHART, DASH, day, daysTo, reading, show, table, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
-import { section } from "@/app/api/thesis/markdown/section";
+import { section, sectionNumber } from "@/app/api/thesis/markdown/section";
 import { COVERAGE_HORIZON_MONTHS, REQUIREMENT_HORIZON_MONTHS, REQUIREMENT_PRICE_MULTIPLES } from "@/config/projections";
+import { HSP029 } from "@/config/protocol";
 import type { ThesisMetrics } from "@/data/thesis-metrics";
 import { digitsApart, formatChange, formatChangeFromZero, formatCount, formatMonths, formatMultiple, formatPercent, formatPercentFromFull, formatUsd, usdDigitsApart } from "@/lib/format";
 import { isoDay, type BreakEven } from "@/lib/metrics";
-import { growthTerms, scenarioOutcome, valuationScenarios } from "@/lib/projection";
+import { growthTerms, modelInputs, modelScenarios, scenarioOutcome, type CoverageScenario } from "@/lib/projection";
 import { formatMaxIssuance } from "@/lib/thesis/max-issuance";
+import { proposalFailed } from "@/lib/thesis/proposal-status";
 import { growthNeededValue, valuationDigits } from "@/lib/thesis/triggers";
 
 function breakEvenRows(e: BreakEven | null, days: number, t: string | null): string[][] {
@@ -22,16 +24,25 @@ function breakEvenRows(e: BreakEven | null, days: number, t: string | null): str
   ];
 }
 
-/** The Valuation page's scenarios (up to three): growth, the month burn + buybacks reach issuance, the share absorbed at the horizon and the volume it needs. */
+/** NEAR bought in the stress scenarios that cut it, as the scenario table's growth column names it. */
+const BUYING_CUT_NAMES: Partial<Record<CoverageScenario["id"], string>> = {
+  "buying-stops": "None bought",
+  "bought-halves": "Half of today's pace, no growth",
+};
+
+/** The Valuation page's scenarios (up to three) and the stress scenarios: growth, the month burn + buybacks reach issuance, the
+    share absorbed at the horizon and the volume it needs. */
 function scenarioTable(m: ThesisMetrics): string | null {
-  const { seed, intents } = m;
-  if (!seed || !intents) return null;
-  const rows = valuationScenarios(seed, m).map((scenario) => {
-    const { reachedMonth, finalCoverage, volumePerYearUsd, timesRunRate, perYear, multiple } = scenarioOutcome(scenario, seed, intents.total30d);
+  const { intents } = m;
+  const inputs = modelInputs(m, m.hsp029 !== null && proposalFailed(m.hsp029));
+  if (!inputs || !intents) return null;
+  const rows = modelScenarios(inputs).map((scenario) => {
+    const { reachedMonth, finalCoverage, volumePerYearUsd, timesRunRate, perYear, multiple } = scenarioOutcome(scenario, inputs.seed, intents.total30d);
     const growth =
-      scenario.growth === 0
+      BUYING_CUT_NAMES[scenario.id] ??
+      (scenario.growth === 0
         ? "No growth"
-        : `${formatChange(scenario.growth, digitsApart(scenario.growth * 100, 0, 1))} a month for ${scenario.growthMonths} months (${formatChangeFromZero(perYear)} a year, ${formatMultiple(multiple, digitsApart(multiple, 1, 1))} in total)`;
+        : `${formatChange(scenario.growth, digitsApart(scenario.growth * 100, 0, 1))} a month for ${scenario.growthMonths} months (${formatChangeFromZero(perYear)} a year, ${formatMultiple(multiple, digitsApart(multiple, 1, 1))} in total)`);
     return [
       scenario.name,
       growth,
@@ -52,7 +63,6 @@ export function valuationSection(input: ThesisDocumentInput): string {
   /** The growth, its range and the growth needed print with the decimals that tell them apart, as the breaking point compares them unrounded. */
   const digits = valuationDigits(m);
   return section(
-    4,
     "valuation",
     input,
     [
@@ -82,10 +92,10 @@ export function valuationSection(input: ThesisDocumentInput): string {
     ],
     [
       scenarios
-        ? `**Scenarios** (month by month from the ${daysTo(30, t)}, with the price and the max issuance rate held at today's level and the burn at its current rate):\n\n${scenarios}`
+        ? `**Scenarios.** Each runs month by month from the ${daysTo(30, t)}. Unless a scenario changes them, the price and the max issuance rate stay at today's level and the burn at its current rate.\n\n${scenarios}`
         : "**Scenarios:** the database does not cover their inputs yet.",
-      `The needed growth is NEAR bought's alone, so it compares directly with its measured growth; it holds the price and the max issuance rate at today's level and the burn at its current rate while supply keeps growing. The growth-needed scenario is left out while no growth is needed or no growth reaches issuance, and the 90-day pace while it is not measured. At a higher price the same buyback dollars buy less NEAR, so more growth is needed; the burn does not depend on price, because gas is paid in NEAR. The Valuation page shows the growth needed at ${formatCount(REQUIREMENT_PRICE_MULTIPLES.length, "price")} and ${formatCount(REQUIREMENT_HORIZON_MONTHS.length, "horizon")}, and a model where the reader can change the price, the monthly growth of NEAR bought and of gas fees, ${m.seed?.fullBurn === false ? "the max issuance (HSP-029) and the share of gas fees burned" : "and the max issuance (HSP-029)"}.`,
+      `The growth needed applies to NEAR bought alone, so it compares directly with the measured growth. It holds the price and the max issuance rate at today's level and the burn at its current rate, while supply keeps growing. The last rows stress the case: buying stops (no protocol rule requires it), NEAR bought halves (as at twice today's price, or with half the buyback dollars), and max issuance ramps to ${formatPercent(HSP029.targetRate, 1)} under HSP-029. At a higher price the same buyback dollars buy less NEAR, so more growth is needed. The burn does not depend on price, because gas is paid in NEAR. The Valuation page shows the growth needed at ${formatCount(REQUIREMENT_PRICE_MULTIPLES.length, "price")} and ${formatCount(REQUIREMENT_HORIZON_MONTHS.length, "horizon")}, and a model in which the reader can change the price, the monthly growth of NEAR bought and of gas fees, ${m.seed?.fullBurn === false ? "the max issuance (HSP-029) and the share of gas fees burned" : "and the max issuance (HSP-029)"}.`,
     ],
-    `\`GET /api/model\` on the dashboard returns the same scenarios month by month as CSV, with the inputs they start from. The inputs come from the requests in sections 1 to 3, CoinGecko \`GET ${COINGECKO_MARKETS}\` (price and market cap) and \`GET ${COINGECKO_NEAR_CHART}\` (\`market_caps\`, the daily market cap behind the revenue multiple).`,
+    `\`GET /api/model\` on the dashboard returns the same scenarios month by month as CSV, with the inputs they start from. The inputs come from the requests in sections ${sectionNumber("demand")} to ${sectionNumber("supply")}, CoinGecko \`GET ${COINGECKO_MARKETS}\` (price and market cap) and \`GET ${COINGECKO_NEAR_CHART}\` (\`market_caps\`, the daily market cap behind the revenue multiple).`,
   );
 }

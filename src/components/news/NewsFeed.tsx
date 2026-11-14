@@ -58,7 +58,7 @@ export function NewsFeed({ initial, total: initialTotal, query, page }: Props) {
         <p className="grid flex-1 place-items-center px-4 py-10 text-center text-[15px] text-ink-2">
           {query
             ? "No stories match this search. Try a shorter word, such as Intents or ETF."
-            : "NEAR news is still being collected from its public sources. The latest stories appear here once the first ones are stored."}
+            : "No stories are stored yet. They appear here once the news sources send the first ones."}
         </p>
       )}
 

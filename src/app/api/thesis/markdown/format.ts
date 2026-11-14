@@ -1,10 +1,10 @@
 /** Input type, Markdown table helpers and value formatters shared by every part of the thesis document. */
+import { PUBLIC_URLS, SOURCES } from "@/config/sources";
 import type { Fact } from "@/content/facts";
 import type { LiveSnapshot } from "@/data/live";
 import type { NetworkState } from "@/data/network";
-import { PUBLIC_URLS, SOURCES } from "@/config/sources";
-import type { Release } from "@/db/schema";
 import type { ThesisMetrics } from "@/data/thesis-metrics";
+import type { Release } from "@/db/schema";
 import { formatChange, formatGrowthRange, formatPercentSplit } from "@/lib/format";
 import { daysInMonth, type Absorption } from "@/lib/metrics";
 
@@ -39,6 +39,9 @@ export const OPEN_DEV_DATA = SOURCES.electricCapital.baseUrl;
 /** The block-header request behind NEAR minted and burned, which several sections name. */
 export const EPOCH_HEADERS = `NEAR archival RPC \`POST ${ARCHIVAL_RPC}\` \`block\` with \`{"block_id":<height or hash>}\` at each epoch boundary`;
 export const COINGECKO = PUBLIC_URLS.coingecko;
+
+/** The Explorer API request behind the 1Click swaps by referral; it needs a partner key. */
+export const EXPLORER_SWAPS = `NEAR Intents Explorer API \`GET ${SOURCES.intentsExplorer.baseUrl}/transactions?statuses=SUCCESS&numberOfTransactions=${SOURCES.intentsExplorer.pageSize}&startTimestamp={a millisecond before the day}&endTimestamp={the next day's start}\` with a free partner key (both bounds exclusive; each day's completed swaps, added up by referral; paged by \`lastDepositAddress\` and \`lastDepositMemo\`)`;
 
 /** Requests that several sections name: the top coins' markets, and NEAR's daily price with the history behind CoinGecko's 365 days. */
 export const COINGECKO_MARKETS = `${COINGECKO}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${SOURCES.coingecko.marketsPageSize}&page=1&price_change_percentage=1y`;

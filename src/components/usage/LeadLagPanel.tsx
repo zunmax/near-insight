@@ -38,13 +38,13 @@ export async function LeadLagPanel() {
       </div>
       <p className="mt-3 text-[13px] leading-relaxed text-ink-2">
         <NoBreakTokens
-          text={`${leadLag.weeks} weekly changes from ${leadLag.from} to ${leadLag.to}. NEAR's weekly return moved ${formatMultiple(leadLag.marketBeta, 2)} the market's (the average of BTC and ETH); that market part is removed before NEAR's return is tested against Intents volume, while the tests of NEAR's return against active accounts use its whole return.`}
+          text={`${leadLag.weeks} weekly changes from ${leadLag.from} to ${leadLag.to}. NEAR's weekly return moved ${formatMultiple(leadLag.marketBeta, 2)} the market's (the average of BTC and ETH). Tests against NEAR Intents volume remove that market part first; tests against active accounts use NEAR's whole return.`}
         />
       </p>
       <LeadLagQuestions groups={groups} />
       <p className="mt-3 text-[12px] leading-relaxed text-muted">
         <NoBreakTokens
-          text={`Weekly log changes in 7-day blocks ending on ${dataThrough}, from the first week with at least $${LEAD_LAG.minWeeklyVolumeUsd / 1e6}M of Intents volume. p-values compare each correlation with ${formatInteger(LEAD_LAG.nullDraws)} stationary block bootstraps of the leading series (blocks of ${LEAD_LAG.meanBlockWeeks} weeks on average), which keep its week-to-week pattern but break its timing.`}
+          text={`Weekly log changes in 7-day blocks ending on ${dataThrough}, from the first week with at least $${LEAD_LAG.minWeeklyVolumeUsd / 1e6}M of NEAR Intents volume. p-values compare each correlation with ${formatInteger(LEAD_LAG.nullDraws)} stationary block bootstraps of the leading series (blocks of ${LEAD_LAG.meanBlockWeeks} weeks on average), which keep its week-to-week pattern but break its timing.`}
         />
       </p>
     </Panel>
@@ -64,10 +64,10 @@ export function LeadLagPanelSkeleton() {
         </p>
       </div>
       <p className="mt-3 text-[13px] leading-relaxed">
-        <SkeletonWords chars={286} />
+        <SkeletonWords chars={244} />
       </p>
       <LeadLagQuestionsSkeleton />
-      <NoteSkeleton chars={299} />
+      <NoteSkeleton chars={304} />
     </PanelSkeleton>
   );
 }

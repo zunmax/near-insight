@@ -13,7 +13,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata: Metadata = {
   title: "NEAR valuation: what the price assumes",
-  description: "What NEAR's price assumes about buyback growth, market cap against network revenue over time, projection scenarios, and a model to test your own.",
+  description: "What NEAR's price assumes about buyback growth, market cap against network revenue over time, projection scenarios and a model to test your own assumptions.",
   alternates: { canonical: "/dashboard/valuation" },
 };
 
@@ -36,7 +36,7 @@ export default function ValuationPage() {
       </PanelSlot>
 
       <SectionHeading title="Projections" />
-      <PanelSlot title="Projections" skeleton={<CoverageScenariosPanelSkeleton />}>
+      <PanelSlot title="NEAR burned + bought against issuance, next 3 years" skeleton={<CoverageScenariosPanelSkeleton />}>
         <CoverageScenariosPanel />
       </PanelSlot>
 

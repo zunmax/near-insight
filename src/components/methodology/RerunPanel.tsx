@@ -20,7 +20,7 @@ import { shellTokens } from "@/lib/shell-tokens";
 const STEPS = `git clone <this repository> near-insights
 cd near-insights
 npm ci
-pip install -r requirements.txt   # curl_cffi, for the Dune reader (Python 3.10 or later)
+pip install -r requirements.txt   # curl_cffi, for the Dune reader (Python 3.11 or later)
 npm run ingest     # every source with its full history into data/dashboard.db; from empty about ${formatCount(FRESH_INGEST_MINUTES.withSnapshot, "minute")},
                    # as block headers older than snapshot/ are copied from it (about ${formatCount(FRESH_INGEST_MINUTES.withoutSnapshot, "minute")} without it)
 npm run worker     # keeps every job on its schedule; each epochs run reads history for up to ${EPOCHS_RUN_BUDGET_MS / 60_000} minutes
@@ -99,6 +99,14 @@ const DUNE_REQUESTS = `# NEAR Intents volume (public and confidential), swaps, f
 echo '{"baseUrl":"${SOURCES.dune.baseUrl}","dashboard":${JSON.stringify(dashboard)},"queries":[${Object.values(duneQueries).join(",")}],"known":{},"signingKey":"${SOURCES.dune.signingKey}","retries":${SOURCES.dune.retries},"browsers":${JSON.stringify(SOURCES.dune.browsers)},"budgetSeconds":${SOURCES.dune.runBudgetMs / 1000}}' \\
   | python3 src/ingest/sources/dune.py   # python on Windows`;
 
+const { intentsExplorer } = SOURCES;
+
+const EXPLORER_REQUESTS = `# Completed 1Click swaps created in one UTC day, with referral, amountInUsd and app fees; needs a free partner key
+# (partners.near-intents.org). Both bounds are exclusive; page with lastDepositAddress and lastDepositMemo.
+# The terms allow no API data to be kept beyond 24 hours, so the worker stores only each day's totals by referral.
+curl -s "${intentsExplorer.baseUrl}/transactions?statuses=SUCCESS&numberOfTransactions=${intentsExplorer.pageSize}&startTimestamp=<ms before the day>&endTimestamp=<next day's start, ms>" \\
+  -H "authorization: Bearer $NEAR_INTENTS_EXPLORER_API_KEY"`;
+
 const DEFILLAMA_REQUESTS = `# NEAR Intents volume, gross fees, revenue and buyback dollars; totalDataChart holds [unix seconds, USD] per day
 # (volume and fees fill only the days Dune does not have)
 curl -s "${PUBLIC_URLS.defillama}/summary/dexs/near-intents?excludeTotalDataChartBreakdown=true"
@@ -131,6 +139,7 @@ const REQUESTS = [
   { title: "Validators, the HSP-029 vote and protocol settings", code: RPC_REQUESTS },
   { title: "Fee wallet and treasury balances", code: WALLET_REQUESTS },
   { title: "NEAR Intents volume, swaps, fees and TVL (Dune)", code: DUNE_REQUESTS },
+  { title: "NEAR Intents 1Click swaps by referral (Explorer API)", code: EXPLORER_REQUESTS },
   { title: "NEAR Intents revenue and buyback dollars, DEX volume, DeFi TVL and stablecoins (DefiLlama)", code: DEFILLAMA_REQUESTS },
   { title: "Chain activity and intents.near transactions (NearBlocks)", code: NEARBLOCKS_REQUESTS },
   { title: "Prices, market caps and circulating supply (CoinGecko, DefiLlama)", code: MARKET_REQUESTS },

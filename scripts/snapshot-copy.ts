@@ -9,5 +9,6 @@ export function copySnapshot(prefix: string): { database: string; remove: () => 
   const folder = mkdtempSync(join(tmpdir(), prefix));
   const database = join(folder, "dashboard.db");
   copyFileSync(SNAPSHOT_PATH, database);
-  return { database, remove: () => rmSync(folder, { recursive: true, force: true }) };
+  /** On Windows the stopped dashboard can hold the file a moment longer (EPERM, EBUSY), so removal retries a few times. */
+  return { database, remove: () => rmSync(folder, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }) };
 }

@@ -18,7 +18,7 @@ import { CORE_SECTIONS, SECTION_ORDER } from "@/content/thesis";
 
 export const metadata: Metadata = {
   title: "NEAR verdict, thesis and market data",
-  description: "The verdict on the latest NEAR data, Intents volume, NEAR's price and market cap, new supply absorbed, NEAR bought, and the latest NEAR news.",
+  description: "The verdict on the latest NEAR data, NEAR Intents volume, NEAR's price and market cap, new supply absorbed, NEAR bought and the latest NEAR news.",
   alternates: { canonical: "/dashboard/home", types: { "text/markdown": "/thesis.md" } },
 };
 
@@ -45,7 +45,7 @@ export default function HomePage() {
         title="NEAR Protocol"
         href="/dashboard/home"
         info={
-          <SourceInfo sources={["coingecko", "dune", "defillama", "nearRpc", "nearArchive"]} />
+          <SourceInfo sources={["coingecko", "dune", "defillama", "nearRpc", "nearArchive", "nearblocks"]} />
         }
       >
         <ProjectSectors />

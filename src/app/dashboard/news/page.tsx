@@ -7,7 +7,8 @@ import { PanelBoundary } from "@/components/ui/PanelBoundary";
 
 export const metadata: Metadata = {
   title: "NEAR news",
-  description: "Every story about NEAR in one searchable list, newest first, from crypto news sites.",
+  description: "NEAR news from CryptoPanic and ChainCatcher in one searchable list, newest first.",
+  alternates: { canonical: "/dashboard/news" },
 };
 
 export default function NewsPage({ searchParams }: PageProps<"/dashboard/news">) {

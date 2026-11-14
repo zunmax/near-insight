@@ -11,7 +11,7 @@ describe("formatMaxIssuance", () => {
     assert.equal(formatMaxIssuance(0.05), "5.0%");
   });
 
-  test("adds decimals so a rate just off the ceiling never prints as the ceiling", () => {
+  test("adds decimals so a rate slightly off the ceiling never prints as the ceiling", () => {
     assert.equal(formatMaxIssuance(0.0251), "2.51%");
     assert.equal(formatMaxIssuance(0.0249), "2.49%");
     assert.equal(formatMaxIssuance(0.025004), "2.5004%");

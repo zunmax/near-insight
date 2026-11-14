@@ -6,7 +6,7 @@ import type { ThesisInputs } from "./inputs";
 import type { ThesisMetrics } from "./types";
 
 /** FDV ÷ market cap; null when CoinGecko gives no FDV. */
-const fdvRatio =(coin: CoinMarket) => (coin.fdvUsd ? coin.fdvUsd / coin.marketCapUsd : null);
+const fdvRatio = (coin: CoinMarket) => (coin.fdvUsd ? coin.fdvUsd / coin.marketCapUsd : null);
 
 /** Whether a coin has supply not yet circulating (locked, unvested or not yet mined): FDV above market cap beyond rounding. */
 const hasLockedSupply = (coin: CoinMarket) => coin.fdvUsd !== null && coin.fdvUsd > coin.marketCapUsd * (1 + LOCKED_SUPPLY_MARGIN);

@@ -12,7 +12,7 @@ export const USAGE_QUERIES: NamedQuery[] = [
     title: "NEAR Intents volume, 30-day totals",
     page: "/dashboard/usage",
     sentence:
-      "Daily NEAR Intents swap volume, public and confidential (Dune's value on each day it has one, DefiLlama's otherwise), with its 30-day running total; the chart takes every 30th total back from the data-through day.",
+      "Daily NEAR Intents swap volume, public and confidential, with its 30-day running total. Each day uses Dune's value, or DefiLlama's when Dune has none. The chart takes every 30th total back from the data-through day.",
     sql: `WITH ${THROUGH}
 SELECT d.day, d.value AS volume_usd,
   SUM(d.value) OVER (ORDER BY julianday(d.day) RANGE BETWEEN 29 PRECEDING AND CURRENT ROW) AS volume_30d_usd
@@ -40,7 +40,7 @@ ORDER BY p.day DESC`,
     title: "Funds held in NEAR Intents",
     page: "/dashboard/usage",
     sentence:
-      "NEAR Intents TVL by day, split into public and confidential balances, from the NEAR team's Dune dashboard; confidential balances count as zero before they began, as the chart draws them.",
+      "NEAR Intents TVL (funds held) by day, split into public and confidential balances, from the NEAR team's Dune dashboard. Confidential balances count as zero before they began, as on the chart.",
     sql: `WITH first_confidential AS (SELECT MIN(day) AS day FROM daily_series WHERE series = '${SERIES.intentsConfidentialTvlUsd}'),
 split AS (
   SELECT p.day, p.tvl_usd, CASE WHEN p.confidential_usd IS NULL AND (f.day IS NULL OR p.day < f.day) THEN 0 ELSE p.confidential_usd END AS confidential_usd
@@ -55,7 +55,7 @@ ORDER BY day DESC`,
     id: "intents-txn-share",
     title: "NEAR Intents share of NEAR transactions",
     page: "/dashboard/usage",
-    sentence: "Transactions of intents.near against every NEAR transaction, by day.",
+    sentence: "Daily transactions of intents.near (the NEAR Intents contract) against all NEAR transactions.",
     sql: `SELECT day, intents_txns, all_txns, 1.0 * intents_txns / all_txns AS share
 FROM (${pivot({ intents_txns: SERIES.intentsTxns, all_txns: SERIES.nearTxns })})
 WHERE intents_txns IS NOT NULL AND all_txns > 0
@@ -67,7 +67,7 @@ ORDER BY day DESC`,
     id: "intents-dex-share",
     title: "NEAR Intents share of DEX volume on NEAR",
     page: "/dashboard/usage",
-    sentence: "DefiLlama's Intents volume against the volume of every DEX DefiLlama tracks on NEAR (Intents included), over the 30 and 180 days to the data-through day and by calendar month through that day; both from DefiLlama, so they count the same swaps.",
+    sentence: "DefiLlama's Intents volume against the volume of every DEX DefiLlama tracks on NEAR, Intents included. Rows cover the 30 and 180 days to the data-through day and each calendar month through that day. Both come from DefiLlama, so they count the same swaps.",
     sql: `WITH ${THROUGH}, windows(days) AS (VALUES (30), (180))
 SELECT 'last ' || w.days || ' days' AS month, COUNT(*) AS days,
   SUM(intents_usd) AS intents_volume_usd, SUM(dex_usd) AS dex_volume_usd, SUM(intents_usd) / SUM(dex_usd) AS share
@@ -88,7 +88,7 @@ ORDER BY month DESC`,
     id: "lead-lag-weekly",
     title: "Lead-lag test inputs",
     page: "/dashboard/usage",
-    sentence: `The weekly inputs of the lead-lag test: 7-day blocks ending on the data-through day, with Intents volume summed, prices at the close of the block's last day (the next day's 00:00 UTC price) and active accounts averaged. The test starts at the first week with at least $${LEAD_LAG.minWeeklyVolumeUsd / 1e6}M of Intents volume, so earlier rows are shown but not tested. A series' value shows only for weeks it has all seven days; the test uses the newest run of consecutive weeks with every value.`,
+    sentence: `Weekly inputs of the lead-lag test, in 7-day blocks ending on the data-through day. Each block sums Intents volume, averages active accounts and takes prices at the close of its last day (the next day's 00:00 UTC price). The test starts at the first week with at least $${LEAD_LAG.minWeeklyVolumeUsd / 1e6}M of Intents volume, so earlier rows are shown but not tested. A series' value shows only for weeks it has all seven days; the test uses the newest run of consecutive weeks with every value.`,
     sql: `WITH ${THROUGH},
 days AS (
   SELECT series, day, value, through_day, CAST((julianday(through_day) - julianday(day)) / 7 AS INTEGER) AS weeks_back
@@ -120,7 +120,7 @@ ORDER BY week_end DESC`,
     id: "chain-activity",
     title: "Transactions and active, relayed and new accounts per day",
     page: "/dashboard/usage",
-    sentence: "Daily NEAR transactions and the share a relayer signed for another account, accounts that signed a transaction, accounts that acted through a relayer, and new accounts.",
+    sentence: "Daily NEAR transactions, those a relayer signed for another account and their share, active accounts (accounts that signed a transaction), accounts that acted through a relayer, and new accounts.",
     sql: `SELECT day, txns, relayed_txns, 1.0 * relayed_txns / txns AS relayed_share, active_accounts, relayed_accounts, new_accounts
 FROM (${pivot({
       txns: SERIES.nearTxns,
@@ -137,7 +137,7 @@ ORDER BY day DESC`,
     title: "Chain activity against a year earlier",
     page: "/dashboard/usage",
     sentence:
-      "Transactions and new accounts, and the median daily active accounts, over the 30 days to the newest day all three NearBlocks series have, against the same 30 days a year earlier; with the share of transactions a relayer signed and the median daily accounts that acted through a relayer over the same days. A median needs all 30 days stored, so a window that is not fully stored shows none.",
+      "Transactions, new accounts and median daily active accounts over the 30 days to the newest day all three NearBlocks series have, against the same 30 days a year earlier. Each window also gives the share of transactions a relayer signed and the median daily accounts that acted through a relayer. A median needs all 30 days stored; a window with a missing day shows none.",
     sql: `WITH last AS (
   SELECT CASE WHEN COUNT(*) = 3 THEN MIN(last_day) END AS day FROM (
     SELECT MAX(day) AS last_day FROM daily_series
@@ -189,7 +189,7 @@ ORDER BY p.day DESC`,
     title: "NEAR Intents volume by chain",
     page: "/dashboard/usage",
     sentence:
-      "NEAR Intents volume, public and confidential, over the 30 days to the newest stored day, by the chain each swap is counted under, with each chain's share; no rows unless all 30 days are stored.",
+      "NEAR Intents volume, public and confidential, over the 30 days to the newest stored day, by the chain each swap counts under, with each chain's share. Rows appear only when all 30 days are stored.",
     sql: `WITH last AS (SELECT MAX(day) AS day FROM intents_chain_daily),
 recent AS (
   SELECT chain, volume_usd FROM intents_chain_daily, last

@@ -22,4 +22,6 @@ export const FINDING_LEVELS = {
   dexShareMajority: 0.5,
   /** Share of NEAR Intents fees buying NEAR from which most of the fees go to buybacks. */
   captureRateMajority: 0.5,
+  /** Share of the 1Click swaps' app fees paid through one referral from which a single front end pays most of them. */
+  referralFeesMajority: 0.5,
 } as const;

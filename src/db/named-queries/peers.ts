@@ -11,7 +11,7 @@ export const PEER_QUERIES: NamedQuery[] = [
     title: "Circulating supply growth, 12 months",
     page: "/dashboard/peers",
     sentence:
-      `Circulating supply growth of NEAR and every coin ranked above it: the median supply of the newest ${endDays} days against the median of the ${endDays} days ending 365 days earlier (or the first ${endDays} stored days when history is shorter), as a yearly rate. Medians stop a single wrong reading from moving the result; coins with less than ${minHistoryDays} days of history are left out.`,
+      `Circulating supply growth of NEAR and every coin ranked above it, as a yearly rate. It compares the median supply of the newest ${endDays} days with the median of the ${endDays} days ending 365 days earlier, or of the first ${endDays} stored days when history is shorter. Medians stop a single wrong reading from moving the result. Coins with less than ${minHistoryDays} days of history are left out.`,
     sql: `WITH bounds AS (
   SELECT coin_id, MIN(day) AS first_day, MAX(day) AS last_day FROM coin_supply_daily GROUP BY coin_id),
 ends AS (
@@ -47,7 +47,7 @@ ORDER BY c.rank`,
     title: "The coins ranked above NEAR",
     page: "/dashboard/peers",
     sentence:
-      "The latest price, market cap and FDV of NEAR and every coin ranked above it, with FDV ÷ market cap (1 when CoinGecko gives no FDV), the price change over a year and the distance from the all-time high.",
+      "The latest price, market cap and FDV of NEAR and every coin ranked above it. Each row adds FDV ÷ market cap (1 when CoinGecko gives no FDV), the 1-year price change and the distance from the all-time high.",
     sql: `SELECT rank, coin_id, symbol, price_usd, market_cap_usd, fdv_usd, COALESCE(fdv_usd, market_cap_usd) / market_cap_usd AS fdv_to_market_cap,
   change_1y / 100 AS change_1y, price_usd / ath_usd - 1 AS from_ath, fetched_at
 FROM coins_latest

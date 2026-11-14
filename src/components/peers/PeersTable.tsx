@@ -42,7 +42,7 @@ export async function PeersTable() {
                     </th>
                     <td className="text-right text-ink-2 tabular-nums max-sm:hidden">{formatUsd(c.marketCapUsd)}</td>
                     <td className="text-right text-ink-2 tabular-nums">{supplyGrowth.has(c.id) ? formatChange(supplyGrowth.get(c.id)!, 1) : "—"}</td>
-                    <td className="text-right text-ink-2 tabular-nums">{c.fdvUsd ? formatMultiple(c.fdvUsd / c.marketCapUsd, 2) : "—"}</td>
+                    <td className="text-right text-ink-2 tabular-nums">{c.fdvUsd && c.marketCapUsd > 0 ? formatMultiple(c.fdvUsd / c.marketCapUsd, 2) : "—"}</td>
                     <td className="text-right text-ink-2 tabular-nums max-sm:hidden">{c.change1y === null ? "—" : formatChange(c.change1y / 100, 0)}</td>
                     <td className="text-right text-ink-2 tabular-nums @max-[650px]:hidden">{c.athUsd ? formatChange(c.priceUsd / c.athUsd - 1, 0) : "—"}</td>
                   </tr>

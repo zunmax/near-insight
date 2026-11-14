@@ -10,6 +10,7 @@ import { getThesisMetrics } from "@/data/thesis-metrics";
 import { formatDateTimeUtc } from "@/lib/format";
 import { transferCost } from "@/lib/thesis/triggers";
 
+/** Shard count, transfer cost, finality and the protocol version mainnet runs. */
 export async function TechTiles() {
   await io();
   const [network, { technology }] = await Promise.all([getNetworkState(), getThesisMetrics()]);

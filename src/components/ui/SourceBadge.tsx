@@ -4,6 +4,7 @@ import { SOURCES, type SourceKey, type SourceRef } from "@/config/sources";
 const KIND_COLOR: Record<SourceKey, string> = {
   coingecko: "var(--section-usage)",
   dune: "var(--section-usage)",
+  intentsExplorer: "var(--section-usage)",
   defillama: "var(--section-usage)",
   nearRpc: "var(--section-revenue)",
   nearArchive: "var(--section-revenue)",

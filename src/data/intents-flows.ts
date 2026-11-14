@@ -13,6 +13,9 @@ type ChainVolume = { chain: string; volumeUsd: number };
 /** Fees one channel (front end, app or referral account) generated since NEAR Intents launched. */
 type FeeChannel = { channel: string; feesUsd: number };
 
+/** One referral's completed 1Click swaps over a window: the count, dollars swapped in and app fees. */
+export type ReferralTotals = { referral: string; swaps: number; volumeUsd: number; feesUsd: number };
+
 /** Daily NEAR Intents volume and its stablecoin part, from the volume by token (Dune). */
 export async function getIntentsVolumeMix(): Promise<IntentsVolumeMix> {
   "use cache";
@@ -72,6 +75,41 @@ export async function getIntentsReach(): Promise<{ day: string; chains: number; 
     .get();
   if (row?.day == null || Number(row.chains) === 0 || Number(row.tokens) === 0) return null;
   return { day: String(row.day), chains: Number(row.chains), tokens: Number(row.tokens) };
+}
+
+/** Completed 1Click swaps by referral over the `days` days ending on the newest stored day, largest fees first; null unless
+    every day of the window is stored, so a missing day never prints a short total. */
+export async function getReferralWindow(days: number): Promise<{ through: string; referrals: ReferralTotals[] } | null> {
+  "use cache";
+  cacheLife("db");
+  const db = getReader();
+  if (!db) return null;
+  const through = db.prepare("SELECT MAX(day) AS day FROM intents_referral_daily").get()?.day;
+  if (through == null) return null;
+  const stored = db
+    .prepare("SELECT COUNT(DISTINCT day) AS days FROM intents_referral_daily WHERE day > date(?, '-' || ? || ' days') AND day <= ?")
+    .get(String(through), days, String(through))?.days;
+  if (Number(stored) < days) return null;
+  const referrals = db
+    .prepare(
+      `SELECT referral, SUM(swaps) AS swaps, SUM(volume_usd) AS volume, SUM(fees_usd) AS fees FROM intents_referral_daily
+       WHERE day > date(?, '-' || ? || ' days') AND day <= ? GROUP BY referral ORDER BY fees DESC, volume DESC`,
+    )
+    .all(String(through), days, String(through))
+    .map((r) => ({ referral: String(r.referral), swaps: Number(r.swaps), volumeUsd: Number(r.volume), feesUsd: Number(r.fees) }));
+  return { through: String(through), referrals };
+}
+
+/** App fees of every completed 1Click swap per day, all referrals together, oldest first. */
+export async function getReferralFeesDaily(): Promise<DailyPoint[]> {
+  "use cache";
+  cacheLife("db");
+  const db = getReader();
+  if (!db) return [];
+  return db
+    .prepare("SELECT day, SUM(fees_usd) AS fees FROM intents_referral_daily GROUP BY day ORDER BY day")
+    .all()
+    .map((r) => ({ time: dayTime(String(r.day)), value: Number(r.fees) }));
 }
 
 /** Fees by channel since launch, largest first, and the last day the totals include. */

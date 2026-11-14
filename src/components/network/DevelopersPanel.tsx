@@ -10,13 +10,15 @@ import { formatChange, formatInteger } from "@/lib/format";
 import { dayTime, firstOfMonth, indexTo100, isoDay, type DailyPoint } from "@/lib/metrics";
 
 const TITLE = "Monthly active developers";
-const DESCRIPTION = "Monthly active developers in each ecosystem, indexed to 100 on 2023-01-01: a value of 80 means 20% fewer developers than on that day.";
+const DESCRIPTION = "Each ecosystem is indexed to 100 on 2023-01-01: a value of 80 means 20% fewer monthly active developers than on that day.";
 const SINCE = dayTime("2023-01-01");
 
-/** Latest monthly value and its change against the same month a year earlier. */
+/** Latest monthly value and its change against the same month a year earlier; no change when that month is not stored. */
 function latestWithChange(points: DailyPoint[]) {
   const now = points.at(-1);
-  const before = points.at(-13);
+  const at = now ? new Date(now.time * 1000) : null;
+  const yearEarlier = at ? Date.UTC(at.getUTCFullYear() - 1, at.getUTCMonth(), at.getUTCDate()) / 1000 : null;
+  const before = points.find((point) => point.time === yearEarlier);
   return { now: now?.value ?? 0, change: now && before && before.value > 0 ? now.value / before.value - 1 : null };
 }
 

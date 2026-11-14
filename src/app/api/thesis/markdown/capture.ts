@@ -1,5 +1,5 @@
-/** Thesis section 2: NEAR bought by NEAR Intents buybacks, the fee chain behind it and the three fee wallets' balances. */
-import { boughtGrowth, DASH, DEFILLAMA, EPOCH_HEADERS, NEAR_DAILY_PRICE, NEARBLOCKS_V3, day, daysTo, factTable, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
+/** The pillar 2 section: NEAR bought by NEAR Intents buybacks, the fee chain behind it, the three fee wallets' balances and 1Click swaps by referral. */
+import { boughtGrowth, DASH, DEFILLAMA, EPOCH_HEADERS, EXPLORER_SWAPS, NEAR_DAILY_PRICE, NEARBLOCKS_V3, day, daysTo, factTable, show, type ThesisDocumentInput } from "@/app/api/thesis/markdown/format";
 import { section } from "@/app/api/thesis/markdown/section";
 import { BUYBACKS_START_DAY } from "@/config/protocol";
 import { BUYBACK_ACCOUNT, FRONTEND_FEE_ACCOUNT, ONE_CLICK_FEE_ACCOUNT, SOURCES } from "@/config/sources";
@@ -7,6 +7,7 @@ import { INTENTS_FEES } from "@/content/facts";
 import { digitsApart, formatBps, formatCompact, formatNear as near, formatPercent, formatPercentFromFull, formatUsd, percentRounded } from "@/lib/format";
 import { daysInMonth, type DataCheck } from "@/lib/metrics";
 import { measuredBurnNote } from "@/lib/projection";
+import { largestReferral, referralLabel } from "@/lib/referrals";
 
 /** "2026-02: 173K (from 2026-02-23), …, 2026-11: 12K (to 2026-11-01)": the first and last month marked when partly covered. */
 function boughtByMonth(monthly: Array<{ month: string; value: number }>, through: string | null): string {
@@ -22,7 +23,7 @@ function boughtByMonth(monthly: Array<{ month: string; value: number }>, through
 }
 
 function boughtCheck(check: DataCheck | null): string {
-  if (!check) return "The stored wallet history does not cover enough days to compare the two yet.";
+  if (!check) return "The stored wallet history is too short to compare the two yet.";
   const days = check.days === 1 ? "day" : `${check.days} days`;
   const gap = check.difference;
   const digits = gap === null ? 1 : digitsApart(gap * 100, 0, 1);
@@ -36,12 +37,13 @@ function boughtCheck(check: DataCheck | null): string {
 }
 
 export function captureSection(input: ThesisDocumentInput): string {
-  const { buybacks: b, feeChain: f, feeWallets: w, seed, dataChecks, dataThrough: t } = input.metrics;
+  const { buybacks: b, feeChain: f, feeWallets: w, referrals: r, seed, dataChecks, dataThrough: t } = input.metrics;
   const chain = f?.d30;
   const feesThrough = f?.through ?? null;
   const balance = `balance on ${day(w?.asOf)}`;
+  const top = largestReferral(r);
+  const referralCheck = dataChecks.referralFees;
   return section(
-    2,
     "capture",
     input,
     [
@@ -72,11 +74,18 @@ export function captureSection(input: ThesisDocumentInput): string {
       ["Change of the three wallets' combined balance", show(w?.gain30dNear, near), daysTo(30, w?.gainThrough ?? null)],
       ["NEAR bought as DefiLlama counts it, same 30 days", show(w?.bought30dNear, near), daysTo(30, w?.gainThrough ?? null)],
       ["Largest daily gap: NEAR bought since the window began less the wallets' gain since then", show(w?.shortfall30dNear, near), daysTo(30, w?.gainThrough ?? null)],
+      ["App fees of completed 1Click swaps (on their volume)", r ? `${formatUsd(r.feesUsd)} (on ${formatUsd(r.volumeUsd)})` : DASH, daysTo(30, r?.through ?? null)],
+      [
+        "Largest referral's share of 1Click app fees (and of their volume)",
+        top ? `${formatPercent(top.feeShare, 1)}, ${referralLabel(top.referral)} (${formatPercent(top.volumeShare, 1)} of volume)` : DASH,
+        daysTo(30, r?.through ?? null),
+      ],
+      ["1Click app fees ÷ NEAR Intents gross fees", referralCheck?.difference != null ? formatPercent(1 + referralCheck.difference, 1) : DASH, daysTo(30, referralCheck?.through ?? null)],
     ],
     [
-      `**How the buying works.** The ${INTENTS_FEES.contract.label} itself charges ${INTENTS_FEES.contract.value}. The money that buys NEAR comes from the fees of two apps on top of it, the ${INTENTS_FEES.app.label} and the ${INTENTS_FEES.oneClick.label}. Their fees reach three wallets: \`${FRONTEND_FEE_ACCOUNT}\`, \`${ONE_CLICK_FEE_ACCOUNT}\` and \`${BUYBACK_ACCOUNT}\`. The NEAR bought is held in these three wallets (each balance is in the table above), off the market. It is not burned, so it stays in total supply (CoinGecko's circulating supply still counts it).\n\n${factTable(Object.values(INTENTS_FEES))}`,
-      `**DefiLlama's count against the wallets.** DefiLlama counts NEAR arriving at all three fee wallets as bought, so its total can exceed the buyback wallet's balance. ${boughtCheck(dataChecks.boughtVsWallets)}`,
+      `**How the buying works.** The ${INTENTS_FEES.contract.label} itself charges ${INTENTS_FEES.contract.value}. The buying is paid from the fees of two apps built on it, the ${INTENTS_FEES.app.label} and the ${INTENTS_FEES.oneClick.label}. Their fees reach three wallets: \`${FRONTEND_FEE_ACCOUNT}\`, \`${ONE_CLICK_FEE_ACCOUNT}\` and \`${BUYBACK_ACCOUNT}\`. The NEAR bought is held in these wallets, off the market; the table above gives each balance. It is not burned, so it stays in total supply, and CoinGecko still counts it as circulating.\n\n${factTable(Object.values(INTENTS_FEES))}`,
+      `**DefiLlama's count against the wallets.** DefiLlama counts all NEAR and wNEAR that reaches the three fee wallets from other accounts as bought; it does not see the trades that bought it. The wallets' balances therefore test whether that NEAR stays, not whether it was bought on the market. ${boughtCheck(dataChecks.boughtVsWallets)}`,
     ],
-    `Dune query ${SOURCES.dune.queries.fees} on the NEAR team's dashboard \`${SOURCES.dune.baseUrl}/${SOURCES.dune.dashboard.handle}/${SOURCES.dune.dashboard.slug}\` (gross fees, with volume from query ${SOURCES.dune.queries.volume}); DefiLlama \`GET ${DEFILLAMA}/summary/fees/near-intents?dataType=dailyFees&excludeTotalDataChartBreakdown=true\` (gross fees on days Dune does not have), the same with \`dataType=dailyRevenue\` (revenue) and \`dataType=dailyHoldersRevenue\` (buybacks), and \`GET ${DEFILLAMA}/summary/fees/near?excludeTotalDataChartBreakdown=true\` (gas fees); ${EPOCH_HEADERS} (NEAR burned, for the measured burn share); ${NEAR_DAILY_PRICE}; NEAR RPC \`view_account\` on each of the three fee wallets (today's balance) and NearBlocks \`GET ${NEARBLOCKS_V3}/accounts/<wallet>/stats/balance?limit=${SOURCES.nearblocks.maxDailyRows}\` (each past day's balance, behind the 30-day change and the NEAR bought over the same days).`,
+    `Dune query ${SOURCES.dune.queries.fees} on the NEAR team's dashboard \`${SOURCES.dune.baseUrl}/${SOURCES.dune.dashboard.handle}/${SOURCES.dune.dashboard.slug}\` (gross fees, with volume from query ${SOURCES.dune.queries.volume}); DefiLlama \`GET ${DEFILLAMA}/summary/fees/near-intents?dataType=dailyFees&excludeTotalDataChartBreakdown=true\` (gross fees on days Dune does not have), the same with \`dataType=dailyRevenue\` (revenue) and \`dataType=dailyHoldersRevenue\` (buybacks), and \`GET ${DEFILLAMA}/summary/fees/near?excludeTotalDataChartBreakdown=true\` (gas fees); ${EPOCH_HEADERS} (NEAR burned, for the measured burn share); ${NEAR_DAILY_PRICE}; NEAR RPC \`view_account\` on each of the three fee wallets (today's balance) and NearBlocks \`GET ${NEARBLOCKS_V3}/accounts/<wallet>/stats/balance?limit=${SOURCES.nearblocks.maxDailyRows}\` (each past day's balance, behind the 30-day change and the NEAR bought over the same days); ${EXPLORER_SWAPS}.`,
   );
 }

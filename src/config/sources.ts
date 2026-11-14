@@ -38,7 +38,7 @@ export const SOURCES = {
   dune: {
     name: "Dune",
     usedFor:
-      "NEAR Intents volume (public and confidential), swaps, fees, fees by channel, volume by chain and by token, and NEAR Intents TVL, from the NEAR team's NEAR Intents dashboard",
+      "NEAR Intents volume (public and confidential), swaps, fees, fees by channel, volume by chain and by token, and TVL, from the NEAR team's NEAR Intents dashboard",
     baseUrl: "https://dune.com",
     /** The dashboard whose queries the job reads; only queries shown on it are used. */
     dashboard: { handle: "near", slug: "near-intents" },
@@ -68,10 +68,24 @@ export const SOURCES = {
     runTimeoutMs: 10 * 60_000,
     docsUrl: "https://dune.com/near/near-intents",
   },
+  /** NEAR Intents Explorer API: every 1Click swap with its referral, dollar amounts and app fees. It needs a free partner key
+      (partners.near-intents.org), and its terms allow no API data to be kept beyond 24 hours, so only daily totals are stored. */
+  intentsExplorer: {
+    name: "NEAR Intents Explorer API",
+    usedFor: "NEAR Intents 1Click swaps, volume and app fees per day by referral (the front end, wallet or app a swap came through)",
+    baseUrl: "https://explorer.near-intents.org/api/v0",
+    /** Partner key (a JWT), sent as a Bearer token; the job runs only when it is set. */
+    apiKey: process.env.NEAR_INTENTS_EXPLORER_API_KEY ?? null,
+    /** Minimum gap between calls: the API allows one request every 5 seconds per partner. */
+    pacingMs: 5_500,
+    /** Most swaps one call returns. */
+    pageSize: 1_000,
+    docsUrl: "https://docs.near-intents.org/integration/distribution-channels/1click-api/explorer/introduction",
+  },
   defillama: {
     name: "DefiLlama",
     usedFor:
-      "NEAR Intents revenue and buybacks, Intents volume and fees on days Dune does not have, DEX volume on NEAR, gas fees, DeFi TVL on NEAR and stablecoins, and daily BTC, ETH and NEAR prices for the lead-lag test",
+      "NEAR Intents revenue and buyback dollars, Intents volume and fees on days Dune does not have, DEX volume, gas fees, DeFi TVL and stablecoins on NEAR, and daily BTC, ETH and NEAR prices for the lead-lag test",
     baseUrl: process.env.DEFILLAMA_BASE_URL ?? PUBLIC_URLS.defillama,
     stablecoinsUrl: process.env.DEFILLAMA_STABLECOINS_URL ?? PUBLIC_URLS.defillamaStablecoins,
     /** Coins API: daily price history by CoinGecko id. */
